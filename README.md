@@ -24,13 +24,39 @@ To get started with the Mathmex chatbot, follow the setup instructions in the re
 
 ## Contributing 
 
-To contribute to the MathMex application follow the following steps. 
+Contributions are welcome! To contribute to MathMex, please follow these steps:
 
-    1. Clone the Repository
-    - Make sure git is installed.
-    - Open a terminal and navigate to the directory where you want the repository to be cloned. 
-    - Ex. (Use Github desktop and clone the repoisotry from UMCPhoenix/MathMex)
-    - Ex. (in terminal `git )
+    1. **Fork the repository**  
+        -  Click the "Fork" button at the top right of this page to create your own copy of the repository. (On github website)
+        - This creates your own copy of the MathMex repo under your Github account. You can freely make changes to this copy without affecting the original project. 
 
-    2. Making and Committing Changes 
-    - U
+    2. **Clone your fork**
+        - Open a terminal and run:  
+        - `git clone https://github.com/your-username/MathMex.git`
+        - This downloads your forked repo from Github to your local computer, so you can work on the code locally. 
+
+    3. **Create a new branch**  
+        - Navigate to the project directory and create a new branch for your feature or bugfix:  
+        - `git checkout -b my-feature-branch`
+        - Branches let you work on new features or bug fixes without affecting the main codebase. Creating a new branch keeps your changes organized and separate.
+
+    4. **Make your changes**  
+        - Implement your feature or fix the bug in your local code. 
+        - Adding tests is encouraged to ensure your changes work as expected. 
+
+    5. **Commit your changes**  
+        - In the terminal run:
+        - `git add .`  
+        - `git commit -m "Describe your changes"`
+        - You can save your changes to your local branch with a description message. This helps others understand what you changed and why.
+
+    6. **Push to your fork**  
+        - `git push origin my-feature-branch`
+        - This uploads your committed changes from your local branch to your forked repo on Github. 
+
+    7. **Open a Pull Request**  
+        - Go to the original repository on GitHub and open a Pull Request from your branch.
+        - You request that your changes be reviewed and merged into the original MathMex repo. It will be reviewed and discussed before any necessary changes are made before merging. 
+
+Please follow these steps to help keep the project organized and easier to be maintained to review and accept contributions. 
+
