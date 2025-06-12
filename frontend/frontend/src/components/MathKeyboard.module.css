@@ -1,0 +1,67 @@
+.mathKeyboard {
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    border: 1px solid var(--gold-accent);
+    overflow: hidden;
+    margin: 1rem 0 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    transition: all 0.3s ease-in-out;
+}
+
+.keyboardSection {
+    margin-bottom: 1.5rem;
+}
+
+.keyboardSection:last-child {
+    margin-bottom: 0;
+}
+
+.sectionTitle {
+    margin-bottom: 0.8rem;
+    color: var(--primary-color);
+    font-size: 1rem;
+    font-family: var(--font-cormorant-garamond);
+    font-weight: 600;
+    border-bottom: 1px solid var(--gold-accent);
+    padding-bottom: 5px;
+    display: inline-block;
+}
+
+.keyRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.key {
+    min-width: 40px;
+    height: 40px;
+    padding: 0 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--gold-accent);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: var(--dark-color);
+}
+
+.key:hover {
+    background-color: var(--light-color);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 480px) {
+    .key {
+        min-width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+}

@@ -1,0 +1,72 @@
+.header {
+    padding: 2rem 0;
+    text-align: center;
+    border-bottom: 2px solid var(--gold-accent);
+    background-color: rgba(92, 56, 54, 0.05);
+}
+
+.header h1 {
+    font-family: var(--font-cormorant-garamond);
+    font-size: 3.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
+.headerContent {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.titleContainer {
+    margin: 0 20px;
+}
+
+.title {
+    font-family: var(--font-cormorant-garamond);
+    font-size: 3.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
+.highlight {
+    color: var(--gold-accent);
+}
+
+.tagline {
+    font-family: var(--font-eb-garamond);
+    font-size: 1.2rem;
+    color: var(--gray-color);
+}
+
+.ornament {
+    width: 80px;
+    height: 80px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.ornament.left {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23c19a49'%3E%3Cpath d='M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0zm0 90c-22.1 0-40-17.9-40-40s17.9-40 40-40 40 17.9 40 40-17.9 40-40 40z'/%3E%3Cpath d='M50 20c-16.5 0-30 13.5-30 30s13.5 30 30 30 30-13.5 30-30-13.5-30-30-30zm0 50c-11 0-20-9-20-20s9-20 20-20 20 9 20 20-9 20-20 20z'/%3E%3Ccircle cx='50' cy='50' r='10'/%3E%3C/svg%3E");
+}
+
+.ornament.right {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23c19a49'%3E%3Cpath d='M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0zm0 90c-22.1 0-40-17.9-40-40s17.9-40 40-40 40 17.9 40 40-17.9 40-40 40z'/%3E%3Cpath d='M50 20c-16.5 0-30 13.5-30 30s13.5 30 30 30 30-13.5 30-30-13.5-30-30-30zm0 50c-11 0-20-9-20-20s9-20 20-20 20 9 20 20-9 20-20 20z'/%3E%3Ccircle cx='50' cy='50' r='10'/%3E%3C/svg%3E");
+}
+
+@media (max-width: 768px) {
+    .title {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .headerContent {
+        flex-direction: column;
+    }
+}

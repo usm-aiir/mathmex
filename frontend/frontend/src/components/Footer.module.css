@@ -1,0 +1,8 @@
+.footer {
+    background-color: rgba(92, 56, 54, 0.1);
+    color: var(--primary-color);
+    padding: 1.5rem 0;
+    text-align: center;
+    margin-top: 3rem;
+    border-top: 2px solid var(--gold-accent);
+}

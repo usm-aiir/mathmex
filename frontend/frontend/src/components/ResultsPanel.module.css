@@ -1,0 +1,93 @@
+.resultsSection {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    border: 1px solid var(--gold-accent);
+    padding: 2rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 2rem;
+}
+.resultsSectionTitle {
+    font-family: var(--font-cormorant-garamond);
+    font-size: 2rem;
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.resultsSectionTitle::after {
+    content: "";
+    display: block;
+    width: 100px;
+    height: 2px;
+    background-color: var(--gold-accent);
+    margin: 10px auto 0;
+}
+
+.resultsContainer {
+    min-height: 100px;
+}
+
+.example {
+    color: var(--primary-color);
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.example:hover {
+    color: var(--accent-color);
+}
+
+.resultItem {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--gold-accent);
+    position: relative;
+}
+
+.resultItem:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.resultTitle {
+    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+    color: var(--primary-color);
+    font-family: var(--font-cormorant-garamond);
+    font-weight: 600;
+}
+
+.resultFormula {
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--gold-accent);
+    overflow-x: auto;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.MathJax {
+    display: block !important;
+    text-align: center;
+}
+
+.resultDescription {
+    margin-bottom: 1.2rem;
+    line-height: 1.7;
+    font-size: 1.05rem;
+}
+
+
+@media (max-width: 768px) {
+    .resultsSection {
+        padding: 1.5rem;
+    }
+
+    .resultItem::before {
+        display: none;
+    }
+}
