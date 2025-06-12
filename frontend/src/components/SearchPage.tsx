@@ -1,6 +1,8 @@
 "use client"
 
 // @ts-ignore
+// Import styles and dependencies
+
 import styles from "./SearchPage.module.css"
 import { useState, useEffect, useRef, useCallback, ReactNode } from "react"
 import { History, Keyboard, Search } from "lucide-react"
@@ -14,6 +16,7 @@ import { keyboardLayout, mockSearch } from "../lib/constants.ts"
 import { formatDate } from "../lib/utils.ts"
 import type { MathField } from "react-mathquill"
 
+// Types for search history and results.
 interface SearchHistoryItem {
     latex: string
     timestamp: number
@@ -27,7 +30,9 @@ interface SearchResult {
     year: string
 }
 
+// Main SearchPage component.
 export default function SearchPage() {
+    // State variables for UI and data
     const [latex, setLatex] = useState<string>("")
     const [isKeyboardVisible, setIsKeyboardVisible] = useState<boolean>(false)
     const [isHistoryVisible, setIsHistoryVisible] = useState<boolean>(false)
@@ -38,6 +43,7 @@ export default function SearchPage() {
 
     const mathFieldRef = useRef<MathField | null>(null)
 
+   // Load search history and set placeholder on mount
     useEffect(() => {
         const storedHistory = sessionStorage.getItem("mathMexSearchHistory")
         if (storedHistory) {
@@ -67,11 +73,13 @@ export default function SearchPage() {
         )
     }, [])
 
+    // Helper to update and persist search history
     const updateAndStoreHistory = (newHistory: SearchHistoryItem[]) => {
         setSearchHistory(newHistory)
         sessionStorage.setItem("mathMexSearchHistory", JSON.stringify(newHistory))
     }
 
+   // Add a new query to history, keeping max 15 items
     const addToHistory = (query: string) => {
         if (!query) return
         const newItem: SearchHistoryItem = { latex: query, timestamp: Date.now() }
@@ -83,6 +91,7 @@ export default function SearchPage() {
         updateAndStoreHistory(updatedHistory)
     }
 
+  // Main search function 
     const performSearch = useCallback(() => {
         const currentLatex = latex.trim()
         if (!currentLatex) return
@@ -93,18 +102,32 @@ export default function SearchPage() {
         if (isKeyboardVisible) setIsKeyboardVisible(false)
         if (isHistoryVisible) setIsHistoryVisible(false)
 
-        setTimeout(() => {
-            const results = mockSearch(currentLatex)
-            setSearchResults(results)
-            setIsLoading(false)
-        }, 1500)
+        // Call backend API instead of mockSearch
+        fetch("http://localhost:5000/api/search", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ latex: currentLatex }),
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                setSearchResults(data.results || [])
+                setIsLoading(false)
+            })
+            .catch(() => {
+                setSearchResults([])
+                setIsLoading(false)
+            })
     }, [latex, searchHistory, isKeyboardVisible, isHistoryVisible])
 
+    // Handle math keyboard key press
     const handleKeyPress = (keyLatex: string) => {
         mathFieldRef.current?.write(keyLatex)
         mathFieldRef.current?.focus()
     }
 
+    //Fill input with example and trigger search
     const handleExampleClick = (formula: string) => {
         setLatex(formula)
         setTimeout(() => {
@@ -112,10 +135,12 @@ export default function SearchPage() {
         }, 0)
     }
 
+    //Clear search history
     const clearHistory = () => {
         updateAndStoreHistory([])
     }
 
+    //Handle click on a history item
     const handleHistoryItemClick = (itemLatex: string) => {
         setLatex(itemLatex)
         setIsHistoryVisible(false)
@@ -124,6 +149,7 @@ export default function SearchPage() {
         }, 0)
     }
 
+    // Render the search page with header, input, results, and footer
     return (
         <>
             <Header />
