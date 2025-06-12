@@ -18,7 +18,7 @@ To get started with MathMex, follow these steps:
 3. **Run the Application**  
    Start the development server with:
    ```sh
-   npm start
+   npm run dev
    ```
    The app will open in your default browser at [http://localhost:3000](http://localhost:3000).
 
