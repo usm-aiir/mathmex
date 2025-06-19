@@ -6,7 +6,7 @@ const Footer: FC = () => {
     return (
         <footer>
             <div className={styles.footer}>
-                <p>© {new Date().getFullYear()} MathMex</p>
+                <p>© {new Date().getFullYear()} MathMex ∙ About </p>
             </div>
         </footer>
     )

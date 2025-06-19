@@ -8,11 +8,11 @@ import { useState, useEffect, useRef, useCallback, ReactNode } from "react"
 import { History, Keyboard, Search } from "lucide-react"
 import Header from "./Header.tsx"
 import Footer from "./Footer.tsx"
-import MathInputField from "./MathInputField.tsx"
+import InputField from "./InputField.tsx"
 import MathKeyboard from "./MathKeyboard.tsx"
 import HistoryPanel from "./HistoryPanel.tsx"
 import ResultsPanel from "./ResultsPanel.tsx"
-import { keyboardLayout, mockSearch } from "../lib/constants.ts"
+import { keyboardLayout } from "../lib/constants.ts"
 import { formatDate } from "../lib/utils.ts"
 import type { MathField } from "react-mathquill"
 
@@ -43,7 +43,21 @@ export default function SearchPage() {
 
     const mathFieldRef = useRef<MathField | null>(null)
 
-   // Load search history and set placeholder on mount
+    // Add keyboard shortcut handler
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault()
+                setIsKeyboardVisible(!isKeyboardVisible)
+                if (!isKeyboardVisible) setIsHistoryVisible(false)
+            }
+        }
+
+        window.addEventListener('keydown', handleKeyDown)
+        return () => window.removeEventListener('keydown', handleKeyDown)
+    }, [isKeyboardVisible])
+
+    // Load search history and set placeholder on mount
     useEffect(() => {
         const storedHistory = sessionStorage.getItem("mathMexSearchHistory")
         if (storedHistory) {
@@ -158,7 +172,7 @@ export default function SearchPage() {
                 <section className={styles.searchSection}>
                     <div className={styles.searchContainer}>
                         <div className={styles.searchInputContainer}>
-                            <MathInputField latex={latex} setLatex={setLatex} mathFieldRef={mathFieldRef} onEnter={performSearch} />
+                            <InputField latex={latex} setLatex={setLatex} mathFieldRef={mathFieldRef} onEnter={performSearch} />
                             <button className={styles.searchButton} onClick={performSearch} disabled={isLoading}>
                                 <Search size={18} />
                                 <span>{isLoading ? "Searching..." : "Search"}</span>
@@ -184,6 +198,7 @@ export default function SearchPage() {
                                         setIsKeyboardVisible(!isKeyboardVisible)
                                         if (!isKeyboardVisible) setIsHistoryVisible(false)
                                     }}
+                                    title="Toggle Math Keyboard (CTRL+K)"
                                 >
                                     <Keyboard size={20} />
                                 </button>
