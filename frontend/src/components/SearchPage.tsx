@@ -1,22 +1,20 @@
 "use client"
 
 // @ts-ignore
-// Import styles and dependencies
-
-import styles from "./SearchPage.module.css"
+import styles from "./SearchPage.module.css";
 import { useState, useEffect, useRef, useCallback, ReactNode } from "react"
 import { History, Keyboard, Search } from "lucide-react"
 import Header from "./Header.tsx"
 import Footer from "./Footer.tsx"
-import InputField from "./InputField.tsx"
-import MathKeyboard from "./MathKeyboard.tsx"
 import HistoryPanel from "./HistoryPanel.tsx"
 import ResultsPanel from "./ResultsPanel.tsx"
 import { keyboardLayout } from "../lib/constants.ts"
 import { formatDate } from "../lib/utils.ts"
-import type { MathField } from "react-mathquill"
+import { addStyles, EditableMathField } from "react-mathquill"
+import MathKeyboard from "./MathKeyboard.tsx"
+addStyles(); // MathQuill styles
 
-// Types for search history and results.
+// --- Types ---
 interface SearchHistoryItem {
     latex: string
     timestamp: number
@@ -30,10 +28,11 @@ interface SearchResult {
     year: string
 }
 
-// Main SearchPage component.
+// --- Main SearchPage Component ---
 export default function SearchPage() {
-    // State variables for UI and data
-    const [latex, setLatex] = useState<string>("")
+    // --- State Hooks ---
+    const [latex, setLatex] = useState<string>("") // The LaTeX string in the search bar
+    const [lastFunctionLatex, setLastFunctionLatex] = useState<string>("") // Last inserted function/operator
     const [isKeyboardVisible, setIsKeyboardVisible] = useState<boolean>(false)
     const [isHistoryVisible, setIsHistoryVisible] = useState<boolean>(false)
     const [searchResults, setSearchResults] = useState<SearchResult[]>([])
@@ -41,23 +40,10 @@ export default function SearchPage() {
     const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([])
     const [placeholderMessage, setPlaceholderMessage] = useState<ReactNode>(null)
 
-    const mathFieldRef = useRef<MathField | null>(null)
+    // Ref to hold the MathQuill field instance
+    const mathFieldRef = useRef<any>(null)
 
-    // Add keyboard shortcut handler
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-                e.preventDefault()
-                setIsKeyboardVisible(!isKeyboardVisible)
-                if (!isKeyboardVisible) setIsHistoryVisible(false)
-            }
-        }
-
-        window.addEventListener('keydown', handleKeyDown)
-        return () => window.removeEventListener('keydown', handleKeyDown)
-    }, [isKeyboardVisible])
-
-    // Load search history and set placeholder on mount
+    // --- Load search history and set placeholder on mount ---
     useEffect(() => {
         const storedHistory = sessionStorage.getItem("mathMexSearchHistory")
         if (storedHistory) {
@@ -76,24 +62,24 @@ export default function SearchPage() {
                             )
                         }
                     >
-            Stokes' Theorem
-          </span>{" "}
+                        Stokes' Theorem
+                    </span>{" "}
                     or{" "}
                     <span className="example" onClick={() => handleExampleClick("e^{i\\pi} + 1 = 0")}>
-            Euler's Identity
-          </span>
+                        Euler's Identity
+                    </span>
                 </p>
             </div>,
         )
+        // eslint-disable-next-line
     }, [])
 
-    // Helper to update and persist search history
+    // --- Helpers for search history ---
     const updateAndStoreHistory = (newHistory: SearchHistoryItem[]) => {
         setSearchHistory(newHistory)
         sessionStorage.setItem("mathMexSearchHistory", JSON.stringify(newHistory))
     }
 
-   // Add a new query to history, keeping max 15 items
     const addToHistory = (query: string) => {
         if (!query) return
         const newItem: SearchHistoryItem = { latex: query, timestamp: Date.now() }
@@ -105,10 +91,10 @@ export default function SearchPage() {
         updateAndStoreHistory(updatedHistory)
     }
 
-  // Main search function 
+    // --- Main search function: sends LaTeX and last function/operator to backend ---
     const performSearch = useCallback(() => {
-        const currentLatex = latex.trim()
-        if (!currentLatex) return
+        const currentLatex = latex.trim();
+        if (!currentLatex && !lastFunctionLatex) return;
 
         setIsLoading(true)
         setSearchResults([])
@@ -116,13 +102,17 @@ export default function SearchPage() {
         if (isKeyboardVisible) setIsKeyboardVisible(false)
         if (isHistoryVisible) setIsHistoryVisible(false)
 
-        // Call backend API instead of mockSearch
+        // Send search request to backend
         fetch("http://localhost:5000/api/search", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ latex: currentLatex }),
+            body: JSON.stringify({
+                query: "", // Not used, only LaTeX is sent
+                functionLatex: lastFunctionLatex, // Last inserted function/operator
+                latex: currentLatex // Full LaTeX string from the search bar
+            }),
         })
             .then((res) => res.json())
             .then((data) => {
@@ -133,15 +123,18 @@ export default function SearchPage() {
                 setSearchResults([])
                 setIsLoading(false)
             })
-    }, [latex, searchHistory, isKeyboardVisible, isHistoryVisible])
+    }, [latex, lastFunctionLatex, searchHistory, isKeyboardVisible, isHistoryVisible])
 
-    // Handle math keyboard key press
+    // --- Handle key press from MathKeyboard (virtual keyboard) ---
     const handleKeyPress = (keyLatex: string) => {
-        mathFieldRef.current?.write(keyLatex)
-        mathFieldRef.current?.focus()
-    }
+        if (mathFieldRef.current) {
+            mathFieldRef.current.write(keyLatex);
+            mathFieldRef.current.focus();
+            setLastFunctionLatex(keyLatex);
+        }
+    };
 
-    //Fill input with example and trigger search
+    // --- Fill input with example and trigger search ---
     const handleExampleClick = (formula: string) => {
         setLatex(formula)
         setTimeout(() => {
@@ -149,12 +142,12 @@ export default function SearchPage() {
         }, 0)
     }
 
-    //Clear search history
+    // --- Clear search history ---
     const clearHistory = () => {
         updateAndStoreHistory([])
     }
 
-    //Handle click on a history item
+    // --- Handle click on a history item ---
     const handleHistoryItemClick = (itemLatex: string) => {
         setLatex(itemLatex)
         setIsHistoryVisible(false)
@@ -163,7 +156,21 @@ export default function SearchPage() {
         }, 0)
     }
 
-    // Render the search page with header, input, results, and footer
+    // --- Insert LaTeX at cursor position and track last function/operator ---
+    const insertLatexAtCursor = (latexSnippet: string) => {
+        if (mathFieldRef.current) {
+            mathFieldRef.current.focus();
+            if (!latex) {
+                mathFieldRef.current.write(latexSnippet);
+            } else {
+                mathFieldRef.current.moveToRightEnd();
+                mathFieldRef.current.write(latexSnippet);
+            }
+            setLastFunctionLatex(latexSnippet);
+        }
+    };
+
+    // --- Render the search page ---
     return (
         <>
             <Header />
@@ -172,13 +179,29 @@ export default function SearchPage() {
                 <section className={styles.searchSection}>
                     <div className={styles.searchContainer}>
                         <div className={styles.searchInputContainer}>
-                            <InputField latex={latex} setLatex={setLatex} mathFieldRef={mathFieldRef} onEnter={performSearch} />
+                            {/* Single MathQuill input for both text and LaTeX */}
+                            <EditableMathField
+                                latex={latex}
+                                onChange={(mathField) => {
+                                    setLatex(mathField.latex());
+                                    mathFieldRef.current = mathField;
+                                }}
+                                className={styles.textarea}
+                                onKeyDown={(e: any) => {
+                                    // Allow searching by pressing Enter
+                                    if (e.key === "Enter") {
+                                        e.preventDefault();
+                                        performSearch();
+                                    }
+                                }}
+                            />
                             <button className={styles.searchButton} onClick={performSearch} disabled={isLoading}>
                                 <Search size={18} />
                                 <span>{isLoading ? "Searching..." : "Search"}</span>
                             </button>
                         </div>
 
+                        {/* Controls for history and keyboard */}
                         <div className={styles.searchControls}>
                             <div className={styles.keyboardToggleContainer}>
                                 <button
@@ -198,7 +221,6 @@ export default function SearchPage() {
                                         setIsKeyboardVisible(!isKeyboardVisible)
                                         if (!isKeyboardVisible) setIsHistoryVisible(false)
                                     }}
-                                    title="Toggle Math Keyboard (CTRL+K)"
                                 >
                                     <Keyboard size={20} />
                                 </button>
@@ -206,6 +228,7 @@ export default function SearchPage() {
                         </div>
                     </div>
 
+                    {/* Show search history panel if visible */}
                     {isHistoryVisible && (
                         <HistoryPanel
                             history={searchHistory.slice().reverse()}
@@ -215,9 +238,11 @@ export default function SearchPage() {
                         />
                     )}
 
+                    {/* Show math keyboard if visible */}
                     {isKeyboardVisible && <MathKeyboard layout={keyboardLayout} onKeyPress={handleKeyPress} />}
                 </section>
 
+                {/* Results panel */}
                 <ResultsPanel results={searchResults} isLoading={isLoading} placeholderMessage={placeholderMessage} />
 
                 <div className="scroll-decoration bottom"></div>
@@ -226,3 +251,5 @@ export default function SearchPage() {
         </>
     )
 }
+
+
