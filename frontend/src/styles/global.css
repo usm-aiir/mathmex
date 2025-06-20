@@ -1,7 +1,7 @@
 /* Base Styles with Renaissance Theme */
 :root {
     --primary-color: #5c3836; /* Deep burgundy */
-    --secondary-color: #8b6f4e; /* Aged gold */
+    --secondary-color: #c19a49; /* Aged gold */
     --accent-color: #2a4c3e; /* Renaissance green */
     --light-color: #f4efe1; /* Parchment */
     --dark-color: #2c2416; /* Aged ink */
@@ -120,7 +120,6 @@ main {
 /* Dark Theme Overrides */
 :root[data-theme="dark"] {
     --primary-color: #f4efe1;
-    --secondary-color: #c19a49;
     --accent-color: #8b6f4e;
     --light-color: #2c2416;
     --dark-color: #f4efe1;
