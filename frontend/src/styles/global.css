@@ -178,3 +178,16 @@ main {
         content: "...";
     }
 }
+
+/* Dark Theme Overrides */
+:root[data-theme="dark"] {
+    --primary-color: #f4efe1;
+    --secondary-color: #c19a49;
+    --accent-color: #8b6f4e;
+    --light-color: #2c2416;
+    --dark-color: #f4efe1;
+    --gray-color: #bdbdbd;
+    --parchment-color: #18120a;
+    --gold-accent: #c19a49;
+    background-color: #18120a;
+}
