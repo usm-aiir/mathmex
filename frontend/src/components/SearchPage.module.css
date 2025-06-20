@@ -23,14 +23,13 @@
     width: 100%;
     min-width: 0;
     flex: 1 1 auto;
-    
+
     font-size: 1.2rem;
     padding: 8px;
     box-sizing: border-box;
-     background: #ffffff;      
-     border-radius: 6px;
+    background: #ffffff;
+    border-radius: 6px 0 0 6px;
     border: 1px solid var(--gold-accent);
-    margin-right : 0.5rem;
 }
 
 .searchButton {
