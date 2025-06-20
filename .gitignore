@@ -1,1 +1,5 @@
-node_modules/
+# For use with virtual environments
+.venv/
+
+# Ignore dependency installations for front-end
+frontend/node_modules/
