@@ -4,8 +4,6 @@
 import styles from "./SearchPage.module.css";
 import { useState, useEffect, useRef, useCallback, ReactNode } from "react"
 import { History, Keyboard, Search } from "lucide-react"
-import Header from "./Header.tsx"
-import Footer from "./Footer.tsx"
 import HistoryPanel from "./HistoryPanel.tsx"
 import ResultsPanel from "./ResultsPanel.tsx"
 import { keyboardLayout } from "../lib/constants.ts"
@@ -159,7 +157,6 @@ export default function SearchPage() {
     // --- Render the search page ---
     return (
         <>
-        
             <main className="container">
                 <div className="scroll-decoration top"></div>
                 <section className={styles.searchSection}>
