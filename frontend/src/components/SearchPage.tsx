@@ -156,24 +156,10 @@ export default function SearchPage() {
         }, 0)
     }
 
-    // --- Insert LaTeX at cursor position and track last function/operator ---
-    const insertLatexAtCursor = (latexSnippet: string) => {
-        if (mathFieldRef.current) {
-            mathFieldRef.current.focus();
-            if (!latex) {
-                mathFieldRef.current.write(latexSnippet);
-            } else {
-                mathFieldRef.current.moveToRightEnd();
-                mathFieldRef.current.write(latexSnippet);
-            }
-            setLastFunctionLatex(latexSnippet);
-        }
-    };
-
     // --- Render the search page ---
     return (
         <>
-            <Header />
+        
             <main className="container">
                 <div className="scroll-decoration top"></div>
                 <section className={styles.searchSection}>
@@ -247,7 +233,6 @@ export default function SearchPage() {
 
                 <div className="scroll-decoration bottom"></div>
             </main>
-            <Footer />
         </>
     )
 }

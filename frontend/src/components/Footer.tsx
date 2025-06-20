@@ -1,12 +1,15 @@
 // @ts-ignore
 import styles from "./Footer.module.css"
-import { FC } from "react"
+import { Link } from "react-router-dom"
 
-const Footer: FC = () => {
+const Footer = () => {
     return (
         <footer>
             <div className={styles.footer}>
-                <p>© {new Date().getFullYear()} MathMex ∙ About </p>
+                <Link to="/about">About</Link>
+                <p>
+                    © {new Date().getFullYear()} MathMex ∙{" "}
+                </p>
             </div>
         </footer>
     )

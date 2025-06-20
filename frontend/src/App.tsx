@@ -1,5 +1,9 @@
 import { MathJaxContext } from "better-react-mathjax"
-import SearchPage from "./components/SearchPage.tsx"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import SearchPage from "./components/SearchPage"
+import AboutPage from "./components/AboutPage"
+import Header from "./components/Header"
+import Footer from "./components/Footer"
 
 const mathJaxConfig = {
     tex: {
@@ -22,9 +26,16 @@ const mathJaxConfig = {
 function App() {
     return (
         <MathJaxContext version={3} config={mathJaxConfig}>
-            <div className="parchment-background">
-                <SearchPage />
-            </div>
+            <Router>
+                <div className="parchment-background">
+                    <Header />
+                    <Routes>
+                        <Route path="/" element={<SearchPage />} />
+                        <Route path="/about" element={<AboutPage />} />
+                    </Routes>
+                    <Footer />
+                </div>
+            </Router>
         </MathJaxContext>
     )
 }
