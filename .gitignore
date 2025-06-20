@@ -1,5 +1,5 @@
 # For use with virtual environments
-backend/.venv/
+.venv/
 
 # Ignore dependency installations for front-end
 frontend/node_modules/
