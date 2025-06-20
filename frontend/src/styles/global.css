@@ -78,78 +78,16 @@ main {
     padding: 2rem 0;
     flex: 1;
 }
-/* MathQuill Field Styling */
-.math-field {
-    flex: 1;
-    min-height: 50px;
-    padding: 0 15px;
-    font-size: 1.1rem;
-    border: 1px solid var(--gold-accent);
-    border-radius: var(--border-radius) 0 0 var(--border-radius);
-    background-color: rgba(255, 255, 255, 0.8);
-    transition: border-color 0.3s;
-    overflow-x: auto;
-    min-width: 0;
-    display: flex;
-    align-items: center;
-    cursor: text;
-}
 
-.math-field > .mq-editable-field {
-    border: none !important;
-    box-shadow: none !important;
-    font-family: var(--font-eb-garamond) !important;
-    width: 100%;
-    font-size: inherit !important;
-    line-height: 1.2 !important;
-    padding: 0 !important;
-}
-
-.math-field .mq-root-block {
-    font-size: inherit !important;
-    line-height: inherit !important;
-    white-space: nowrap;
-}
-
-.math-field .mq-large-operator > .mq-root-block,
-.math-field .mq-large-operator > span > .mq-root-block {
-    font-size: 1.2em !important;
-    line-height: 1 !important;
-    vertical-align: middle;
-}
-
-.math-field .mq-large-operator .mq-sup,
-.math-field .mq-large-operator .mq-sub {
-    font-size: 0.65em !important;
-    line-height: 1 !important;
-    padding: 0 0.05em !important;
-    transform: scale(0.9);
-    display: inline-block;
-}
-
-.math-field .mq-fraction {
-    transform: scale(0.9);
-    transform-origin: center center;
-    display: inline-block;
-    vertical-align: middle;
-    margin: -0.1em 0;
-}
-
-.math-field .mq-fraction .mq-numerator,
-.math-field .mq-fraction .mq-denominator {
-    font-size: 1em !important;
-    padding: 0.05em 0.1em !important;
-    line-height: 1 !important;
-}
-
-.math-field:focus-within {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 5px rgba(193, 154, 73, 0.5);
+/* MathQuill Wrapped Elements Styling */
+.mq-editable-field {
+    border: 1px solid transparent;
 }
 
 .mq-editable-field.mq-focused {
     box-shadow: none !important;
-    border: none !important;
+    border: 1px solid var(--dark-color) !important;
+    border-radius: 6px 0 0 6px !important;
 }
 
 /* Loading Animation */
@@ -190,4 +128,8 @@ main {
     --parchment-color: #18120a;
     --gold-accent: #c19a49;
     background-color: #18120a;
+
+    .themeButton {
+        color: var(--secondary-color);
+    }
 }

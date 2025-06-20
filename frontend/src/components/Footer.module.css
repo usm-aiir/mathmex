@@ -6,3 +6,11 @@
     margin-top: 3rem;
     border-top: 2px solid var(--gold-accent);
 }
+
+.link {
+    text-decoration: none;
+}
+
+.link:visited {
+    color: var(--primary-color);
+}

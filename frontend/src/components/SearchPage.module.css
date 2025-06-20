@@ -17,7 +17,6 @@
     margin-bottom: 1rem;
     width: 100%;
     max-width: 100%;
-    align-items: center;
 }
 
 .textarea {
@@ -28,10 +27,9 @@
     font-size: 1.2rem;
     padding: 8px;
     box-sizing: border-box;
-     background: #ffffff;      
-     border-radius: 6px;
+    background: #ffffff;
+    border-radius: 6px 0 0 6px;
     border: 1px solid var(--gold-accent);
-    margin-right : 0.5rem;
 }
 
 .searchButton {

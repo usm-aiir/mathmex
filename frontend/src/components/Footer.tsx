@@ -6,9 +6,9 @@ const Footer = () => {
     return (
         <footer>
             <div className={styles.footer}>
-                <Link to="/">Home</Link>
+                <Link to="/" className={styles.link}>Home</Link>
                 {" | "}
-                <Link to="/about">About</Link>
+                <Link to="/about" className={styles.link}>About</Link>
                 <p>
                     © {new Date().getFullYear()} MathMex ∙{" "}
                 </p>
