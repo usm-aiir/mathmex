@@ -1,3 +1,12 @@
+interface Window {
+  SpeechRecognition: typeof SpeechRecognition | undefined;
+  webkitSpeechRecognition: typeof SpeechRecognition | undefined;
+}
+
+declare var SpeechRecognition: {
+  new (): SpeechRecognition;
+};
+
 interface SpeechRecognition extends EventTarget {
     continuous: boolean;
     interimResults: boolean;
