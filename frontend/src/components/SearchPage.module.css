@@ -30,6 +30,7 @@
     background: #ffffff;
     border-radius: 6px 0 0 6px;
     border: 1px solid var(--gold-accent);
+    color: var(--font-color);
 }
 
 .searchButton {
@@ -102,6 +103,10 @@
     cursor: pointer;
     transition: all 0.3s;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.controlButton.listening {
+    background-color: var(--accent-color);
 }
 
 .controlButton:hover {

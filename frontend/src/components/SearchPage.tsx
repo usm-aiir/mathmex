@@ -1,9 +1,10 @@
+/// <reference path="../types/window.d.ts" />
 "use client"
 
 // @ts-ignore
 import styles from "./SearchPage.module.css";
 import { useState, useEffect, useRef, useCallback, ReactNode } from "react"
-import { History, Keyboard, Search } from "lucide-react"
+import { History, Keyboard, Mic, Search, Square } from "lucide-react"
 import HistoryPanel from "./HistoryPanel.tsx"
 import ResultsPanel from "./ResultsPanel.tsx"
 import { keyboardLayout } from "../lib/constants.ts"
@@ -33,6 +34,8 @@ export default function SearchPage() {
     const [lastFunctionLatex, setLastFunctionLatex] = useState<string>("") // Last inserted function/operator
     const [isKeyboardVisible, setIsKeyboardVisible] = useState<boolean>(false)
     const [isHistoryVisible, setIsHistoryVisible] = useState<boolean>(false)
+    const [isListening, setIsListening] = useState<boolean>(false)
+    const [transcript, setTranscript] = useState<string>("")
     const [searchResults, setSearchResults] = useState<SearchResult[]>([])
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([])
@@ -40,6 +43,16 @@ export default function SearchPage() {
 
     // Ref to hold the MathQuill field instance
     const mathFieldRef = useRef<any>(null)
+    const recognitionRef = useRef<SpeechRecognition | null>(null)
+
+    // --- Send transcript to backend when listening stops ---
+    useEffect(() => {
+        if (!isListening && transcript) {
+            speechToLatex(transcript)
+            setTranscript("") // Clear transcript after sending
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isListening])
 
     // --- Load search history and set placeholder on mount ---
     useEffect(() => {
@@ -72,6 +85,73 @@ export default function SearchPage() {
         // eslint-disable-next-line
     }, [])
 
+    // --- Speech-to-LaTeX ---
+    const toggleSpeechRecognition = () => {
+        if (isListening) {
+            recognitionRef.current?.stop()
+            return
+        }
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+        if (!SpeechRecognition) {
+            console.error("Speech recognition not supported in this browser.")
+            return
+        }
+
+        const recognition = new SpeechRecognition()
+        recognition.continuous = true
+        recognition.interimResults = true
+        recognition.lang = "en-US"
+        recognitionRef.current = recognition
+
+        recognition.onresult = (event: SpeechRecognitionEvent) => {
+            let interimTranscript = ""
+            let finalTranscript = ""
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                const transcriptPart = event.results[i][0].transcript
+                if (event.results[i].isFinal) {
+                    finalTranscript += transcriptPart
+                } else {
+                    interimTranscript += transcriptPart
+                }
+            }
+            setTranscript(finalTranscript)
+        }
+
+        recognition.onend = () => {
+            setIsListening(false)
+            recognitionRef.current = null
+        }
+
+        recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+            console.error("Speech recognition error:", event.error)
+            setIsListening(false)
+        }
+
+        recognition.start()
+        setIsListening(true)
+    }
+
+    const speechToLatex = (text: string) => {
+        fetch("http://127.0.0.1:5000/api/speech-to-latex", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ text }),
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.latex && mathFieldRef.current) {
+                    mathFieldRef.current.write(data.latex)
+                    mathFieldRef.current.focus()
+                }
+            })
+            .catch((err) => {
+                console.error("Error converting speech to LaTeX", err);
+            });
+    };
+
     // --- Helpers for search history ---
     const updateAndStoreHistory = (newHistory: SearchHistoryItem[]) => {
         setSearchHistory(newHistory)
@@ -101,7 +181,7 @@ export default function SearchPage() {
         if (isHistoryVisible) setIsHistoryVisible(false)
 
         // Send search request to backend
-        fetch("http://localhost:5000/api/search", {
+        fetch("http://127.0.0.1:5000/api/search", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -167,6 +247,8 @@ export default function SearchPage() {
                                 latex={latex}
                                 onChange={(mathField) => {
                                     setLatex(mathField.latex());
+                                }}
+                                mathquillDidMount={(mathField) => {
                                     mathFieldRef.current = mathField;
                                 }}
                                 className={styles.textarea}
@@ -188,6 +270,13 @@ export default function SearchPage() {
                         <div className={styles.searchControls}>
                             <div className={styles.keyboardToggleContainer}>
                                 <button
+                                    className={`${styles.controlButton} ${isListening ? styles.listening : ""}`}
+                                    aria-label={isListening ? "Stop voice input" : "Start voice input"}
+                                    onClick={toggleSpeechRecognition}
+                                >
+                                    {isListening ? <Square size={20} strokeWidth={2.5} /> : <Mic size={20} />}
+                                </button>
+                                <button
                                     className={styles.controlButton}
                                     aria-label="Search history"
                                     onClick={() => {
@@ -195,7 +284,7 @@ export default function SearchPage() {
                                         if (!isHistoryVisible) setIsKeyboardVisible(false)
                                     }}
                                 >
-                                    <History size={20} />
+                                    <History size={20}/>
                                 </button>
                                 <button
                                     className={styles.controlButton}
@@ -205,7 +294,7 @@ export default function SearchPage() {
                                         if (!isKeyboardVisible) setIsHistoryVisible(false)
                                     }}
                                 >
-                                    <Keyboard size={20} />
+                                    <Keyboard size={20}/>
                                 </button>
                             </div>
                         </div>

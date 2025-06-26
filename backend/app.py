@@ -1,6 +1,7 @@
 # Import Flask and CORS libraries
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import saytex
 
 # Create the Flask application instance
 app = Flask(__name__)
@@ -58,6 +59,42 @@ def search():
             }
         ]
     })
+
+@app.route('/api/speech-to-latex', methods=['POST'])
+def speech_to_latex():
+    data = request.get_json()
+    print(f"Received data: {data}")
+    text = data.get('text')
+    if not text:
+        print("Error: No text provided")
+        return jsonify({'error': 'No text provided'}), 400
+
+    # Pre-process text to be more SayTeX-friendly
+    replacements = {
+        "plus": "+",
+        "minus": "-",
+        "times": "*",
+        "divided by": "/",
+        "over": "/",
+        "equals": "=",
+        "squared": "^2",
+        "cubed": "^3",
+    }
+
+    for word, symbol in replacements.items():
+        text = text.replace(symbol, word)
+
+    print(f"Pre-processed text: {text}")
+
+    try:
+        st = saytex.Saytex()
+        latex_string = st.to_latex(text)
+        print(f"Generated LaTeX: {latex_string}")
+        return jsonify({'latex': latex_string})
+
+    except Exception as e:
+        print(f"Error during LaTeX conversion: {e}")
+        return jsonify({'error': str(e)}), 500
 
 # Run the Flask development server if this script is executed directly
 if __name__ == "__main__":
