@@ -1,18 +1,22 @@
 /* Base Styles with Renaissance Theme */
 :root {
-    --primary-color: #5c3836; /* Deep burgundy */
-    --secondary-color: #c19a49; /* Aged gold */
-    --accent-color: #2a4c3e; /* Renaissance green */
-    --light-color: #f4efe1; /* Parchment */
-    --dark-color: #2c2416; /* Aged ink */
-    --gray-color: #7a6c5d; /* Faded ink */
-    --border-radius: 4px;
-    --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    --primary-color: #5c3836;
+    --secondary-color: #c19a49;
+    --accent-color: #2a4c3e;
+    --light-color: #f4efe1;
+    --dark-color: #2c2416;
+    --gray-color: #7a6c5d;
+
     --parchment-color: #f8f4e9;
     --gold-accent: #c19a49;
+
+    --font-color: #2c2416;
+
+    --border-radius: 4px;
+    --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+
     --font-cormorant-garamond: "Cormorant Garamond", Georgia, serif;
     --font-eb-garamond: "EB Garamond", Georgia, serif;
-    --font-color: #2c2416;
 
     overflow-y: scroll;
     scrollbar-width: none;
@@ -122,10 +126,17 @@ main {
 :root[data-theme="dark"] {
     --primary-color: #f4efe1;
     --accent-color: #8b6f4e;
+
+    /* Invert dark and light colors */
     --light-color: #2c2416;
     --dark-color: #f4efe1;
-    --gray-color: #bdbdbd;
+
+    /* Lighten gray (higher contrast) */
+    --gray-color: #bebebe;
+
+    /* Background */
     --parchment-color: #18120a;
+
     --gold-accent: #c19a49;
     background-color: #18120a;
 

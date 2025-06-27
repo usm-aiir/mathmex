@@ -133,7 +133,7 @@ export default function SearchPage() {
     }
 
     const speechToLatex = (text: string) => {
-        fetch("http://api.mathmex.com/speech-to-latex", {
+        fetch("http://127.0.0.1:5000/api/speech-to-latex", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -181,7 +181,7 @@ export default function SearchPage() {
         if (isHistoryVisible) setIsHistoryVisible(false)
 
         // Send search request to backend
-        fetch("http://api.mathmex.com/search", {
+        fetch("http://127.0.0.1:5000/api/search", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

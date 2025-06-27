@@ -1,5 +1,5 @@
 .resultsSection {
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: var(--light-color);
     border-radius: 8px;
     border: 1px solid var(--gold-accent);
     padding: 2rem;
