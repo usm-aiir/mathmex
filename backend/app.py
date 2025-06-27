@@ -25,7 +25,7 @@ def home():
     msg += f"Last function/operator from frontend: <code>{function_latex_cleaned if function_latex_cleaned is not None else 'None'}</code><br>"
     return msg
 
-@app.route("/api/search", methods=["POST"])
+@app.route("/search", methods=["POST"])
 def search():
     data = request.get_json()
     latex = data.get("latex", "")  # full LaTeX string from the search bar
@@ -60,7 +60,7 @@ def search():
         ]
     })
 
-@app.route('/api/speech-to-latex', methods=['POST'])
+@app.route('/speech-to-latex', methods=['POST'])
 def speech_to_latex():
     data = request.get_json()
     print(f"Received data: {data}")
