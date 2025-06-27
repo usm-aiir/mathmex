@@ -1,0 +1,5 @@
+Flask>=2.0
+opensearch-py>=2.0
+requests
+flask_cors
+saytex

@@ -1,8 +1,9 @@
 # MathMex Backend
 
-- This directory contains the backend code for the MathMex web application, built using Flask. 
+- This directory contains the backend code for the MathMex web application, built using Flask.
 
 ## Getting Started
+
 - Follow these steps to setup and run the backend server:
 
 ### 1. Create and Activate a Virtual Environment
@@ -16,7 +17,7 @@ venv\Scripts\activate  #On Windows
 ### 2. Install Dependencies
 
 ```sh
-pip install flask flask-cors
+pip install -r requirements.txt
 ```
 
 To save dependencies for future use:
@@ -31,17 +32,18 @@ pip freeze > requirements.txt
 python app.py
 ```
 
-The server will start at [http://localhost:5000/](http://localhost:5000/).
+The server will start at [http://localhost:5001/](http://localhost:5001/).
 
-## Project Structure 
-    - `app.py` -Main Flask application file. 
+## Project Structure
+
+    - `app.py` -Main Flask application file.
     - `venv/` - Python virtual environment (not included in version control).
-    - `requirements.txt` - List of Python dependencies. 
+    - `requirements.txt` - List of Python dependencies.
 
 ## API Endpoints
 
-- `Get /` - Returns a simple greeting to confirm the server is running. 
+- `Get /` - Returns a simple greeting to confirm the server is running.
 
-## Contributing 
+## Contributing
 
 Please follow the main project's contributing guidelines in the root `README.md`.
