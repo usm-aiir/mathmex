@@ -7,7 +7,7 @@ import saytex
 app = Flask(__name__)
 
 # Enable Cross-Origin Resource Sharing (CORS) so the frontend (React) can communicate with this backend
-CORS(app)
+CORS(app, origins=["https://mathmex.com", "https://www.mathmex.com"])
 
 # Route for the root URL
 @app.route("/")
