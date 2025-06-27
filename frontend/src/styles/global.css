@@ -24,14 +24,13 @@
     .root::-webkit-scrollbar {
         display: none;
     }
-
-    transition: all 0.2s ease-in-out;
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    transition: all 0.3s ease-in-out;
 }
 
 body {
