@@ -1,5 +1,5 @@
 .mathKeyboard {
-    background-color: var(--light-color);
+    background-color: var(--container-color);
     border-radius: 8px;
     border: 1px solid var(--gold-accent);
     overflow: hidden;
@@ -10,7 +10,7 @@
 }
 
 .keyboardSection {
-    color: var(--dark-color);
+    color: var(--primary-color);
     margin-bottom: 1.5rem;
 }
 
@@ -54,7 +54,7 @@
 
 .key:hover {
     color: white;
-    background-color: var(--light-color);
+    background-color: var(--container-color);
     border-color: var(--primary-color);
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);

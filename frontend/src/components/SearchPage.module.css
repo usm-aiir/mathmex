@@ -4,7 +4,7 @@
 
 .searchContainer {
     margin-bottom: 1.5rem;
-    background-color: var(--light-color);
+    background-color: var(--container-color);
     padding: 25px;
     border-radius: 8px;
     border: 1px solid var(--gold-accent);
@@ -37,7 +37,7 @@
     min-width: 100px;
     padding: 0 1.5rem;
     background-color: var(--primary-color);
-    color: var(--light-color);
+    color: var(--container-color);
     border: 1px solid var(--gold-accent);
     border-left: none;
     border-radius: 0 var(--border-radius) var(--border-radius) 0;
@@ -92,8 +92,8 @@
 
 .controlButton {
     background-color: var(--primary-color);
-    color: var(--light-color);
-    border: 1px solid var(--gold-accent);
+    color: var(--container-color);
+    border: 2px solid var(--gold-accent);
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -102,7 +102,7 @@
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 3px 8px rgba(193, 154, 73, 0.3);
 }
 
 .controlButton.listening {
@@ -117,10 +117,46 @@
 
 .resultsPlaceholderMessage {
     text-align: center;
-    color: var(--gray-color);
+    color: var(--font-color-alt);
     padding: 2rem 0;
 }
 
+.modeSwitchContainer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 8px;
+}
+
+.modeToggleButton {
+    background-color: var(--primary-color);
+    color: var(--container-color);
+    border: 2px solid var(--gold-accent);
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: var(--font-eb-garamond);
+    box-shadow: 0 3px 8px rgba(193, 154, 73, 0.3);
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.5px;
+    min-width: 140px;
+    text-align: center;
+}
+
+.modeToggleButton:hover {
+    background-color: var(--accent-color);
+    transform: translate(-2px, -4px);
+    box-shadow: 2px 4px 3px rgba(0, 0, 0, 0.5);
+}
+
+.modeToggleButton:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(193, 154, 73, 0.3);
+}
 
 @media (max-width: 768px) {
     .searchControls {

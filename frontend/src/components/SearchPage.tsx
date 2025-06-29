@@ -40,6 +40,7 @@ export default function SearchPage() {
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([])
     const [placeholderMessage, setPlaceholderMessage] = useState<ReactNode>(null)
+    const [isMathMode, setIsMathMode] = useState<boolean>(true) // true = math mode, false = text mode
 
     // Ref to hold the MathQuill field instance
     const mathFieldRef = useRef<any>(null)
@@ -189,7 +190,8 @@ export default function SearchPage() {
             body: JSON.stringify({
                 query: "", // Not used, only LaTeX is sent
                 functionLatex: lastFunctionLatex, // Last inserted function/operator
-                latex: currentLatex // Full LaTeX string from the search bar
+                latex: currentLatex, // Full LaTeX string from the search bar
+                isMathMode: isMathMode // Pass math mode boolean
             }),
         })
             .then((res) => res.json())
@@ -201,7 +203,7 @@ export default function SearchPage() {
                 setSearchResults([])
                 setIsLoading(false)
             })
-    }, [latex, lastFunctionLatex, searchHistory, isKeyboardVisible, isHistoryVisible])
+    }, [latex, lastFunctionLatex, searchHistory, isKeyboardVisible, isHistoryVisible, isMathMode])
 
     // --- Handle key press from MathKeyboard (virtual keyboard) ---
     const handleKeyPress = (keyLatex: string) => {
@@ -265,9 +267,17 @@ export default function SearchPage() {
                                 <span>{isLoading ? "Searching..." : "Search"}</span>
                             </button>
                         </div>
-
-                        {/* Controls for history and keyboard */}
+                        {/* Controls for history and keyboard, now with mode switch inline */}
                         <div className={styles.searchControls}>
+                            <div className={styles.modeSwitchContainer} style={{ marginRight: 'auto' }}>
+                                <button
+                                    className={styles.modeToggleButton}
+                                    onClick={() => setIsMathMode((prev) => !prev)}
+                                    aria-label={isMathMode ? "Switch to text search" : "Switch to math search"}
+                                >
+                                    {isMathMode ? "Search with text" : "Search with math"}
+                                </button>
+                            </div>
                             <div className={styles.keyboardToggleContainer}>
                                 <button
                                     className={`${styles.controlButton} ${isListening ? styles.listening : ""}`}

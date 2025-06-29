@@ -40,7 +40,7 @@
 .tagline {
     font-family: var(--font-eb-garamond);
     font-size: 1.2rem;
-    color: var(--gray-color);
+    color: var(--font-color-alt);
 }
 
 .ornament {
@@ -75,7 +75,7 @@
 }
 
 .themeButton {
-    color: var(--parchment-color);
+    color: var(--background-color);
     background-color: var(--primary-color);
     border: 2px solid var(--secondary-color);
     border-radius: 50%;

@@ -7,7 +7,7 @@ import saytex
 app = Flask(__name__)
 
 # Enable Cross-Origin Resource Sharing (CORS) so the frontend (React) can communicate with this backend
-CORS(app, origins=["https://mathmex.com", "https://www.mathmex.com"])
+CORS(app)
 
 # Route for the root URL
 @app.route("/")
@@ -30,6 +30,7 @@ def search():
     data = request.get_json()
     latex = data.get("latex", "")  # full LaTeX string from the search bar
     function_latex = data.get("functionLatex", "")  # LaTeX for function/operator
+    is_math_mode = data.get("isMathMode", False)
 
     # Store the latest values in app config so they can be shown on the home page
     app.config["last_latex"] = latex
@@ -38,13 +39,17 @@ def search():
     # Print the raw string received from the frontend
     print(f"Raw LaTeX from frontend: {latex!r}")
     print(f"Raw functionLatex from frontend: {function_latex!r}")
+    print(f"isMathMode: {is_math_mode}")
 
     # Clean only for logging
     latex_cleaned = latex.replace("\\ ", " ")
     function_latex_cleaned = function_latex.replace("\\ ", " ")
 
-    print(f"Received search request with LaTeX: {latex_cleaned}")
-    print(f"Received function/operator LaTeX: {function_latex_cleaned}")
+    # If math mode, wrap latex in $'s
+    if is_math_mode and latex_cleaned:
+        latex = f"${latex}$"
+
+    print(f"Received search request: {latex}")
 
     # Always return the functionLatex field, even if it's empty
     return jsonify({

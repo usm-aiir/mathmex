@@ -1,5 +1,5 @@
 .searchHistory {
-    background-color: var(--light-color);
+    background-color: var(--container-color);
     border-radius: 8px;
     border: 1px solid var(--gold-accent);
     overflow: hidden;
@@ -87,13 +87,13 @@
 
 .historyTime {
     font-size: 0.8rem;
-    color: var(--gray-color);
+    color: var(--font-color-alt);
     white-space: nowrap;
 }
 
 .emptyHistory {
     padding: 1rem;
     text-align: center;
-    color: var(--gray-color);
+    color: var(--font-color-alt);
     font-style: italic;
 }
