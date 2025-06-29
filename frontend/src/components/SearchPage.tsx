@@ -270,13 +270,27 @@ export default function SearchPage() {
                         {/* Controls for history and keyboard, now with mode switch inline */}
                         <div className={styles.searchControls}>
                             <div className={styles.modeSwitchContainer} style={{ marginRight: 'auto' }}>
-                                <button
-                                    className={styles.modeToggleButton}
-                                    onClick={() => setIsMathMode((prev) => !prev)}
-                                    aria-label={isMathMode ? "Switch to text search" : "Switch to math search"}
-                                >
-                                    {isMathMode ? "Search with text" : "Search with math"}
-                                </button>
+                                <div className={styles.modeSwitchGroup}>
+                                    <span className={styles.modeSwitchLabel}>Search with...</span>
+                                    <div className={styles.modeButtonRow}>
+                                        <button
+                                            className={`${styles.modeButton} ${isMathMode ? styles.active : ''}`}
+                                            onClick={() => setIsMathMode(true)}
+                                            aria-pressed={isMathMode}
+                                            type="button"
+                                        >
+                                            Math
+                                        </button>
+                                        <button
+                                            className={`${styles.modeButton} ${!isMathMode ? styles.active : ''}`}
+                                            onClick={() => setIsMathMode(false)}
+                                            aria-pressed={!isMathMode}
+                                            type="button"
+                                        >
+                                            Text
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                             <div className={styles.keyboardToggleContainer}>
                                 <button
