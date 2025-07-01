@@ -1,0 +1,9 @@
+.aboutPage {
+    margin: 2em 0 2em 0;
+    border-radius: 8px;
+    background-color: var(--container-color);
+    border: 1px solid var(--gold-accent);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    padding: 3.5em;
+}

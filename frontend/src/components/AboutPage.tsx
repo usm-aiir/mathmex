@@ -1,6 +1,9 @@
+// @ts-expect-error
+import styles from "./AboutPage.module.css";
+
 const AboutPage = () => (
-    <>
-        <div className="container">
+    <div className="container">
+        <div className={styles.aboutPage}>
             <h1>About MathMex</h1>
             <p>
                 <strong>MathMex</strong> is an innovative platform designed to make mathematical knowledge more accessible than ever before.<br /><br />
@@ -24,7 +27,7 @@ const AboutPage = () => (
                 </a>
             </p>
         </div>
-    </>
+    </div>
 );
 
 export default AboutPage;
