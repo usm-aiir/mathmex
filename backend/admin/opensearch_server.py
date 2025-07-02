@@ -1,14 +1,23 @@
 from flask import Flask, request, jsonify
 from backend.admin.opensearch_client import OpenSearchClient
+import configparser
+import os
 
 # Initialize the Flask application
 app = Flask(__name__)
 
 # Configuration for the OpenSearch connection
+config_file = os.path.join(os.path.dirname(__file__), 'config.ini')
+model_path = os.path.join(os.path.dirname(__file__), 'arq1thru3-finetuned-all-mpnet-jul-27')
+
 OS_HOST = "localhost"
 OS_PORT = 9200
-OS_USERNAME = "admin"
-OS_PASSWORD = "MathMexDeveloper4ChairmanDoctorProfessor"
+
+config = configparser.ConfigParser()
+config.read(config_file)
+OS_USERNAME = config.get('OpenSearch', 'username')
+OS_PASSWORD = config.get('OpenSearch', 'password')
+# auth = (OS_USERNAME, OS_PASSWORD)
 
 # Initialize the OpenSearch client
 try:

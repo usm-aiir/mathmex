@@ -3,3 +3,10 @@
 
 # Ignore dependency installations for front-end
 frontend/node_modules/
+
+# Backend folders to omit from Github
+backend/admin/mpnet_model/
+backend/__pycache__
+
+# Omit all .ini files
+*.ini 
