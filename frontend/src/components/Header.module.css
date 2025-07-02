@@ -3,6 +3,7 @@
     text-align: center;
     border-bottom: 2px solid var(--gold-accent);
     background-color: rgba(92, 56, 54, 0.05);
+    margin-bottom: 1.5rem;
 }
 
 .header h1 {

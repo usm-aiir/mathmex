@@ -7,11 +7,13 @@
 
     --background-color: #f8f4e9;
     --gold-accent: #c19a49;
+    --glow-accent: rgba(193, 154, 73, 0.3);
 
     --switch-color: var(--primary-color);
 
     --font-color: #2c2416;
     --font-color-alt: #7a6c5d;
+    --font-color-light: #f4efe1;
 
     --border-radius: 4px;
     --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
@@ -127,11 +129,11 @@ main {
 /* Dark Theme Overrides */
 :root[data-theme="dark"] {
     --primary-color: #f4efe1;
-    --accent-color: #8b6f4e;
     --switch-color: var(--gold-accent);
 
     /* Invert dark and light colors */
     --container-color: #2c2416;
+    --accent-color: var(--container-color);
 
     /* Lighten gray (higher contrast) */
    --font-color-alt: #BaAc9d;

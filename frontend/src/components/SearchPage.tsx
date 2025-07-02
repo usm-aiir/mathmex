@@ -244,24 +244,48 @@ export default function SearchPage() {
                 <section className={styles.searchSection}>
                     <div className={styles.searchContainer}>
                         <div className={styles.searchInputContainer}>
-                            {/* Single MathQuill input for both text and LaTeX */}
-                            <EditableMathField
-                                latex={latex}
-                                onChange={(mathField) => {
-                                    setLatex(mathField.latex());
-                                }}
-                                mathquillDidMount={(mathField) => {
-                                    mathFieldRef.current = mathField;
-                                }}
-                                className={styles.textarea}
-                                onKeyDown={(e: any) => {
-                                    // Allow searching by pressing Enter
-                                    if (e.key === "Enter") {
-                                        e.preventDefault();
-                                        performSearch();
-                                    }
-                                }}
-                            />
+                            {/* Custom placeholder overlay */}
+                            {!latex && (
+                                <div className={`${styles.placeholderOverlay} ${latex ? styles.hidden : ''}`}>
+                                    {isMathMode ? "Enter a formula or equation, e.g. a² + b² = c²" :
+                                    "Enter a concept or theorem, e.g. \"Pythagorean Theorem\""}
+                                </div>
+                            )}
+                            {/* Input field: Math or Text */}
+                            {isMathMode ? (
+                                <EditableMathField
+                                    latex={latex}
+                                    onChange={(mathField) => {
+                                        setLatex(mathField.latex());
+                                    }}
+                                    mathquillDidMount={(mathField) => {
+                                        mathFieldRef.current = mathField;
+                                    }}
+                                    className={styles.inputField}
+                                    onKeyDown={(e: any) => {
+                                        // Allow searching by pressing Enter
+                                        if (e.key === "Enter") {
+                                            e.preventDefault();
+                                            performSearch();
+                                        }
+                                    }}
+                                />
+                            ) : (
+                                <textarea
+                                    className={styles.inputField}
+                                    value={latex}
+                                    onChange={e => setLatex(e.target.value)}
+                                    onKeyDown={e => {
+                                        if (e.key === "Enter") {
+                                            e.preventDefault();
+                                            performSearch();
+                                        }
+                                    }}
+                                    rows={1}
+                                    spellCheck={true}
+                                    autoFocus={true}
+                                />
+                            )}
                             <button className={styles.searchButton} onClick={performSearch} disabled={isLoading}>
                                 <Search size={18} />
                                 <span>{isLoading ? "Searching..." : "Search"}</span>
@@ -270,13 +294,27 @@ export default function SearchPage() {
                         {/* Controls for history and keyboard, now with mode switch inline */}
                         <div className={styles.searchControls}>
                             <div className={styles.modeSwitchContainer} style={{ marginRight: 'auto' }}>
-                                <button
-                                    className={styles.modeToggleButton}
-                                    onClick={() => setIsMathMode((prev) => !prev)}
-                                    aria-label={isMathMode ? "Switch to text search" : "Switch to math search"}
-                                >
-                                    {isMathMode ? "Search with text" : "Search with math"}
-                                </button>
+                                <div className={styles.modeSwitchGroup}>
+                                    <span className={styles.modeSwitchLabel}>Search with...</span>
+                                    <div className={styles.modeButtonRow}>
+                                        <button
+                                            className={`${styles.modeButton} ${isMathMode ? styles.active : ''}`}
+                                            onClick={() => setIsMathMode(true)}
+                                            aria-pressed={isMathMode}
+                                            type="button"
+                                        >
+                                            Math
+                                        </button>
+                                        <button
+                                            className={`${styles.modeButton} ${!isMathMode ? styles.active : ''}`}
+                                            onClick={() => setIsMathMode(false)}
+                                            aria-pressed={!isMathMode}
+                                            type="button"
+                                        >
+                                            Text
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                             <div className={styles.keyboardToggleContainer}>
                                 <button

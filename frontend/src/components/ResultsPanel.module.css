@@ -5,9 +5,9 @@
     padding: 2rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-top: 2rem;
+    font-family: var(--font-cormorant-garamond);
 }
 .resultsSectionTitle {
-    font-family: var(--font-cormorant-garamond);
     font-size: 2rem;
     color: var(--primary-color);
     text-align: center;
@@ -56,7 +56,6 @@
     font-size: 1.5rem;
     margin-bottom: 0.8rem;
     color: var(--primary-color);
-    font-family: var(--font-cormorant-garamond);
     font-weight: 600;
 }
 
