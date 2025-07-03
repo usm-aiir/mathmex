@@ -5,18 +5,34 @@ from opensearchpy import OpenSearch, RequestsHttpConnection
 import warnings
 from flask_cors import CORS
 import saytex
+import configparser
+import os
 
 # --- Flask App Initialization & CORS ---
 app = Flask(__name__)
 # Enable Cross-Origin Resource Sharing (CORS) for specified frontend origins
 CORS(app, origins=["https://mathmex.com", "https://www.mathmex.com"])
 
+
+
 # --- OpenSearch Client Configuration ---
+config_file = os.path.join(os.path.dirname(__file__), 'config.ini')
+model_path = os.path.join(os.path.dirname(__file__), 'arq1thru3-finetuned-all-mpnet-jul-27')
+
 OPENSEARCH_HOST = 'localhost'
 OPENSEARCH_PORT = 9200
-OPENSEARCH_USER = 'public_user'
-OPENSEARCH_PASSWORD = 'ThisIsThePublicUserPassW0rd'
-INDEX_NAME = 'public-articles'
+
+config = configparser.ConfigParser()
+config.read(config_file)
+
+### For public_read_only user spin up
+# OPENSEARCH_USER = config.get('OpenSearch', 'username')
+# OPENSEARCH_PASSWORD = config.get('OpenSearch', 'password')
+
+### For admin user spin up
+OPENSEARCH_USERNAME = config.get('OpenSearch', 'admin_username')
+OPENSEARCH_PASSWORD = config.get('OpenSearch', 'admin_password')
+INDEX_NAME = 'mathmex'
 
 # Suppress the security warning from using a self-signed cert in development
 warnings.filterwarnings('ignore', message='Unverified HTTPS request')
@@ -25,7 +41,7 @@ def get_opensearch_client():
     """Initializes and returns the OpenSearch client."""
     client = OpenSearch(
         hosts=[{'host': OPENSEARCH_HOST, 'port': OPENSEARCH_PORT}],
-        http_auth=(OPENSEARCH_USER, OPENSEARCH_PASSWORD),
+        http_auth=(OPENSEARCH_USERNAME, OPENSEARCH_PASSWORD),
         use_ssl=True,
         verify_certs=False,
         ssl_show_warn=False,

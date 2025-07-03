@@ -9,13 +9,13 @@ import warnings
 OPENSEARCH_HOST = 'localhost'
 OPENSEARCH_PORT = 9200
 OPENSEARCH_USER = 'admin'
-OPENSEARCH_PASSWORD = 'YourStrongPassword123!' # <-- The admin password you set
-INDEX_NAME = 'my-tsv-dataset'
-TSV_FILE_PATH = 'dataset.tsv'
+OPENSEARCH_PASSWORD = 'Str0ngP0ssw0rd' # <-- The admin password you set
+INDEX_NAME = 'MathMex'
+TSV_FILE_PATH = 'final_wikipedia.tsv'
 
 # The headers of your TSV file in order.
 # *** YOU MUST ADJUST THIS TO MATCH YOUR TSV FILE'S COLUMNS ***
-TSV_HEADERS = ['id', 'title', 'author', 'content']
+TSV_HEADERS = ['Title', 'Description', 'URL']
 
 # Suppress the security warning from using a self-signed cert
 warnings.filterwarnings('ignore', message='Unverified HTTPS request')
