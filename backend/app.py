@@ -1,7 +1,7 @@
 # Import Flask and CORS libraries
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import saytex
+
 
 # Create the Flask application instance
 app = Flask(__name__)

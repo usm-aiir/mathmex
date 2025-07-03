@@ -34,7 +34,7 @@ export default function SearchPage() {
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([])
     const [placeholderMessage, setPlaceholderMessage] = useState<ReactNode>(null)
-    const [mathMode, setMathMode] = useState<"math" | "text">("text")
+    const [mode, setMode] = useState<"math" | "text">("text")
 
     const mathFieldRef = useRef<MathLiveFieldHandle>(null)
     const recognitionRef = useRef<SpeechRecognition | null>(null)
@@ -214,6 +214,22 @@ export default function SearchPage() {
         }, 0)
     }
 
+    const getCurrentMode = () => {
+        const el = mathFieldRef.current?.fieldRef.current;
+        return el?.mode || "text";
+    };
+
+    // --- Sync mode state with MathLiveField events ---
+    useEffect(() => {
+        const el = mathFieldRef.current?.fieldRef.current;
+        if (!el) return;
+        const handler = (evt: any) => setMode(evt.detail.mode);
+        el.addEventListener("mode-change", handler);
+        // Set initial mode
+        setMode(el.mode || "text");
+        return () => el.removeEventListener("mode-change", handler);
+    }, [mathFieldRef]);
+
     // --- Render the search page ---
     return (
         <>
@@ -243,19 +259,28 @@ export default function SearchPage() {
                         {/* Controls for history, mic, and mode toggle */}
                         <div className={styles.searchControls}>
                             <div className={styles.keyboardToggleContainer}>
-                                <button
-                                    type="button"
-                                    className={styles.controlButton}
-                                    onClick={() => {
-                                        const newMode = mathMode === "math" ? "text" : "math";
-                                        setMathMode(newMode);
-                                        mathFieldRef.current?.switchMode(newMode);
-                                        mathFieldRef.current?.fieldRef.current?.focus();
-                                    }}
-                                    aria-label="Toggle math/text mode"
-                                >
-                                    {mathMode === "math" ? "Text" : "Math"}
-                                </button>
+                                <div className={styles.modeSwitch}>
+                                    <label className={styles.switchLabel}>
+                                        <input
+                                            type="checkbox"
+                                            checked={mode === "math"}
+                                            onChange={() => {
+                                                const el = mathFieldRef.current?.fieldRef.current;
+                                                if (el && el.executeCommand) {
+                                                    const newMode = mode === "math" ? "text" : "math";
+                                                    el.executeCommand("switchMode", newMode);
+                                                    el.focus();
+                                                    setMode(newMode);
+                                                }
+                                            }}
+                                            aria-label="Toggle math/text mode"
+                                        />
+                                        <span className={styles.switchSlider}></span>
+                                        <span className={styles.switchText}>
+                                            {mode === "math" ? "Math" : "Text"}
+                                        </span>
+                                    </label>
+                                </div>
                                 <button
                                     className={`${styles.controlButton} ${isListening ? styles.listening : ""}`}
                                     aria-label={isListening ? "Stop voice input" : "Start voice input"}

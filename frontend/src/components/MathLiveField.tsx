@@ -7,7 +7,7 @@ interface MathLiveFieldProps {
 }
 
 export interface MathLiveFieldHandle {
-    insertAtCursor: (text: string) => void
+    insertAtCursor: (latex: string) => void
     fieldRef: React.RefObject<any>
 }
 
@@ -25,6 +25,11 @@ const MathLiveField = forwardRef<MathLiveFieldHandle, MathLiveFieldProps>(
                         fieldRef.current.executeCommand &&
                             fieldRef.current.executeCommand("moveToPreviousChar")
                     }
+                }
+            },
+            switchMode: (mode: "math" | "text") => {
+                if (fieldRef.current && fieldRef.current.executeCommand) {
+                    fieldRef.current.executeCommand("switchMode", mode)
                 }
             },
             fieldRef
@@ -54,9 +59,9 @@ const MathLiveField = forwardRef<MathLiveFieldHandle, MathLiveFieldProps>(
 
 export default MathLiveField
 export interface MathLiveFieldHandle {
-    insertAtCursor: (latex: string) => void
-    fieldRef: React.RefObject<any>
+    insertAtCursor: (text: string) => void
     switchMode: (mode: "math" | "text") => void
+    fieldRef: React.RefObject<any>
 }
 
 declare global {
