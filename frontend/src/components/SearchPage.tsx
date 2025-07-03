@@ -29,8 +29,16 @@ interface SearchResult {
 
 // --- Main SearchPage Component ---
 export default function SearchPage() {
+    // --- Initialize search param from URL ---
+    // q is the query parameter for search
+    // If it exists, decode it and use as initial LaTeX input
+    // If not, start with an empty string
+    const searchParam = new URLSearchParams(window.location.search).get("q") || "";
+    // Initialize LaTeX state with search param if available
+    const initialLatex = searchParam ? decodeURIComponent(searchParam) : "";
+
     // --- State Hooks ---
-    const [latex, setLatex] = useState<string>("") // The LaTeX string in the search bar
+    const [latex, setLatex] = useState<string>(initialLatex) // The LaTeX string in the search bar
     const [lastFunctionLatex, setLastFunctionLatex] = useState<string>("") // Last inserted function/operator
     const [isKeyboardVisible, setIsKeyboardVisible] = useState<boolean>(false)
     const [isHistoryVisible, setIsHistoryVisible] = useState<boolean>(false)
@@ -40,7 +48,7 @@ export default function SearchPage() {
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([])
     const [placeholderMessage, setPlaceholderMessage] = useState<ReactNode>(null)
-    const [isMathMode, setIsMathMode] = useState<boolean>(true) // true = math mode, false = text mode
+    const [isMathMode, setIsMathMode] = useState<boolean>(initialLatex == "") // true = math mode, false = text mode; default to true if no initial LaTeX, otherwise assume text mode is passed by q parameter
 
     // Ref to hold the MathQuill field instance
     const mathFieldRef = useRef<any>(null)
@@ -204,6 +212,14 @@ export default function SearchPage() {
                 setIsLoading(false)
             })
     }, [latex, lastFunctionLatex, searchHistory, isKeyboardVisible, isHistoryVisible, isMathMode])
+
+    // -- If there is a search param in the URL, perform search on mount
+    useEffect(() => {
+        if (initialLatex && initialLatex.trim() !== "") {
+            performSearch();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     // --- Handle key press from MathKeyboard (virtual keyboard) ---
     const handleKeyPress = (keyLatex: string) => {
