@@ -1,17 +1,14 @@
 /// <reference path="../types/window.d.ts" />
 "use client"
 
-// @ts-ignore
 import styles from "./SearchPage.module.css";
 import { useState, useEffect, useRef, useCallback, ReactNode } from "react"
-import { History, Keyboard, Mic, Search, Square } from "lucide-react"
+import { History, Mic, Search, Square } from "lucide-react"
 import HistoryPanel from "./HistoryPanel.tsx"
 import ResultsPanel from "./ResultsPanel.tsx"
-import { keyboardLayout } from "../lib/constants.ts"
 import { formatDate } from "../lib/utils.ts"
-import { addStyles, EditableMathField } from "react-mathquill"
-import MathKeyboard from "./MathKeyboard.tsx"
-addStyles(); // MathQuill styles
+import MathLiveField, { MathLiveFieldHandle } from "./MathLiveField"
+import "mathlive"
 
 // --- Types ---
 interface SearchHistoryItem {
@@ -27,12 +24,9 @@ interface SearchResult {
     year: string
 }
 
-// --- Main SearchPage Component ---
 export default function SearchPage() {
     // --- State Hooks ---
-    const [latex, setLatex] = useState<string>("") // The LaTeX string in the search bar
-    const [lastFunctionLatex, setLastFunctionLatex] = useState<string>("") // Last inserted function/operator
-    const [isKeyboardVisible, setIsKeyboardVisible] = useState<boolean>(false)
+    const [latex, setLatex] = useState<string>("")
     const [isHistoryVisible, setIsHistoryVisible] = useState<boolean>(false)
     const [isListening, setIsListening] = useState<boolean>(false)
     const [transcript, setTranscript] = useState<string>("")
@@ -40,19 +34,17 @@ export default function SearchPage() {
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([])
     const [placeholderMessage, setPlaceholderMessage] = useState<ReactNode>(null)
-    const [isMathMode, setIsMathMode] = useState<boolean>(true) // true = math mode, false = text mode
+    const [mathMode, setMathMode] = useState<"math" | "text">("text")
 
-    // Ref to hold the MathQuill field instance
-    const mathFieldRef = useRef<any>(null)
+    const mathFieldRef = useRef<MathLiveFieldHandle>(null)
     const recognitionRef = useRef<SpeechRecognition | null>(null)
 
     // --- Send transcript to backend when listening stops ---
     useEffect(() => {
         if (!isListening && transcript) {
             speechToLatex(transcript)
-            setTranscript("") // Clear transcript after sending
+            setTranscript("")
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isListening])
 
     // --- Load search history and set placeholder on mount ---
@@ -63,27 +55,26 @@ export default function SearchPage() {
         }
         setPlaceholderMessage(
             <div className={styles.resultsPlaceholderMessage}>
-                <p>Enter a mathematical theorem or formula to search</p>
+                <p>Enter a statement with text and math, e.g. "The area is $a^2$"</p>
                 <p>
                     Example: Try searching for{" "}
                     <span
                         className="example"
                         onClick={() =>
                             handleExampleClick(
-                                "\\oint_C \\vec{F} \\cdot d\\vec{r} = \\iint_S (\\nabla \\times \\vec{F}) \\cdot d\\vec{S}",
+                                "The circulation is $\\oint_C \\vec{F} \\cdot d\\vec{r} = \\iint_S (\\nabla \\times \\vec{F}) \\cdot d\\vec{S}$",
                             )
                         }
                     >
                         Stokes' Theorem
                     </span>{" "}
                     or{" "}
-                    <span className="example" onClick={() => handleExampleClick("e^{i\\pi} + 1 = 0")}>
+                    <span className="example" onClick={() => handleExampleClick("Euler's identity: $e^{i\\pi} + 1 = 0$")}>
                         Euler's Identity
                     </span>
                 </p>
             </div>,
         )
-        // eslint-disable-next-line
     }, [])
 
     // --- Speech-to-LaTeX ---
@@ -144,8 +135,7 @@ export default function SearchPage() {
             .then((res) => res.json())
             .then((data) => {
                 if (data.latex && mathFieldRef.current) {
-                    mathFieldRef.current.write(data.latex)
-                    mathFieldRef.current.focus()
+                    mathFieldRef.current.insertAtCursor(data.latex)
                 }
             })
             .catch((err) => {
@@ -170,28 +160,25 @@ export default function SearchPage() {
         updateAndStoreHistory(updatedHistory)
     }
 
-    // --- Main search function: sends LaTeX and last function/operator to backend ---
+    // --- Main search function: sends LaTeX to backend ---
     const performSearch = useCallback(() => {
         const currentLatex = latex.trim();
-        if (!currentLatex && !lastFunctionLatex) return;
+        if (!currentLatex) return;
 
         setIsLoading(true)
         setSearchResults([])
         addToHistory(currentLatex)
-        if (isKeyboardVisible) setIsKeyboardVisible(false)
         if (isHistoryVisible) setIsHistoryVisible(false)
 
-        // Send search request to backend
         fetch("https://api.mathmex.com/search", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                query: "", // Not used, only LaTeX is sent
-                functionLatex: lastFunctionLatex, // Last inserted function/operator
-                latex: currentLatex, // Full LaTeX string from the search bar
-                isMathMode: isMathMode // Pass math mode boolean
+                query: "",
+                functionLatex: "",
+                latex: currentLatex,
             }),
         })
             .then((res) => res.json())
@@ -203,16 +190,7 @@ export default function SearchPage() {
                 setSearchResults([])
                 setIsLoading(false)
             })
-    }, [latex, lastFunctionLatex, searchHistory, isKeyboardVisible, isHistoryVisible, isMathMode])
-
-    // --- Handle key press from MathKeyboard (virtual keyboard) ---
-    const handleKeyPress = (keyLatex: string) => {
-        if (mathFieldRef.current) {
-            mathFieldRef.current.write(keyLatex);
-            mathFieldRef.current.focus();
-            setLastFunctionLatex(keyLatex);
-        }
-    };
+    }, [latex, searchHistory, isHistoryVisible])
 
     // --- Fill input with example and trigger search ---
     const handleExampleClick = (formula: string) => {
@@ -247,76 +225,37 @@ export default function SearchPage() {
                             {/* Custom placeholder overlay */}
                             {!latex && (
                                 <div className={`${styles.placeholderOverlay} ${latex ? styles.hidden : ''}`}>
-                                    {isMathMode ? "Enter a formula or equation, e.g. a² + b² = c²" :
-                                    "Enter a concept or theorem, e.g. \"Pythagorean Theorem\""}
+                                    Enter a statement with text and math, e.g. "The area is $a^2$"
                                 </div>
                             )}
-                            {/* Input field: Math or Text */}
-                            {isMathMode ? (
-                                <EditableMathField
-                                    latex={latex}
-                                    onChange={(mathField) => {
-                                        setLatex(mathField.latex());
-                                    }}
-                                    mathquillDidMount={(mathField) => {
-                                        mathFieldRef.current = mathField;
-                                    }}
-                                    className={styles.inputField}
-                                    onKeyDown={(e: any) => {
-                                        // Allow searching by pressing Enter
-                                        if (e.key === "Enter") {
-                                            e.preventDefault();
-                                            performSearch();
-                                        }
-                                    }}
-                                />
-                            ) : (
-                                <textarea
-                                    className={styles.inputField}
-                                    value={latex}
-                                    onChange={e => setLatex(e.target.value)}
-                                    onKeyDown={e => {
-                                        if (e.key === "Enter") {
-                                            e.preventDefault();
-                                            performSearch();
-                                        }
-                                    }}
-                                    rows={1}
-                                    spellCheck={true}
-                                    autoFocus={true}
-                                />
-                            )}
+                            {/* MathLiveField for inline text+math */}
+                            <MathLiveField
+                                ref={mathFieldRef}
+                                value={latex}
+                                onChange={setLatex}
+                                className={styles.inputField}
+                            />
                             <button className={styles.searchButton} onClick={performSearch} disabled={isLoading}>
                                 <Search size={18} />
                                 <span>{isLoading ? "Searching..." : "Search"}</span>
                             </button>
                         </div>
-                        {/* Controls for history and keyboard, now with mode switch inline */}
+                        {/* Controls for history, mic, and mode toggle */}
                         <div className={styles.searchControls}>
-                            <div className={styles.modeSwitchContainer} style={{ marginRight: 'auto' }}>
-                                <div className={styles.modeSwitchGroup}>
-                                    <span className={styles.modeSwitchLabel}>Search with...</span>
-                                    <div className={styles.modeButtonRow}>
-                                        <button
-                                            className={`${styles.modeButton} ${isMathMode ? styles.active : ''}`}
-                                            onClick={() => setIsMathMode(true)}
-                                            aria-pressed={isMathMode}
-                                            type="button"
-                                        >
-                                            Math
-                                        </button>
-                                        <button
-                                            className={`${styles.modeButton} ${!isMathMode ? styles.active : ''}`}
-                                            onClick={() => setIsMathMode(false)}
-                                            aria-pressed={!isMathMode}
-                                            type="button"
-                                        >
-                                            Text
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
                             <div className={styles.keyboardToggleContainer}>
+                                <button
+                                    type="button"
+                                    className={styles.controlButton}
+                                    onClick={() => {
+                                        const newMode = mathMode === "math" ? "text" : "math";
+                                        setMathMode(newMode);
+                                        mathFieldRef.current?.switchMode(newMode);
+                                        mathFieldRef.current?.fieldRef.current?.focus();
+                                    }}
+                                    aria-label="Toggle math/text mode"
+                                >
+                                    {mathMode === "math" ? "Text" : "Math"}
+                                </button>
                                 <button
                                     className={`${styles.controlButton} ${isListening ? styles.listening : ""}`}
                                     aria-label={isListening ? "Stop voice input" : "Start voice input"}
@@ -327,22 +266,9 @@ export default function SearchPage() {
                                 <button
                                     className={styles.controlButton}
                                     aria-label="Search history"
-                                    onClick={() => {
-                                        setIsHistoryVisible(!isHistoryVisible)
-                                        if (!isHistoryVisible) setIsKeyboardVisible(false)
-                                    }}
+                                    onClick={() => setIsHistoryVisible(!isHistoryVisible)}
                                 >
-                                    <History size={20}/>
-                                </button>
-                                <button
-                                    className={styles.controlButton}
-                                    aria-label="Toggle keyboard"
-                                    onClick={() => {
-                                        setIsKeyboardVisible(!isKeyboardVisible)
-                                        if (!isKeyboardVisible) setIsHistoryVisible(false)
-                                    }}
-                                >
-                                    <Keyboard size={20}/>
+                                    <History size={20} />
                                 </button>
                             </div>
                         </div>
@@ -357,9 +283,6 @@ export default function SearchPage() {
                             formatDate={formatDate}
                         />
                     )}
-
-                    {/* Show math keyboard if visible */}
-                    {isKeyboardVisible && <MathKeyboard layout={keyboardLayout} onKeyPress={handleKeyPress} />}
                 </section>
 
                 {/* Results panel */}
@@ -370,5 +293,3 @@ export default function SearchPage() {
         </>
     )
 }
-
-
