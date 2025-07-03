@@ -24,6 +24,11 @@ interface SearchResult {
     year: string
 }
 
+const API_BASE =
+    process.env.NODE_ENV === "development"
+        ? "http://localhost:5000"
+        : "https://api.mathmex.com";
+
 export default function SearchPage() {
     // --- State Hooks ---
     const [latex, setLatex] = useState<string>("")
@@ -125,11 +130,9 @@ export default function SearchPage() {
     }
 
     const speechToLatex = (text: string) => {
-        fetch("https://api.mathmex.com/speech-to-latex", {
+        fetch(`${API_BASE}/speech-to-latex`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ text }),
         })
             .then((res) => res.json())
@@ -170,11 +173,9 @@ export default function SearchPage() {
         addToHistory(currentLatex)
         if (isHistoryVisible) setIsHistoryVisible(false)
 
-        fetch("https://api.mathmex.com/search", {
+        fetch(`${API_BASE}/search`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 query: "",
                 functionLatex: "",
