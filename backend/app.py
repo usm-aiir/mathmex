@@ -1,7 +1,8 @@
 # Import Flask and CORS libraries
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import saytex
+import re
+
 
 # Create the Flask application instance
 app = Flask(__name__)
@@ -12,52 +13,35 @@ CORS(app)
 # Route for the root URL
 @app.route("/")
 def home():
-    # Display the most recent cleaned LaTeX and function/operator sent to /api/search (if any)
+    # Display the most recent cleaned LaTeX and function/operator sent to /search (if any)
     latex = app.config.get("last_latex", None)
     function_latex = app.config.get("last_function_latex", None)
 
-    # Clean the LaTeX for display (replace "\ " with real spaces)
-    latex_cleaned = latex.replace("\\ ", " ") if latex else None
-    function_latex_cleaned = function_latex.replace("\\ ", " ") if function_latex else None
-
     msg = "Hello, MathMex!<br>"
-    msg += f"Last CLEANED LaTeX string from frontend: <code>{latex_cleaned if latex_cleaned is not None else 'None'}</code><br>"
-    msg += f"Last function/operator from frontend: <code>{function_latex_cleaned if function_latex_cleaned is not None else 'None'}</code><br>"
+    msg += f"Last CLEANED LaTeX string from frontend: <code>{latex if latex is not None else 'None'}</code><br>"
+    msg += f"Last function/operator from frontend: <code>{function_latex if function_latex is not None else 'None'}</code><br>"
     return msg
 
 @app.route("/search", methods=["POST"])
 def search():
     data = request.get_json()
-    latex = data.get("latex", "")  # full LaTeX string from the search bar
-    function_latex = data.get("functionLatex", "")  # LaTeX for function/operator
-    is_math_mode = data.get("isMathMode", False)
+    latex = data.get("latex", "")
+    function_latex = data.get("functionLatex", "")
 
-    # Store the latest values in app config so they can be shown on the home page
-    app.config["last_latex"] = latex
+    # Convert LaTeX to storage format
+    formatted = latex_to_storage_format(latex)
+
+    app.config["last_latex"] = formatted
     app.config["last_function_latex"] = function_latex
 
-    # Print the raw string received from the frontend
-    print(f"Raw LaTeX from frontend: {latex!r}")
-    print(f"Raw functionLatex from frontend: {function_latex!r}")
-    print(f"isMathMode: {is_math_mode}")
+    print(f"Formatted for storage: {formatted}")
 
-    # Clean only for logging
-    latex_cleaned = latex.replace("\\ ", " ")
-    function_latex_cleaned = function_latex.replace("\\ ", " ")
-
-    # If math mode, wrap latex in $'s
-    if is_math_mode and latex_cleaned:
-        latex = f"${latex}$"
-
-    print(f"Received search request: {latex}")
-
-    # Always return the functionLatex field, even if it's empty
     return jsonify({
         "results": [
             {
                 "title": "Sample Result",
-                "formula": latex if latex else None,
-                "functionLatex": function_latex,  # Always include, even if empty string
+                "formula": formatted if formatted else None,
+                "functionLatex": function_latex,
                 "description": "This is a mock result.",
                 "tags": ["example"],
                 "year": "2025"
@@ -100,6 +84,39 @@ def speech_to_latex():
     except Exception as e:
         print(f"Error during LaTeX conversion: {e}")
         return jsonify({'error': str(e)}), 500
+
+def latex_to_storage_format(latex):
+    """
+    Converts LaTeX like '\\text{abc} x^2 \\text{def} y' to
+    'abc $x^2$ def $y$'
+    """
+    # Pattern: \text{...}
+    text_pattern = re.compile(r'\\text\{([^}]*)\}')
+    parts = []
+    last_end = 0
+
+    # Find all \text{...} and split
+    for m in text_pattern.finditer(latex):
+        # Add math before this text, if any
+        if m.start() > last_end:
+            math_part = latex[last_end:m.start()].strip()
+            if math_part:
+                parts.append(f"${math_part}$")
+        # Add the plain text
+        parts.append(m.group(1))
+        last_end = m.end()
+    # Add any trailing math
+    if last_end < len(latex):
+        math_part = latex[last_end:].strip()
+        if math_part:
+            parts.append(f"${math_part}$")
+    # Join with spaces, remove empty $...$
+    return " ".join([p for p in parts if p and p != "$$"])
+
+# Example:
+# latex = r"\text{The area is } a^2 \text{ and the perimeter is } 4a"
+# print(latex_to_storage_format(latex))
+# Output: The area is $a^2$ and the perimeter is $4a$
 
 # Run the Flask development server if this script is executed directly
 if __name__ == "__main__":

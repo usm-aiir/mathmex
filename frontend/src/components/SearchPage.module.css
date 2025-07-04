@@ -196,6 +196,59 @@
     padding: 2rem 0;
 }
 
+.modeSwitch {
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+}
+
+.switchLabel {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.switchLabel input[type="checkbox"] {
+  display: none;
+}
+
+.switchSlider {
+  width: 40px;
+  height: 22px;
+  background: #4f8cff; /* Blue when unchecked (Text mode) */
+  border-radius: 11px;
+  position: relative;
+  transition: background 0.2s;
+  margin-right: 0.5em;
+}
+
+.switchLabel input[type="checkbox"]:checked + .switchSlider {
+  background: #ccc; /* Grey when checked (Math mode) */
+}
+
+.switchSlider::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.switchLabel input[type="checkbox"]:checked + .switchSlider::before {
+  transform: translateX(18px);
+}
+
+.switchText {
+  font-weight: bold;
+  min-width: 40px;
+  text-align: left;
+}
+
 @media (max-width: 768px) {
     .searchControls {
         justify-content: center;
