@@ -2,6 +2,7 @@
 "use client"
 
 import styles from "./SearchPage.module.css";
+import type { SearchResult, SearchHistoryItem } from "../types/search";
 import { useState, useEffect, useRef, useCallback, ReactNode } from "react"
 import { History, Mic, Search, Square } from "lucide-react"
 import HistoryPanel from "./HistoryPanel.tsx"
@@ -9,20 +10,6 @@ import ResultsPanel from "./ResultsPanel.tsx"
 import { formatDate } from "../lib/utils.ts"
 import MathLiveField, { MathLiveFieldHandle } from "./MathLiveField"
 import "mathlive"
-
-// --- Types ---
-interface SearchHistoryItem {
-    latex: string
-    timestamp: number
-}
-
-interface SearchResult {
-    title: string
-    formula: string
-    description: string
-    tags: string[]
-    year: string
-}
 
 const API_BASE =
     process.env.NODE_ENV === "development"
