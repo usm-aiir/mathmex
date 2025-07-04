@@ -1,7 +1,7 @@
-/// <reference path="../types/window.d.ts" />
+// @ts-ignore
+import styles from "./SearchPage.module.css";
 "use client"
 
-import styles from "./SearchPage.module.css";
 import { useState, useEffect, useRef, useCallback, ReactNode } from "react"
 import { History, Mic, Search, Square } from "lucide-react"
 import HistoryPanel from "./HistoryPanel.tsx"
@@ -313,3 +313,4 @@ export default function SearchPage() {
         </>
     )
 }
+
