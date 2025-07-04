@@ -31,17 +31,11 @@ const API_BASE =
 
 export default function SearchPage() {
     // --- Initialize search param from URL ---
-    // q is the query parameter for search
-    // If it exists, decode it and use as initial LaTeX input
-    // If not, start with an empty string
     const searchParam = new URLSearchParams(window.location.search).get("q") || "";
-    // Initialize LaTeX state with search param if available
     const initialLatex = searchParam ? decodeURIComponent(searchParam) : "";
 
     // --- State Hooks ---
-    const [latex, setLatex] = useState<string>("") // The LaTeX string in the search bar
-    const [lastFunctionLatex, setLastFunctionLatex] = useState<string>("") // Last inserted function/operator
-    const [isKeyboardVisible, setIsKeyboardVisible] = useState<boolean>(false)
+    const [latex, setLatex] = useState<string>(initialLatex)
     const [isHistoryVisible, setIsHistoryVisible] = useState<boolean>(false)
     const [isListening, setIsListening] = useState<boolean>(false)
     const [transcript, setTranscript] = useState<string>("")
@@ -49,7 +43,7 @@ export default function SearchPage() {
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([])
     const [placeholderMessage, setPlaceholderMessage] = useState<ReactNode>(null)
-    const [isMathMode, setIsMathMode] = useState<boolean>(true) // true = math mode, false = text mode
+    const [mode, setMode] = useState<"math" | "text">("text")
 
     const mathFieldRef = useRef<MathLiveFieldHandle>(null)
     const recognitionRef = useRef<SpeechRecognition | null>(null)
@@ -201,16 +195,7 @@ export default function SearchPage() {
                 setSearchResults([])
                 setIsLoading(false)
             })
-    }, [latex, lastFunctionLatex, searchHistory, isKeyboardVisible, isHistoryVisible, isMathMode])
-
-    // --- Handle key press from MathKeyboard (virtual keyboard) ---
-    const handleKeyPress = (keyLatex: string) => {
-        if (mathFieldRef.current) {
-            mathFieldRef.current.write(keyLatex);
-            mathFieldRef.current.focus();
-            setLastFunctionLatex(keyLatex);
-        }
-    };
+    }, [latex, searchHistory, isHistoryVisible])
 
     // --- Fill input with example and trigger search ---
     const handleExampleClick = (formula: string) => {
@@ -233,11 +218,6 @@ export default function SearchPage() {
             performSearch()
         }, 0)
     }
-
-    const getCurrentMode = () => {
-        const el = mathFieldRef.current?.fieldRef.current;
-        return el?.mode || "text";
-    };
 
     // --- Sync mode state with MathLiveField events ---
     useEffect(() => {
