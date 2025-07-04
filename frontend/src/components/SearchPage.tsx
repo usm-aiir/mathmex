@@ -50,6 +50,7 @@ export default function SearchPage() {
     const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([])
     const [placeholderMessage, setPlaceholderMessage] = useState<ReactNode>(null)
     const [isMathMode, setIsMathMode] = useState<boolean>(true) // true = math mode, false = text mode
+    const [mode, setMode] = useState<"math" | "text">("text");
 
     const mathFieldRef = useRef<MathLiveFieldHandle>(null)
     const recognitionRef = useRef<SpeechRecognition | null>(null)
@@ -205,10 +206,10 @@ export default function SearchPage() {
 
     // --- Handle key press from MathKeyboard (virtual keyboard) ---
     const handleKeyPress = (keyLatex: string) => {
-        if (mathFieldRef.current) {
-            mathFieldRef.current.write(keyLatex);
-            mathFieldRef.current.focus();
-            setLastFunctionLatex(keyLatex);
+        const el = mathFieldRef.current?.fieldRef.current;
+        if (el) {
+            el.insert(keyLatex);
+            el.focus();
         }
     };
 
