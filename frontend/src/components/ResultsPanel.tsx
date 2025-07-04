@@ -2,7 +2,7 @@
 import styles from "./ResultsPanel.module.css"
 import { FC, ReactNode } from "react"
 import { MathJax } from "better-react-mathjax"
-import type { SearchResult } from "../lib/constants.ts"
+import type { SearchResult } from "../types/search"
 
 interface ResultsPanelProps {
     results: SearchResult[]

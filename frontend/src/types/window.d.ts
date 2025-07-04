@@ -50,4 +50,4 @@ interface SpeechRecognitionErrorEvent extends Event {
 interface Window {
     SpeechRecognition: typeof SpeechRecognition | undefined;
     webkitSpeechRecognition: typeof SpeechRecognition | undefined;
-  }
+}

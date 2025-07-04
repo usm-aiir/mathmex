@@ -88,17 +88,6 @@ main {
     flex: 1;
 }
 
-/* MathQuill Wrapped Elements Styling */
-.mq-editable-field {
-    border: 1px solid var(--gold-accent) !important;
-}
-
-.mq-editable-field.mq-focused {
-    box-shadow: none !important;
-    border: 1px solid var(--gold-accent) !important;
-    border-radius: 6px 0 0 6px !important;
-}
-
 /* Loading Animation */
 .loading {
     text-align: center;

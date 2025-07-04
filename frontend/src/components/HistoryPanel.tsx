@@ -4,11 +4,7 @@
 import styles from "./HistoryPanel.module.css"
 import { FC } from "react"
 import { MathJax } from "better-react-mathjax"
-
-interface SearchHistoryItem {
-    latex: string
-    timestamp: number
-}
+import type { SearchHistoryItem } from "../types/search"
 
 interface SearchHistoryDisplayProps {
     history: SearchHistoryItem[]

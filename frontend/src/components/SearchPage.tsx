@@ -1,7 +1,7 @@
-// @ts-ignore
-import styles from "./SearchPage.module.css";
+/// <reference path="../types/window.d.ts" />
 "use client"
 
+import styles from "./SearchPage.module.css";
 import { useState, useEffect, useRef, useCallback, ReactNode } from "react"
 import { History, Mic, Search, Square } from "lucide-react"
 import HistoryPanel from "./HistoryPanel.tsx"
@@ -30,8 +30,12 @@ const API_BASE =
         : "https://api.mathmex.com";
 
 export default function SearchPage() {
+    // --- Initialize search param from URL ---
+    const searchParam = new URLSearchParams(window.location.search).get("q") || "";
+    const initialLatex = searchParam ? decodeURIComponent(searchParam) : "";
+
     // --- State Hooks ---
-    const [latex, setLatex] = useState<string>("") // The LaTeX string in the search bar
+    const [latex, setLatex] = useState<string>(initialLatex)
     const [isHistoryVisible, setIsHistoryVisible] = useState<boolean>(false)
     const [isListening, setIsListening] = useState<boolean>(false)
     const [transcript, setTranscript] = useState<string>("")
@@ -39,7 +43,8 @@ export default function SearchPage() {
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([])
     const [placeholderMessage, setPlaceholderMessage] = useState<ReactNode>(null)
-    const [mode, setMode] = useState<"math" | "text">("text");
+    const [mode, setMode] = useState<"math" | "text">("text")
+
     const mathFieldRef = useRef<MathLiveFieldHandle>(null)
     const recognitionRef = useRef<SpeechRecognition | null>(null)
 
@@ -49,7 +54,7 @@ export default function SearchPage() {
             speechToLatex(transcript)
             setTranscript("")
         }
-    }, [isListening, transcript])
+    }, [isListening])
 
     // --- Load search history and set placeholder on mount ---
     useEffect(() => {
@@ -313,4 +318,3 @@ export default function SearchPage() {
         </>
     )
 }
-
