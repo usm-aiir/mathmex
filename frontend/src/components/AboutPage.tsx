@@ -1,4 +1,4 @@
-// @ts-expect-error
+
 import styles from "./AboutPage.module.css";
 
 const AboutPage = () => (
