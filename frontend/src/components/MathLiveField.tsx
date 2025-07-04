@@ -71,9 +71,8 @@ declare global {
                 ref?: React.Ref<any>
                 virtualkeyboardmode?: string
                 textmode?: string
+                className?: string
             }
         }
     }
-
-    
 }
