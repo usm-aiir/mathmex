@@ -1,6 +1,3 @@
-"use client"
-
-// @ts-ignore
 import styles from "./Header.module.css"
 import type { FC } from "react"
 import { Sun, Moon } from "lucide-react"

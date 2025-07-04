@@ -1,4 +1,3 @@
-
 import styles from "./AboutPage.module.css";
 
 const AboutPage = () => (

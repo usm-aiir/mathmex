@@ -1,6 +1,3 @@
-"use client"
-
-// @ts-ignore
 import styles from "./ThemeSwitch.module.css"
 import { Moon, Sun } from "lucide-react"
 import { useDarkMode } from "../hooks/darkMode"

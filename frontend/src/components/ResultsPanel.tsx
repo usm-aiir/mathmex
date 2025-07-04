@@ -1,4 +1,3 @@
-// @ts-ignore
 import styles from "./ResultsPanel.module.css"
 import { FC, ReactNode } from "react"
 import { MathJax } from "better-react-mathjax"

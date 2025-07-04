@@ -1,6 +1,3 @@
-"use client"
-
-// @ts-ignore
 import styles from "./MathKeyboard.module.css"
 
 interface KeyConfig {

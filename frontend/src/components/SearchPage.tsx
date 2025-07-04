@@ -1,5 +1,4 @@
 /// <reference path="../types/window.d.ts" />
-"use client"
 
 import styles from "./SearchPage.module.css";
 import type { SearchResult, SearchHistoryItem } from "../types/search";

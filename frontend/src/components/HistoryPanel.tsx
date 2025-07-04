@@ -1,6 +1,3 @@
-"use client"
-
-// @ts-ignore
 import styles from "./HistoryPanel.module.css"
 import { FC } from "react"
 import { MathJax } from "better-react-mathjax"
