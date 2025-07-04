@@ -48,7 +48,7 @@ const MathLiveField = forwardRef<MathLiveFieldHandle, MathLiveFieldProps>(
         return (
             <math-field
                 ref={fieldRef}
-                class={className}
+                className={className}
                 style={{ width: "100%", minHeight: "40px", fontSize: "1.2rem" }}
                 virtualkeyboardmode="manual"
                 textmode="true"
