@@ -1,5 +1,6 @@
-/* Base Styles with Renaissance Theme */
 :root {
+
+    /* Custom color & font styling */
     --primary-color: #5c3836;
     --secondary-color: #c19a49;
     --accent-color: #2a4c3e;
@@ -20,6 +21,21 @@
 
     --font-cormorant-garamond: "Cormorant Garamond", Georgia, serif;
     --font-eb-garamond: "EB Garamond", Georgia, serif;
+
+    /* MathLive color styles */
+    --keyboard-border: var(--gold-accent);
+    --keyboard-toolbar-text: var(--font-color);
+    --keyboard-background: var(--background-color);
+    --keyboard-accent-color: var(--gold-accent);
+
+    --keycap-border: 1px solid var(--gold-accent);
+    --keycap-background: var(--container-color);
+    --keycap-text: var(--font-color);
+
+    --keycap-background-hover: var(--font-color);
+    --keycap-text-hover: var(--font-color-light);
+
+    --caret-color: var(--font-color);
 
     overflow-y: scroll;
     scrollbar-width: none;
@@ -103,6 +119,18 @@ main {
     animation: ellipsis 1.5s infinite;
 }
 
+/* MathLive styling */
+math-field:focus-within {
+    outline: 2px solid var(--font-color);
+    outline-offset: -3px;
+}
+
+math-field::part(virtual-keyboard-toggle),
+math-field::part(menu-toggle) {
+    color: var(--font-color);
+    fill: currentColor;
+}
+
 @keyframes ellipsis {
     0% {
         content: ".";
@@ -132,6 +160,13 @@ main {
 
     --gold-accent: #c19a49;
     background-color: #18120a;
+
+    /* MathLive color styles */
+    --keyboard-toolbar-text: var(--font-color-light);
+    --keycap-text: var(--font-color-light);
+
+    --keycap-background-hover: var(--font-color-light);
+    --keycap-text-hover: var(--font-color);
 
     .themeButton {
         color: var(--secondary-color);
