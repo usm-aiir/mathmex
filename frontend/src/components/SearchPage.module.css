@@ -44,8 +44,8 @@
 
 .placeholderOverlay {
     position: absolute;
-    top: 8px;
-    left: 11px;
+    top: 10px;
+    left: 6px;
     color: #999;
     font-size: 1rem;
     pointer-events: none;
@@ -102,14 +102,27 @@
     left: 100%;
 }
 
-.searchControls {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin-top: 1rem;
+.searchButtonText {
+    display: inline;
 }
 
-.keyboardToggleContainer {
+.searchControls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    gap: 1rem;
+}
+
+.controlsRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 1rem;
+}
+
+.actionButtons {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -189,7 +202,6 @@
     color: #222;
 }
 
-
 .resultsPlaceholderMessage {
     text-align: center;
     color: var(--font-color-alt);
@@ -199,7 +211,6 @@
 .modeSwitch {
   display: flex;
   align-items: center;
-  margin-right: 1rem;
 }
 
 .switchLabel {
@@ -249,21 +260,100 @@
   text-align: left;
 }
 
+/* Tablet and smaller desktop */
 @media (max-width: 768px) {
+    .placeholderOverlay {
+        top: 13px;
+        font-size: 0.8rem;
+    }
+
+    .searchContainer {
+        padding: 20px;
+    }
+    
     .searchControls {
-        justify-content: center;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    
+    .controlsRow {
+        justify-content: space-between;
+    }
+    
+    .searchButtonText {
+        display: none;
+    }
+    
+    .searchButton {
+        min-width: 60px;
+        padding: 0 1rem;
     }
 }
 
+/* Mobile phones */
 @media (max-width: 480px) {
+    .searchContainer {
+        padding: 15px;
+        margin-bottom: 1rem;
+    }
+    
     .searchInputContainer {
         flex-direction: column;
+        gap: 0.5rem;
     }
-
+    
+    .inputField {
+        border-radius: var(--border-radius);
+        border: 1px solid var(--gold-accent);
+    }
+    
     .searchButton {
-        border-radius: 0 0 var(--border-radius) var(--border-radius);
-        border-left: 1px solid var(--gold-accent);
+        border-radius: var(--border-radius);
+        border: 1px solid var(--gold-accent);
         width: 100%;
+        min-width: auto;
+        padding: 12px 1rem;
+    }
+    
+    .searchControls {
+        margin-top: 1.5rem;
+    }
+    
+    .controlsRow {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .modeSwitch {
+        justify-content: center;
+    }
+    
+    .actionButtons {
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    .controlButton {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+    .searchContainer {
+        padding: 12px;
+    }
+    
+    .actionButtons {
+        gap: 0.5rem;
+    }
+    
+    .controlButton {
+        width: 44px;
+        height: 44px;
     }
 }
 

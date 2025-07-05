@@ -172,3 +172,62 @@ math-field::part(menu-toggle) {
         color: var(--secondary-color);
     }
 }
+
+/* Responsive Design Improvements */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    main {
+        padding: 1.5rem 0;
+    }
+    
+    .scroll-decoration.top {
+        margin: 15px 0 5px 0;
+    }
+    
+    .scroll-decoration.bottom {
+        margin: 5px 0 15px 0;
+    }
+    
+    body {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 10px;
+    }
+    
+    main {
+        padding: 1rem 0;
+    }
+    
+    .scroll-decoration.top {
+        margin: 10px 0 3px 0;
+    }
+    
+    .scroll-decoration.bottom {
+        margin: 3px 0 10px 0;
+    }
+    
+    body {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 360px) {
+    .container {
+        padding: 0 8px;
+    }
+    
+    main {
+        padding: 0.75rem 0;
+    }
+    
+    body {
+        font-size: 14px;
+    }
+}

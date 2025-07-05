@@ -80,13 +80,101 @@
     font-size: 1.05rem;
 }
 
-
+/* Tablet and smaller desktop */
 @media (max-width: 768px) {
     .resultsSection {
         padding: 1.5rem;
+        margin-top: 1.5rem;
     }
+    
+    .resultsSectionTitle {
+        font-size: 1.75rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .resultItem {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+    
+    .resultTitle {
+        font-size: 1.35rem;
+    }
+    
+    .resultFormula {
+        margin: 1.25rem 0;
+        padding: 1.25rem;
+    }
+    
+    .resultDescription {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+}
 
-    .resultItem::before {
-        display: none;
+/* Mobile phones */
+@media (max-width: 480px) {
+    .resultsSection {
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .resultsSectionTitle {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .resultsSectionTitle::after {
+        width: 80px;
+        margin: 8px auto 0;
+    }
+    
+    .resultItem {
+        margin-bottom: 1.25rem;
+        padding-bottom: 1.25rem;
+    }
+    
+    .resultTitle {
+        font-size: 1.25rem;
+        margin-bottom: 0.6rem;
+    }
+    
+    .resultFormula {
+        margin: 1rem 0;
+        padding: 1rem;
+        border-radius: 6px;
+    }
+    
+    .resultDescription {
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+    }
+    
+    .example {
+        font-size: 0.9rem;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+    .resultsSection {
+        padding: 0.75rem;
+    }
+    
+    .resultsSectionTitle {
+        font-size: 1.35rem;
+    }
+    
+    .resultTitle {
+        font-size: 1.15rem;
+    }
+    
+    .resultFormula {
+        padding: 0.75rem;
+    }
+    
+    .resultDescription {
+        font-size: 0.9rem;
     }
 }

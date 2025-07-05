@@ -1,5 +1,5 @@
 .header {
-    padding: 2rem 0;
+    padding: 1.5rem 0;
     text-align: center;
     border-bottom: 2px solid var(--gold-accent);
     background-color: rgba(92, 56, 54, 0.05);
@@ -8,30 +8,32 @@
 
 .header h1 {
     font-family: var(--font-cormorant-garamond);
-    font-size: 3.5rem;
-    margin-bottom: 0.5rem;
+    font-size: 2.8rem;
+    margin-bottom: 0.3rem;
     color: var(--primary-color);
     font-weight: 600;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
 }
 
 .headerContent {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 1rem;
 }
 
 .titleContainer {
-    margin: 0 20px;
+    margin: 0 15px;
+    flex-shrink: 0;
 }
 
 .title {
     font-family: var(--font-cormorant-garamond);
-    font-size: 3.5rem;
-    margin-bottom: 0.5rem;
+    font-size: 2.8rem;
+    margin-bottom: 0.3rem;
     color: var(--primary-color);
     font-weight: 600;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
 }
 
 .highlight {
@@ -40,13 +42,14 @@
 
 .tagline {
     font-family: var(--font-eb-garamond);
-    font-size: 1.2rem;
+    font-size: 1rem;
     color: var(--font-color-alt);
+    margin: 0;
 }
 
 .ornament {
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -65,6 +68,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .toggleOverlay {
@@ -80,8 +84,8 @@
     background-color: var(--primary-color);
     border: 2px solid var(--secondary-color);
     border-radius: 50%;
-    width: 45px;
-    height: 45px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -96,14 +100,118 @@
     transform: rotate(45deg);
 }
 
+/* Tablet and smaller desktop */
 @media (max-width: 768px) {
+    .header {
+        padding: 1.25rem 0;
+    }
+    
+    .header h1 {
+        font-size: 2.2rem;
+        letter-spacing: 1px;
+    }
+    
     .title {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
+        letter-spacing: 1px;
+    }
+    
+    .tagline {
+        font-size: 0.9rem;
+    }
+    
+    .ornament {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .themeButton {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .headerContent {
+        gap: 0.75rem;
+    }
+    
+    .titleContainer {
+        margin: 0 10px;
     }
 }
 
+/* Mobile phones */
 @media (max-width: 480px) {
+    .header {
+        padding: 1rem 0;
+        margin-bottom: 1rem;
+    }
+    
     .headerContent {
-        flex-direction: column;
+        flex-direction: row;
+        gap: 0.5rem;
+        align-items: center;
+    }
+    
+    .header h1 {
+        font-size: 1.8rem;
+        margin-bottom: 0.2rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .title {
+        font-size: 1.8rem;
+        margin-bottom: 0.2rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .tagline {
+        font-size: 0.8rem;
+    }
+    
+    .ornament {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .themeButton {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .titleContainer {
+        margin: 0 8px;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+    .header h1 {
+        font-size: 1.6rem;
+    }
+    
+    .title {
+        font-size: 1.6rem;
+    }
+    
+    .tagline {
+        font-size: 0.75rem;
+    }
+    
+    .ornament {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .themeButton {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .headerContent {
+        gap: 0.25rem;
+    }
+    
+    .titleContainer {
+        margin: 0 5px;
     }
 }

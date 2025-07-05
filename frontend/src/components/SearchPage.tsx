@@ -239,12 +239,13 @@ export default function SearchPage() {
                             />
                             <button className={styles.searchButton} onClick={performSearch} disabled={isLoading}>
                                 <Search size={18} />
-                                <span>{isLoading ? "Searching..." : "Search"}</span>
+                                <span className={styles.searchButtonText}>{isLoading ? "Searching..." : "Search"}</span>
                             </button>
                         </div>
-                        {/* Controls for history, mic, and mode toggle */}
+                        
+                        {/* Improved mobile-friendly controls layout */}
                         <div className={styles.searchControls}>
-                            <div className={styles.keyboardToggleContainer}>
+                            <div className={styles.controlsRow}>
                                 <div className={styles.modeSwitch}>
                                     <label className={styles.switchLabel}>
                                         <input
@@ -267,20 +268,23 @@ export default function SearchPage() {
                                         </span>
                                     </label>
                                 </div>
-                                <button
-                                    className={`${styles.controlButton} ${isListening ? styles.listening : ""}`}
-                                    aria-label={isListening ? "Stop voice input" : "Start voice input"}
-                                    onClick={toggleSpeechRecognition}
-                                >
-                                    {isListening ? <Square size={20} strokeWidth={2.5} /> : <Mic size={20} />}
-                                </button>
-                                <button
-                                    className={styles.controlButton}
-                                    aria-label="Search history"
-                                    onClick={() => setIsHistoryVisible(!isHistoryVisible)}
-                                >
-                                    <History size={20} />
-                                </button>
+                                
+                                <div className={styles.actionButtons}>
+                                    <button
+                                        className={`${styles.controlButton} ${isListening ? styles.listening : ""}`}
+                                        aria-label={isListening ? "Stop voice input" : "Start voice input"}
+                                        onClick={toggleSpeechRecognition}
+                                    >
+                                        {isListening ? <Square size={20} strokeWidth={2.5} /> : <Mic size={20} />}
+                                    </button>
+                                    <button
+                                        className={styles.controlButton}
+                                        aria-label="Search history"
+                                        onClick={() => setIsHistoryVisible(!isHistoryVisible)}
+                                    >
+                                        <History size={20} />
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

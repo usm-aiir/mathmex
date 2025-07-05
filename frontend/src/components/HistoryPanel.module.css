@@ -97,3 +97,108 @@
     color: var(--font-color-alt);
     font-style: italic;
 }
+
+/* Tablet and smaller desktop */
+@media (max-width: 768px) {
+    .searchHistory {
+        max-height: 250px;
+        margin: 0.75rem 0 0;
+    }
+    
+    .historyHeader {
+        padding: 0.7rem 0.8rem;
+    }
+    
+    .historyItem {
+        padding: 0.7rem 0.8rem;
+    }
+    
+    .historyFormula .MathJax {
+        font-size: 0.85rem !important;
+    }
+    
+    .historyTime {
+        font-size: 0.75rem;
+    }
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+    .searchHistory {
+        max-height: 200px;
+        margin: 0.5rem 0 0;
+        border-radius: 6px;
+    }
+    
+    .historyHeader {
+        padding: 0.6rem 0.7rem;
+    }
+    
+    .historyTitle {
+        font-size: 0.95rem;
+    }
+    
+    .clearHistoryBtn {
+        padding: 0.25rem 0.6rem;
+        font-size: 0.85rem;
+    }
+    
+    .historyList {
+        padding: 0.3rem 0;
+    }
+    
+    .historyItem {
+        padding: 0.6rem 0.7rem;
+        min-height: 44px; /* Better touch target */
+    }
+    
+    .historyFormula {
+        padding-right: 8px;
+    }
+    
+    .historyFormula .MathJax {
+        font-size: 0.8rem !important;
+    }
+    
+    .historyTime {
+        font-size: 0.7rem;
+    }
+    
+    .emptyHistory {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+    .searchHistory {
+        max-height: 180px;
+    }
+    
+    .historyHeader {
+        padding: 0.5rem 0.6rem;
+    }
+    
+    .historyTitle {
+        font-size: 0.9rem;
+    }
+    
+    .clearHistoryBtn {
+        padding: 0.2rem 0.5rem;
+        font-size: 0.8rem;
+    }
+    
+    .historyItem {
+        padding: 0.5rem 0.6rem;
+        min-height: 40px;
+    }
+    
+    .historyFormula .MathJax {
+        font-size: 0.75rem !important;
+    }
+    
+    .historyTime {
+        font-size: 0.65rem;
+    }
+}
