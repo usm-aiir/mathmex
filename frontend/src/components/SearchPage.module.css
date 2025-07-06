@@ -60,7 +60,7 @@
 .searchButton {
     min-width: 100px;
     padding: 0 1.5rem;
-    background-color: var(--primary-color);
+    background-color: var(--mathmex-primary-color);
     color: var(--container-color);
     border: 1px solid var(--gold-accent);
     border-left: none;
@@ -92,7 +92,7 @@
 
 .searchButton:hover {
     color: var(--font-color-light);
-    background-color: var(--accent-color);
+    background-color: var(--mathmex-accent-color);
     transform: translate(-2px, -4px);
     box-shadow: 2px 4px 3px rgba(0, 0, 0, 0.5);
     border-radius: var(--border-radius);
@@ -129,7 +129,7 @@
 }
 
 .controlButton {
-    background-color: var(--primary-color);
+    background-color: var(--mathmex-primary-color);
     color: var(--container-color);
     border: 2px solid var(--gold-accent);
     width: 40px;
@@ -144,11 +144,11 @@
 }
 
 .controlButton.listening {
-    background-color: var(--accent-color);
+    background-color: var(--mathmex-accent-color);
 }
 
 .controlButton:hover {
-    background-color: var(--accent-color);
+    background-color: var(--mathmex-accent-color);
     color: var(--font-color-light);
     transform: translate(-2px, -4px);
     box-shadow: 2px 4px 3px rgba(0, 0, 0, 0.5);
@@ -191,7 +191,7 @@
 }
 
 .modeButton.active {
-    background: var(--primary-color);
+    background: var(--mathmex-primary-color);
     color: var(--container-color);
     border: 2px solid var(--gold-accent);
     box-shadow: 0 3px 8px var(--glow-accent);

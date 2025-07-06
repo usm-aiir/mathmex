@@ -20,7 +20,7 @@
 
 .historyTitle {
     margin: 0;
-    color: var(--primary-color);
+    color: var(--mathmex-primary-color);
     font-size: 1rem;
     font-family: var(--font-cormorant-garamond);
     font-weight: 600;
@@ -28,7 +28,7 @@
 
 .clearHistoryBtn {
     background-color: transparent;
-    color: var(--primary-color);
+    color: var(--mathmex-primary-color);
     border: 1px solid var(--gold-accent);
     padding: 0.3rem 0.8rem;
     border-radius: var(--border-radius);

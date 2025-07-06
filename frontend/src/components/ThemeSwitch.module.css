@@ -1,5 +1,5 @@
 .darkModeToggle {
-    background-color: var(--primary-color);
+    background-color: var(--mathmex-primary-color);
     border: 2px solid var(--gold-accent);
     border-radius: 50%;
     width: 45px;
@@ -15,7 +15,7 @@
 }
 
 .darkModeToggle:hover {
-    background-color: var(--accent-color);
+    background-color: var(--mathmex-accent-color);
 }
 
 .iconContainer {
