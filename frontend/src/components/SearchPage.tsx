@@ -246,27 +246,44 @@ export default function SearchPage() {
                         {/* Improved mobile-friendly controls layout */}
                         <div className={styles.searchControls}>
                             <div className={styles.controlsRow}>
-                                <div className={styles.modeSwitch}>
-                                    <label className={styles.switchLabel}>
-                                        <input
-                                            type="checkbox"
-                                            checked={mode === "math"}
-                                            onChange={() => {
-                                                const el = mathFieldRef.current?.fieldRef.current;
-                                                if (el && el.executeCommand) {
-                                                    const newMode = mode === "math" ? "text" : "math";
-                                                    el.executeCommand("switchMode", newMode);
-                                                    el.focus();
-                                                    setMode(newMode);
+                                <div className={styles.modeSwitchGroup}>
+                                    <span className={styles.modeSwitchLabel}>Input Mode...</span>
+                                    <div className={styles.modeButtonRow}>
+                                        <button
+                                            type="button"
+                                            className={`${styles.modeButton} ${mode === "text" ? styles.active : ""}`}
+                                            onClick={() => {
+                                                if (mode !== "text") {
+                                                    const el = mathFieldRef.current?.fieldRef.current;
+                                                    if (el && el.executeCommand) {
+                                                        el.executeCommand("switchMode", "text");
+                                                        el.focus();
+                                                        setMode("text");
+                                                    }
                                                 }
                                             }}
-                                            aria-label="Toggle math/text mode"
-                                        />
-                                        <span className={styles.switchSlider}></span>
-                                        <span className={styles.switchText}>
-                                            {mode === "math" ? "Math" : "Text"}
-                                        </span>
-                                    </label>
+                                            aria-pressed={mode === "text"}
+                                        >
+                                            Text
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className={`${styles.modeButton} ${mode === "math" ? styles.active : ""}`}
+                                            onClick={() => {
+                                                if (mode !== "math") {
+                                                    const el = mathFieldRef.current?.fieldRef.current;
+                                                    if (el && el.executeCommand) {
+                                                        el.executeCommand("switchMode", "math");
+                                                        el.focus();
+                                                        setMode("math");
+                                                    }
+                                                }
+                                            }}
+                                            aria-pressed={mode === "math"}
+                                        >
+                                            Math
+                                        </button>
+                                    </div>
                                 </div>
                                 
                                 <div className={styles.actionButtons}>
