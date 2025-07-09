@@ -33,7 +33,7 @@
     background: #ffffff;
     border-radius: 6px 0 0 6px;
     border: 1px solid var(--gold-accent);
-    color: var(--font-color);
+    color: var(--primary-dark);
     resize: none;
 }
 
@@ -60,7 +60,7 @@
 .searchButton {
     min-width: 100px;
     padding: 0 1.5rem;
-    background-color: var(--mathmex-primary-color);
+    background-color: var(--button-color);
     color: var(--container-color);
     border: 1px solid var(--gold-accent);
     border-left: none;
@@ -91,8 +91,8 @@
 }
 
 .searchButton:hover {
-    color: var(--font-color-light);
-    background-color: var(--mathmex-accent-color);
+    color: var(--primary-light);
+    background-color: var(--button-active-color);
     transform: translate(-2px, -4px);
     box-shadow: 2px 4px 3px rgba(0, 0, 0, 0.5);
     border-radius: var(--border-radius);
@@ -129,7 +129,7 @@
 }
 
 .controlButton {
-    background-color: var(--mathmex-primary-color);
+    background-color: var(--button-color);
     color: var(--container-color);
     border: 2px solid var(--gold-accent);
     width: 40px;
@@ -144,12 +144,12 @@
 }
 
 .controlButton.listening {
-    background-color: var(--mathmex-accent-color);
+    background-color: var(--button-active-color);
 }
 
 .controlButton:hover {
-    background-color: var(--mathmex-accent-color);
-    color: var(--font-color-light);
+    background-color: var(--button-active-color);
+    color: var(--primary-light);
     transform: translate(-2px, -4px);
     box-shadow: 2px 4px 3px rgba(0, 0, 0, 0.5);
 }
@@ -163,7 +163,7 @@
 }
 
 .modeSwitchLabel {
-    color: var(--font-color-alt);
+    color: var(--primary-alt);
     font-size: 0.98rem;
     margin-bottom: 0.2rem;
     margin-left: 0.4rem;
@@ -197,7 +197,7 @@
 }
 
 .modeButton.active {
-    background: var(--mathmex-primary-color);
+    background: var(--button-color);
     color: var(--container-color);
     border: 2px solid var(--gold-accent);
     box-shadow: 0 3px 8px var(--glow-accent);
@@ -219,7 +219,7 @@
 
 .resultsPlaceholderMessage {
     text-align: center;
-    color: var(--font-color-alt);
+    color: var(--primary-alt);
     padding: 2rem 0;
 }
 

@@ -9,7 +9,7 @@
 }
 .resultsSectionTitle {
     font-size: 2rem;
-    color: var(--mathmex-primary-color);
+    color: var(--button-color);
     text-align: center;
     margin-bottom: 1.5rem;
     position: relative;
@@ -36,7 +36,7 @@
 }
 
 .example:hover {
-    color: var(--mathmex-accent-color);
+    color: var(--button-active-color);
 }
 
 .resultItem {
@@ -55,7 +55,7 @@
 .resultTitle {
     font-size: 1.5rem;
     margin-bottom: 0.8rem;
-    color: var(--mathmex-primary-color);
+    color: var(--button-color);
     font-weight: 600;
 }
 

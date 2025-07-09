@@ -1,6 +1,6 @@
 .footer {
     background-color: rgba(92, 56, 54, 0.1);
-    color: var(--mathmex-primary-color);
+    color: var(--button-color);
     padding: 1.5rem 0;
     text-align: center;
     margin-top: 3rem;
@@ -12,5 +12,5 @@
 }
 
 .link:visited {
-    color: var(--mathmex-primary-color);
+    color: var(--button-color);
 }

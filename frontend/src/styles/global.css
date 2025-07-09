@@ -1,20 +1,12 @@
 :root {
 
-    /* Custom color & font styling */
-    --mathmex-primary-color: #5c3836;
-    --mathmex-secondary-color: #c19a49;
-    --mathmex-accent-color: #2a4c3e;
-    --container-color: #f4efe1;
+    /* Constants */
+    --primary-dark: #2c2416;
+    --primary-light: #f4efe1;
+    --primary-alt: #7a6c5d;
 
-    --background-color: #f8f4e9;
     --gold-accent: #c19a49;
     --glow-accent: rgba(193, 154, 73, 0.3);
-
-    --switch-color: var(--mathmex-primary-color);
-
-    --font-color: #2c2416;
-    --font-color-alt: #7a6c5d;
-    --font-color-light: #f4efe1;
 
     --border-radius: 4px;
     --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
@@ -22,24 +14,31 @@
     --font-cormorant-garamond: "Cormorant Garamond", Georgia, serif;
     --font-eb-garamond: "EB Garamond", Georgia, serif;
 
+    /* Light mode colors */
+    --container-color: var(--primary-light);
+    --background-color: #f8f4e9;
+
+    --button-color: #5c3836;
+    --button-active-color: #2a4c3e;
+
     /* MathLive color styles */
-    --keyboard-toolbar-text: var(--font-color);
+    --keyboard-toolbar-text: var(--primary-dark);
 
     --keyboard-border: var(--gold-accent);
     --keyboard-background: var(--background-color);
     --keyboard-accent-color: var(--gold-accent);
 
     --keycap-background: var(--container-color);
-    --keycap-secondary-background: var(--font-color);
+    --keycap-secondary-background: var(--primary-dark);
 
-    --keycap-text: var(--font-color);
-    --keycap-secondary-text: var(--font-color-light);
+    --keycap-text: var(--primary-dark);
+    --keycap-secondary-text: var(--primary-light);
 
-    --keycap-background-hover: var(--font-color);
-    --keycap-text-hover: var(--font-color-light);
-    --keycap-secondary-text-hover: var(--font-color);
+    --keycap-background-hover: var(--primary-dark);
+    --keycap-text-hover: var(--primary-light);
+    --keycap-secondary-text-hover: var(--primary-dark);
 
-    --caret-color: var(--font-color);
+    --caret-color: var(--primary-dark);
 
     overflow-y: scroll;
     scrollbar-width: none;
@@ -59,7 +58,7 @@
 body {
     font-family: var(--font-eb-garamond), Georgia, serif;
     line-height: 1.6;
-    color: var(--mathmex-primary-color);
+    color: var(--button-color);
     background-color: #2c2416;
     font-size: 18px;
 }
@@ -112,7 +111,7 @@ main {
 .loading {
     text-align: center;
     padding: 2rem 0;
-    color: var(--font-color-alt);
+    color: var(--primary-alt);
     position: relative;
     font-size: 1.2rem;
 }
@@ -125,13 +124,13 @@ main {
 
 /* MathLive styling */
 math-field:focus-within {
-    outline: 2px solid var(--font-color);
+    outline: 2px solid var(--primary-dark);
     outline-offset: -3px;
 }
 
 math-field::part(virtual-keyboard-toggle),
 math-field::part(menu-toggle) {
-    color: var(--font-color);
+    color: var(--primary-dark);
     fill: currentColor;
 }
 
@@ -147,37 +146,31 @@ math-field::part(menu-toggle) {
     }
 }
 
-/* Dark Theme Overrides */
 :root[data-theme="dark"] {
-    --mathmex-primary-color: #f4efe1;
-    --switch-color: var(--gold-accent);
+     /* Lighten alt color (higher contrast) */
+    --primary-alt: #BaAc9d;
 
-    /* Invert dark and light colors */
-    --container-color: #2c2416;
-    --mathmex-accent-color: var(--container-color);
-
-    /* Lighten gray (higher contrast) */
-   --font-color-alt: #BaAc9d;
-
-    /* Background */
+    /* Dark mode backgrounds */
+    --container-color: var(--primary-dark);
     --background-color: #18120a;
 
-    --gold-accent: #c19a49;
-    background-color: #18120a;
+    /* Light buttons */
+    --button-color: var(--primary-light);
+    --button-active-color: var(--container-color);
 
     /* MathLive color styles */
-    --keyboard-toolbar-text: var(--font-color-light);
+    --keyboard-toolbar-text: var(--primary-light);
 
-    --keycap-secondary-background: var(--font-color-light);
+    --keycap-secondary-background: var(--primary-light);
 
-    --keycap-text: var(--font-color-light);
-    --keycap-secondary-text: var(--font-color);
+    --keycap-text: var(--primary-light);
+    --keycap-secondary-text: var(--primary-dark);
 
-    --keycap-background-hover: var(--font-color-light);
-    --keycap-text-hover: var(--font-color);
+    --keycap-background-hover: var(--primary-light);
+    --keycap-text-hover: var(--primary-dark);
 
     .themeButton {
-        color: var(--mathmex-secondary-color);
+        color: var(--gold-accent);
     }
 }
 

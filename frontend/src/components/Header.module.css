@@ -10,7 +10,7 @@
     font-family: var(--font-cormorant-garamond);
     font-size: 2.8rem;
     margin-bottom: 0.3rem;
-    color: var(--mathmex-primary-color);
+    color: var(--button-color);
     font-weight: 600;
     letter-spacing: 1.5px;
 }
@@ -31,7 +31,7 @@
     font-family: var(--font-cormorant-garamond);
     font-size: 2.8rem;
     margin-bottom: 0.3rem;
-    color: var(--mathmex-primary-color);
+    color: var(--button-color);
     font-weight: 600;
     letter-spacing: 1.5px;
 }
@@ -43,7 +43,7 @@
 .tagline {
     font-family: var(--font-eb-garamond);
     font-size: 1rem;
-    color: var(--font-color-alt);
+    color: var(--primary-alt);
     margin: 0;
 }
 
@@ -81,8 +81,8 @@
 
 .themeButton {
     color: var(--background-color);
-    background-color: var(--mathmex-primary-color);
-    border: 2px solid var(--mathmex-secondary-color);
+    background-color: var(--button-color);
+    border: 2px solid var(--gold-accent);
     border-radius: 50%;
     width: 45px;
     height: 45px;

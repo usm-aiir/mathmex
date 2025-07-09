@@ -20,7 +20,7 @@
 
 .historyTitle {
     margin: 0;
-    color: var(--mathmex-primary-color);
+    color: var(--button-color);
     font-size: 1rem;
     font-family: var(--font-cormorant-garamond);
     font-weight: 600;
@@ -28,7 +28,7 @@
 
 .clearHistoryBtn {
     background-color: transparent;
-    color: var(--mathmex-primary-color);
+    color: var(--button-color);
     border: 1px solid var(--gold-accent);
     padding: 0.3rem 0.8rem;
     border-radius: var(--border-radius);
@@ -87,14 +87,14 @@
 
 .historyTime {
     font-size: 0.8rem;
-    color: var(--font-color-alt);
+    color: var(--primary-alt);
     white-space: nowrap;
 }
 
 .emptyHistory {
     padding: 1rem;
     text-align: center;
-    color: var(--font-color-alt);
+    color: var(--primary-alt);
     font-style: italic;
 }
 
