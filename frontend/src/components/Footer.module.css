@@ -1,5 +1,5 @@
 .footer {
-    background-color: rgba(92, 56, 54, 0.1);
+    background-color: var(--container-color);
     color: var(--button-color);
     padding: 1.5rem 0;
     text-align: center;
