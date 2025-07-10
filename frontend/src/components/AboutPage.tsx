@@ -25,6 +25,16 @@ const AboutPage = () => (
                     AIIR Lab at USM
                 </a>
             </p>
+            <p>
+                View the project on GitHub:&nbsp;
+                <a
+                    href="https://github.com/AIIRLab-USM/MathMex"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    github.com/AIIRLab-USM/MathMex
+                </a>
+            </p>
         </div>
     </div>
 );
