@@ -241,7 +241,7 @@ export default function SearchPage() {
                             {/* Custom placeholder overlay */}
                             {!latex && (
                                 <div className={`${styles.placeholderOverlay} ${latex ? styles.hidden : ''}`}>
-                                    Enter a statement with text and math, e.g. "The area is $a^2$"
+                                    Search for definitions, theorems, and proofs...
                                 </div>
                             )}
                             {/* MathLiveField for inline text+math */}
