@@ -13,33 +13,12 @@
     overflow: hidden;
 }
 
-.searchInputContainer {
+.inputContainer {
     display: flex;
     margin-bottom: 1rem;
     width: 100%;
     max-width: 100%;
     position: relative;
-}
-
-.inputField {
-    width: 100%;
-    min-width: 0;
-    flex: 1 1 auto;
-    
-    font-size: 1.2rem;
-    font-family: inherit;
-    padding: 8px;
-    box-sizing: border-box;
-    background: #ffffff;
-    border-radius: 6px 0 0 6px;
-    border: 1px solid var(--gold-accent);
-    color: var(--primary-dark);
-    resize: none;
-}
-
-.inputField:focus {
-    outline: none;
-    box-shadow: none;
 }
 
 .placeholderOverlay {
@@ -55,6 +34,22 @@
 
 .placeholderOverlay.hidden {
     opacity: 0;
+}
+
+/* MathLive styling */
+math-field {
+    border-radius: var(--border-radius);
+}
+
+math-field:focus-within {
+    outline: 2px solid var(--primary-dark);
+    outline-offset: -3px;
+}
+
+math-field::part(virtual-keyboard-toggle),
+math-field::part(menu-toggle) {
+    color: var(--primary-dark);
+    fill: currentColor;
 }
 
 .searchButton {
@@ -266,22 +261,13 @@
         margin-bottom: 1rem;
     }
     
-    .searchInputContainer {
+    .inputContainer {
         flex-direction: column;
         gap: 0.5rem;
     }
     
-    .inputField {
-        border-radius: var(--border-radius);
-        border: 1px solid var(--gold-accent);
-    }
-    
     .searchButton {
-        border-radius: var(--border-radius);
-        border: 1px solid var(--gold-accent);
-        width: 100%;
-        min-width: auto;
-        padding: 12px 1rem;
+        display: none;
     }
     
     .searchControls {
@@ -289,18 +275,31 @@
     }
     
     .controlsRow {
-        flex-direction: column;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
         gap: 1rem;
-        align-items: stretch;
     }
     
-    .modeSwitch {
-        justify-content: center;
+    .modeSwitchGroup {
+        align-items: flex-start;
+        flex: 0 1 auto;
+    }
+    
+    .modeSwitchLabel {
+        text-align: left;
+        margin-left: 0.4rem;
+    }
+    
+    .modeButtonRow {
+        justify-content: flex-start;
     }
     
     .actionButtons {
-        justify-content: center;
+        justify-content: flex-end;
         gap: 1rem;
+        flex: 0 1 auto;
     }
     
     .controlButton {
@@ -315,13 +314,22 @@
         padding: 12px;
     }
     
+    .controlsRow {
+        gap: 1rem;
+    }
+    
+    .modeButton {
+        padding: 4px 12px;
+        font-size: 0.9rem;
+    }
+    
     .actionButtons {
         gap: 0.5rem;
     }
     
     .controlButton {
-        width: 44px;
-        height: 44px;
+        width: 40px;
+        height: 40px;
     }
 }
 

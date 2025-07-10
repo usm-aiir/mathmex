@@ -223,7 +223,7 @@ export default function SearchPage() {
                 <div className="scroll-decoration top"></div>
                 <section className={styles.searchSection}>
                     <div className={styles.searchContainer}>
-                        <div className={styles.searchInputContainer}>
+                        <div className={styles.inputContainer}>
                             {/* Custom placeholder overlay */}
                             {!latex && (
                                 <div className={`${styles.placeholderOverlay} ${latex ? styles.hidden : ''}`}>

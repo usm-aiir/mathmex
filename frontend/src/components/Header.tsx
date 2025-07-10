@@ -31,7 +31,7 @@ const Header: FC = () => {
                                 aria-label="Switch to light mode"
                                 title="Light Mode"
                             >
-                                <Sun size={20} />
+                                <Sun className={styles.themeIcon} />
                             </button>
                         </div>
                     </div>
@@ -50,7 +50,7 @@ const Header: FC = () => {
                                 aria-label="Switch to dark mode"
                                 title="Dark Mode"
                             >
-                                <Moon size={20} />
+                                <Moon className={styles.themeIcon} />
                             </button>
                         </div>
                     </div>

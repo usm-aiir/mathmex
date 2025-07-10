@@ -14,7 +14,12 @@ const PAGES = [
     content: (
       <>
         <p className={styles.pageDescription}>
-          Your intelligent tool for searching mathematical expressions with natural language or LaTeX.
+          MathMex is a search engine designed for conversational mathematics, allowing users to search for mathematical
+          definitions and theorems.
+        </p>
+
+        <p className={styles.pageDescription}>
+          We draw data from various sources across the internet, ensuring you get the theorems and definitions that are most relevant to your equation or problem.
         </p>
         <div className={styles.featureList}>
           <div className={styles.featureItem}>
@@ -136,11 +141,11 @@ const HelpModal: React.FC<HelpModalProps> = ({ open, onClose }) => {
             Skip Tour
           </button>
           
-          <div className={styles.dots}>
+          <div className={styles.dotContainer}>
             {PAGES.map((_, i) => (
               <button
                 key={i}
-                className={`${styles.dot} ${i === page ? styles.activeDot : ''}`}
+                className={`${styles.dot} ${i === page ? styles.active : ''}`}
                 onClick={() => setPage(i)}
                 aria-label={`Go to page ${i + 1}`}
               />
@@ -159,7 +164,7 @@ const HelpModal: React.FC<HelpModalProps> = ({ open, onClose }) => {
               onClick={handleNext} 
               className={`${styles.navButton} ${styles.nextButton}`}
             >
-              {page === PAGES.length - 1 ? 'Finish' : 'Next'}
+              {page === PAGES.length - 1 ? 'Done' : 'Next'}
             </button>
           </div>
         </div>

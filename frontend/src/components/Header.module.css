@@ -100,6 +100,11 @@
     transform: rotate(45deg);
 }
 
+.themeIcon {
+    width: 20px;
+    height: 20px;
+}
+
 /* Tablet and smaller desktop */
 @media (max-width: 768px) {
     .header {
@@ -128,6 +133,11 @@
     .themeButton {
         width: 32px;
         height: 32px;
+    }
+    
+    .themeIcon {
+        width: 18px;
+        height: 18px;
     }
     
     .headerContent {
@@ -178,6 +188,11 @@
         height: 28px;
     }
     
+    .themeIcon {
+        width: 16px;
+        height: 16px;
+    }
+    
     .titleContainer {
         margin: 0 8px;
     }
@@ -205,6 +220,11 @@
     .themeButton {
         width: 24px;
         height: 24px;
+    }
+    
+    .themeIcon {
+        width: 14px;
+        height: 14px;
     }
     
     .headerContent {
