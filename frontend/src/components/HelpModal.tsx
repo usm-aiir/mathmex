@@ -28,11 +28,11 @@ const PAGES = [
           </div>
           <div className={styles.featureItem}>
             <span className={styles.featureIcon}>⌨️</span>
-            <span>Switch between text and math input</span>
+            <span>Search with plain English and written mathematics</span>
           </div>
           <div className={styles.featureItem}>
             <span className={styles.featureIcon}>🎯</span>
-            <span>Get precise mathematical results</span>
+            <span>Get precise results</span>
           </div>
         </div>
       </>
