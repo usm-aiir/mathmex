@@ -216,6 +216,20 @@ export default function SearchPage() {
         return () => el.removeEventListener("mode-change", handler);
     }, [mathFieldRef]);
 
+    // --- Handle Enter key in MathLiveField to trigger search ---
+    useEffect(() => {
+        const el = mathFieldRef.current?.fieldRef.current;
+        if (!el) return;
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                performSearch();
+            }
+        };
+        el.addEventListener("keydown", handleKeyDown);
+        return () => el.removeEventListener("keydown", handleKeyDown);
+    }, [performSearch]);
+
     // --- Render the search page ---
     return (
         <>
