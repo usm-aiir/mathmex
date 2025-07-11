@@ -54,9 +54,23 @@
 
 .resultTitle {
     font-size: 1.5rem;
-    margin-bottom: 0.8rem;
     color: var(--button-color);
     font-weight: 600;
+}
+
+.source {
+    font-size: 0.8rem;
+    color: var(--primary-alt);
+    font-weight: 300;
+}
+
+.source:hover {
+    color: var(--button-active-color);
+    text-decoration: underline;
+}
+
+:root[data-theme="dark"] .source:hover {
+    color: var(--primary-light);
 }
 
 .resultFormula {
@@ -72,6 +86,9 @@
 .MathJax {
     display: block !important;
     text-align: center;
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .resultDescription {

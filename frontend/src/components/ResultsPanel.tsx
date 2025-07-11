@@ -15,15 +15,19 @@ const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMe
             <h2 className={styles.resultsSectionTitle}>Results</h2>
             <div className={styles.resultsContainer}>
                 {isLoading ? (
-                    <div className="loading">Searching</div>
+                    <div className="loading">Searching...</div>
                 ) : results.length > 0 ? (
                     results.map((result, index) => (
                         <div key={index} className={styles.resultItem}>
                             <h3 className={styles.resultTitle}>{result.title}</h3>
+                            <a className={styles.source} href={result.link} target="_blank" rel="noopener noreferrer">
+                                {result.link}
+                            </a>
                             <div className={styles.resultFormula}>
-                                <MathJax dynamic>{`$$${result.body_text}$$`}</MathJax>
+                                <MathJax inline={false}>
+                                     {result.body_text}
+                                </MathJax>
                             </div>
-                            <p className={styles.resultDescription}>{result.link}</p>
                         </div>
                     ))
                 ) : (
