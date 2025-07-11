@@ -40,7 +40,6 @@
 math-field {
     width: 100%;
     min-height: 40px;
-    max-height: 50px;
     border-radius: var(--border-radius);
 }
 
@@ -265,10 +264,6 @@ math-field::part(menu-toggle) {
     .inputContainer {
         flex-direction: column;
         gap: 0.5rem;
-    }
-
-    math-field {
-        max-height: 40px;
     }
     
     .searchButton {
