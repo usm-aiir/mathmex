@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './HelpModal.module.css';
 import inputSwitchVideo from '../assets/input-mode-switch.mp4';
 import functionInsertionVideo from '../assets/function-insertion.mp4';
+import { Search, Keyboard, Goal } from "lucide-react";
 
 interface HelpModalProps {
   open: boolean;
@@ -23,15 +24,15 @@ const PAGES = [
         </p>
         <div className={styles.featureList}>
           <div className={styles.featureItem}>
-            <span className={styles.featureIcon}>🔍</span>
+            <span className={styles.featureIcon}><Search size={18}></Search></span>
             <span>Search theorems and formulas</span>
           </div>
           <div className={styles.featureItem}>
-            <span className={styles.featureIcon}>⌨️</span>
+            <span className={styles.featureIcon}><Keyboard size={18}></Keyboard></span>
             <span>Search with plain English and written mathematics</span>
           </div>
           <div className={styles.featureItem}>
-            <span className={styles.featureIcon}>🎯</span>
+            <span className={styles.featureIcon}><Goal size={18}></Goal></span>
             <span>Get precise results</span>
           </div>
         </div>

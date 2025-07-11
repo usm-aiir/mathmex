@@ -3,7 +3,7 @@ import { useEffect, useRef, forwardRef, useImperativeHandle } from "react"
 interface MathLiveFieldProps {
     value: string
     onChange: (latex: string) => void
-    className?: string
+    placeholder: string
 }
 
 export interface MathLiveFieldHandle {
@@ -12,7 +12,7 @@ export interface MathLiveFieldHandle {
 }
 
 const MathLiveField = forwardRef<MathLiveFieldHandle, MathLiveFieldProps>(
-    ({ value, onChange, className }, ref) => {
+    ({ value, onChange, placeholder }, ref) => {
         const fieldRef = useRef<any>(null)
 
         useImperativeHandle(ref, () => ({
@@ -48,10 +48,9 @@ const MathLiveField = forwardRef<MathLiveFieldHandle, MathLiveFieldProps>(
         return (
             <math-field
                 ref={fieldRef}
-                className={className}
-                style={{ width: "100%", minHeight: "40px", fontSize: "1.2rem" }}
                 virtualkeyboardmode="manual"
                 textmode="true"
+                placeholder={placeholder}
             ></math-field>
         )
     }
@@ -71,7 +70,7 @@ declare global {
                 ref?: React.Ref<any>
                 virtualkeyboardmode?: string
                 textmode?: string
-                className?: string
+                placeholder?: string
             }
         }
     }

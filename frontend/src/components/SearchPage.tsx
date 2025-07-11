@@ -238,18 +238,12 @@ export default function SearchPage() {
                 <section className={styles.searchSection}>
                     <div className={styles.searchContainer}>
                         <div className={styles.inputContainer}>
-                            {/* Custom placeholder overlay */}
-                            {!latex && (
-                                <div className={`${styles.placeholderOverlay} ${latex ? styles.hidden : ''}`}>
-                                    Search for definitions, theorems, and proofs...
-                                </div>
-                            )}
                             {/* MathLiveField for inline text+math */}
                             <MathLiveField
                                 ref={mathFieldRef}
                                 value={latex}
                                 onChange={setLatex}
-                                className={styles.inputField}
+                                placeholder="\mathrm{Search\ mathematics...}"
                             />
                             <button className={styles.searchButton} onClick={performSearch} disabled={isLoading}>
                                 <Search size={18} />
