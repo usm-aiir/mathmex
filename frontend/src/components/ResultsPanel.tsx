@@ -21,9 +21,9 @@ const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMe
                         <div key={index} className={styles.resultItem}>
                             <h3 className={styles.resultTitle}>{result.title}</h3>
                             <div className={styles.resultFormula}>
-                                <MathJax dynamic>{`$$${result.formula}$$`}</MathJax>
+                                <MathJax dynamic>{`$$${result.body_text}$$`}</MathJax>
                             </div>
-                            <p className={styles.resultDescription}>{result.description}</p>
+                            <p className={styles.resultDescription}>{result.link}</p>
                         </div>
                     ))
                 ) : (

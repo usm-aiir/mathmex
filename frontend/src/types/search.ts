@@ -5,8 +5,7 @@ export interface SearchHistoryItem {
 
 export interface SearchResult {
     title: string
-    formula: string
-    description: string
-    tags: string[]
-    year: string
+    body_text: string
+    link: string
+    score: string
 }
