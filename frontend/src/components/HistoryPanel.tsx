@@ -1,6 +1,5 @@
 import styles from "./HistoryPanel.module.css"
-import { FC } from "react"
-import { MathJax } from "better-react-mathjax"
+import {FC, useEffect} from "react"
 import type { SearchHistoryItem } from "../types/search"
 
 interface SearchHistoryDisplayProps {
@@ -16,6 +15,15 @@ const HistoryPanel: FC<SearchHistoryDisplayProps> = ({
                                                                        onHistoryItemClick,
                                                                        formatDate,
                                                                    }) => {
+
+    useEffect(() => {
+        if (history.length > 0) {
+            import("mathlive").then(mathlive => {
+                mathlive.renderMathInDocument();
+            });
+        }
+    }, [history]);
+
     return (
         <div className={styles.searchHistory}>
             <div className={styles.historyHeader}>
@@ -36,7 +44,7 @@ const HistoryPanel: FC<SearchHistoryDisplayProps> = ({
                             title={`Search for: ${item.latex}\nSearched: ${formatDate(new Date(item.timestamp))}`}
                         >
                             <div className={styles.historyFormula}>
-                                <MathJax inline dynamic>{`\$$${item.latex}\$$`}</MathJax>
+                                <p>{`\$$${item.latex}\$$`}</p>
                             </div>
                             <div className="history-time">{formatDate(new Date(item.timestamp))}</div>
                         </div>
