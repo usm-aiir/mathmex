@@ -30,9 +30,21 @@ const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMe
                             <a className={styles.source} href={result.link} target="_blank" rel="noopener noreferrer">
                                 {result.link}
                             </a>
-                            <p>
-                                {result.body_text}
-                            </p>
+
+                            {result['media_type'] === "video" ? (
+                                <div className={styles.resultDescription}>
+                                    <iframe
+                                        src={`https://www.youtube.com/embed/${extractYouTubeId(result.link)}`}
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                        title={result.title}
+                                    ></iframe>
+                                </div>
+                            ) : (
+                                <p className={styles.resultDescription}>
+                                    {result.body_text}
+                                </p>
+                            )}
                         </div>
                     ))
                 ) : (
@@ -44,3 +56,13 @@ const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMe
 }
 
 export default ResultsPanel
+
+/**
+ * Extracts the YouTube video ID from a typical YouTube URL.
+ * e.g. https://www.youtube.com/watch?v=abcd1234 -> abcd1234
+ */
+function extractYouTubeId(url: string): string {
+    const regex = /(?:youtube\.com\/.*v=|youtu\.be\/)([^&\n?#]+)/;
+    const match = url.match(regex);
+    return match ? match[1] : "";
+}

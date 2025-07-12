@@ -1,6 +1,9 @@
 # Import Flask and CORS libraries
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from opensearchpy import OpenSearch
+from sentence_transformers import SentenceTransformer
+import saytex
 import re
 
 
@@ -9,6 +12,44 @@ app = Flask(__name__)
 
 # Enable Cross-Origin Resource Sharing (CORS) so the frontend (React) can communicate with this backend
 CORS(app)
+
+# OpenSearch client
+client = OpenSearch(
+    hosts=[{'host': 'localhost', 'port': 9200}],
+    http_auth=('admin', 'Str0ngP0ssw0rd'),
+    use_ssl=True,
+    verify_certs=False,
+    ssl_show_warn=False
+)
+
+_model = None
+def get_model():
+    global _model
+    if _model is None:
+        _model = SentenceTransformer('/home/global/dev/MathMex/backend/models/arq1thru3-finetuned-all-mpnet-jul-27')
+    return _model
+
+def clean_for_mathlive(text: str) -> str:
+    """
+    Replaces single $...$ wrappers with $$...$$ for MathLive consistency,
+    while leaving existing $$...$$ untouched.
+    """
+    # Use a regex to find single $...$ not already part of $$...$$
+    # Matches a single $...$ with no extra $ next to it
+    pattern = re.compile(r'(?<!\$)\$(?!\$)(.+?)(?<!\$)\$(?!\$)')
+
+    return pattern.sub(r'$$\1$$', text)
+
+def delete_dups(list, unique_key="body_text"):
+    seen_ids = set()
+    unique_dicts = []
+
+    for d in list:
+        if d[unique_key] not in seen_ids:
+            seen_ids.add(d[unique_key])
+            unique_dicts.append(d)
+
+    return unique_dicts
 
 # Route for the root URL
 @app.route("/")
@@ -25,29 +66,75 @@ def home():
 @app.route("/search", methods=["POST"])
 def search():
     data = request.get_json()
-    latex = data.get("latex", "")
-    function_latex = data.get("functionLatex", "")
+    query = data.get('latex', '')
+    sources = data.get('sources', [])
+    media_types = data.get('mediaTypes', [])
 
-    # Convert LaTeX to storage format
-    formatted = latex_to_storage_format(latex)
+    if not query:
+        return jsonify({'error': 'No query provided'}), 400
 
-    app.config["last_latex"] = formatted
-    app.config["last_function_latex"] = function_latex
+    # Define available sources and their corresponding indices
+    source_to_index = {
+        'arxiv': 'mathmex_arxiv',
+        'math-overflow': 'mathmex_math-overflow',
+        'math-stack-exchange': 'mathmex_math-stack-exchange',
+        'mathematica': 'mathmex_mathematica',
+        'wikipedia': 'mathmex_wikipedia',
+        'youtube': 'mathmex_youtube'
+    }
 
-    print(f"Formatted for storage: {formatted}")
+    # Filter indices based on selected sources
+    if sources:
+        indices = [source_to_index[source] for source in sources if source in source_to_index]
+    else:
+        indices = list(source_to_index.values())
 
-    return jsonify({
-        "results": [
-            {
-                "title": "Sample Result",
-                "formula": formatted if formatted else None,
-                "functionLatex": function_latex,
-                "description": "This is a mock result.",
-                "tags": ["example"],
-                "year": "2025"
+    model = get_model()
+    query_vec = model.encode(query).tolist()
+
+    # Build query with filters
+    query_body = {
+        "size": 10,
+        "query": {
+            "bool": {
+                "must": [
+                    {
+                        "knn": {
+                            "body_vector": {
+                                "vector": query_vec,
+                                "k": 10
+                            }
+                        }
+                    }
+                ]
             }
+        }
+    }
+
+    # Add media type filter if specified
+    if media_types:
+        query_body["query"]["bool"]["filter"] = [
+            {"terms": {"media_type": media_types}}
         ]
-    })
+
+    response = client.search(
+        index=indices,
+        body=query_body
+    )
+
+    results = []
+    for hit in response['hits']['hits']:
+        source = hit['_source']
+        results.append({
+            'title': source.get('title'),
+            'media_type': source.get('media_type'),
+            'body_text': clean_for_mathlive(source.get("body_text")),
+            'link': source.get('link'),
+            'score': source.get('_score')
+        })
+
+    results = delete_dups(results, unique_key="body_text")
+    return jsonify({'results': results})
 
 @app.route('/speech-to-latex', methods=['POST'])
 def speech_to_latex():

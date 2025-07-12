@@ -110,7 +110,7 @@
 .actionButtons {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .controlButton {
@@ -126,6 +126,7 @@
     cursor: pointer;
     transition: all 0.3s;
     box-shadow: 0 3px 8px var(--glow-accent);
+    position: relative;
 }
 
 .controlButton.listening {
@@ -137,6 +138,23 @@
     color: var(--primary-light);
     transform: translate(-2px, -4px);
     box-shadow: 2px 4px 3px rgba(0, 0, 0, 0.5);
+}
+
+.filterBadge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: var(--gold-accent);
+    color: var(--container-color);
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    border: 2px solid var(--container-color);
 }
 
 .modeSwitchGroup {
@@ -289,7 +307,7 @@
     
     .actionButtons {
         justify-content: flex-end;
-        gap: 1rem;
+        gap: 0.8rem;
         flex: 0 1 auto;
     }
     
@@ -329,7 +347,7 @@
     }
     
     .actionButtons {
-        gap: 0.5rem;
+        gap: 0.4rem;
     }
     
     .controlButton {

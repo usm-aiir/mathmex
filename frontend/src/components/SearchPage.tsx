@@ -1,11 +1,12 @@
 /// <reference path="../types/window.d.ts" />
 
 import styles from "./SearchPage.module.css";
-import type { SearchResult, SearchHistoryItem } from "../types/search";
+import type { SearchResult, SearchHistoryItem, SearchFilters } from "../types/search";
 import { useState, useEffect, useRef, useCallback, ReactNode } from "react"
-import { History, Mic, Search, Square } from "lucide-react"
+import { History, Mic, Search, Square, Filter } from "lucide-react"
 import HistoryPanel from "./HistoryPanel.tsx"
 import ResultsPanel from "./ResultsPanel.tsx"
+import FilterModal from "./FilterModal.tsx"
 import { formatDate } from "../lib/utils.ts"
 import "mathlive"
 
@@ -22,6 +23,7 @@ export default function SearchPage() {
     // --- State Hooks ---
     const [latex, setLatex] = useState<string>(initialLatex)
     const [isHistoryVisible, setIsHistoryVisible] = useState<boolean>(false)
+    const [isFilterVisible, setIsFilterVisible] = useState<boolean>(false)
     const [isListening, setIsListening] = useState<boolean>(false)
     const [transcript, setTranscript] = useState<string>("")
     const [searchResults, setSearchResults] = useState<SearchResult[]>([])
@@ -29,6 +31,10 @@ export default function SearchPage() {
     const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([])
     const [placeholderMessage, setPlaceholderMessage] = useState<ReactNode>(null)
     const [mode, setMode] = useState<"math" | "text">("text")
+    const [filters, setFilters] = useState<SearchFilters>({
+        sources: [],
+        mediaTypes: []
+    })
 
     const mathFieldRef = useRef<any>(null)
     const recognitionRef = useRef<SpeechRecognition | null>(null)
@@ -169,6 +175,8 @@ export default function SearchPage() {
                 query: "",
                 functionLatex: "",
                 latex: currentLatex,
+                sources: filters.sources,
+                mediaTypes: filters.mediaTypes,
             }),
         })
             .then((res) => res.json())
@@ -180,7 +188,7 @@ export default function SearchPage() {
                 setSearchResults([])
                 setIsLoading(false)
             })
-    }, [latex, searchHistory, isHistoryVisible])
+    }, [latex, searchHistory, isHistoryVisible, filters])
 
     // --- Fill input with example and trigger search ---
     const handleExampleClick = (formula: string) => {
@@ -300,6 +308,18 @@ export default function SearchPage() {
                                         {isListening ? <Square size={20} strokeWidth={2.5} /> : <Mic size={20} />}
                                     </button>
                                     <button
+                                        className={`${styles.controlButton} ${(filters.sources.length > 0 || filters.mediaTypes.length > 0) ? styles.active : ""}`}
+                                        aria-label="Search filters"
+                                        onClick={() => setIsFilterVisible(!isFilterVisible)}
+                                    >
+                                        <Filter size={20} />
+                                        {(filters.sources.length > 0 || filters.mediaTypes.length > 0) && (
+                                            <span className={styles.filterBadge}>
+                                                {filters.sources.length + filters.mediaTypes.length}
+                                            </span>
+                                        )}
+                                    </button>
+                                    <button
                                         className={styles.controlButton}
                                         aria-label="Search history"
                                         onClick={() => setIsHistoryVisible(!isHistoryVisible)}
@@ -324,6 +344,14 @@ export default function SearchPage() {
 
                 {/* Results panel */}
                 <ResultsPanel results={searchResults} isLoading={isLoading} placeholderMessage={placeholderMessage} />
+
+                {/* Filter Modal */}
+                <FilterModal
+                    isOpen={isFilterVisible}
+                    onClose={() => setIsFilterVisible(false)}
+                    filters={filters}
+                    onFiltersChange={setFilters}
+                />
 
                 <div className="scroll-decoration bottom"></div>
             </main>

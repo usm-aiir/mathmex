@@ -3,3 +3,12 @@
 
 # Ignore dependency installations for front-end
 frontend/node_modules/
+
+# Data
+backend/data/jsonl
+backend/data/tsvs
+backend/data/vectors
+
+# Vectorization/embedding model
+backend/models/*
+
