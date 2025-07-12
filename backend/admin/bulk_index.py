@@ -11,8 +11,9 @@ OPENSEARCH_USER = 'admin'
 OPENSEARCH_PASSWORD = 'Str0ngP0ssw0rd'
 
 # Change as needed
-INDEX_NAME = 'mathmex_'
-JSONL_FILE_PATH = 'combined_data.jsonl'
+SOURCE_NAME = 'arxiv'
+INDEX_NAME = f'mathmex_{SOURCE_NAME}'
+JSONL_FILE_PATH = f'../data/jsonl/{SOURCE_NAME}.jsonl'
 
 # Suppress the security warning from using a self-signed cert
 warnings.filterwarnings('ignore', message='Unverified HTTPS request')

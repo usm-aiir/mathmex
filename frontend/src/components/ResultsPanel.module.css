@@ -71,13 +71,18 @@
     color: var(--primary-light);
 }
 
-.resultItem p {
+.resultItem p, .resultItem iframe {
     margin: 1.5rem 0;
     padding: 1.2rem;
     background-color: rgba(255, 255, 255, 0.2);
     border-radius: var(--border-radius);
     border: 1px solid var(--gold-accent);
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.resultItem iframe {
+    aspect-ratio: 16 / 9;
+    width: 100%;
 }
 
 /* Tablet and smaller desktop */

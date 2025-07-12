@@ -1,15 +1,11 @@
 from opensearchpy import OpenSearch
-from mappings import mapping
-import json
 
 # --- CONFIG ---
 HOST = 'localhost'
 PORT = 9200
 USER = 'admin'
 PASSWORD = 'Str0ngP0ssw0rd'
-
-# Change as needed
-INDEX_NAME = 'mathmex_wikipedia'
+INDEX_NAME = 'mathmex_math-stack-exchange'
 
 # --- Connect ---
 client = OpenSearch(
@@ -20,10 +16,9 @@ client = OpenSearch(
     ssl_show_warn=False
 )
 
-# --- Create the index ---
+# --- Delete the entire index ---
 if client.indices.exists(index=INDEX_NAME):
-    print(f"Index '{INDEX_NAME}' already exists.")
+    client.indices.delete(index=INDEX_NAME)
+    print(f"Deleted index '{INDEX_NAME}'.")
 else:
-    response = client.indices.create(index=INDEX_NAME, body=mapping)
-    print(f"Created index '{INDEX_NAME}':")
-    print(json.dumps(response, indent=2))
+    print(f"Index '{INDEX_NAME}' does not exist.")
