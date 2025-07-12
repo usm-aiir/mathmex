@@ -129,6 +129,7 @@
 
 .filterItem:hover {
     background-color: var(--button-active-color);
+    color: var(--primary-light);
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }

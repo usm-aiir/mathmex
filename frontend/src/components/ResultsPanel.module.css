@@ -60,6 +60,8 @@
     font-size: 0.8rem;
     color: var(--primary-alt);
     font-weight: 300;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
 }
 
 .source:hover {
@@ -71,9 +73,12 @@
     color: var(--primary-light);
 }
 
+.resultItem p {
+    padding: 1.2rem;
+}
+
 .resultItem p, .resultItem iframe {
     margin: 1.5rem 0;
-    padding: 1.2rem;
     background-color: rgba(255, 255, 255, 0.2);
     border-radius: var(--border-radius);
     border: 1px solid var(--gold-accent);
@@ -88,7 +93,6 @@
 /* Tablet and smaller desktop */
 @media (max-width: 768px) {
     .resultsSection {
-        padding: 1.5rem;
         margin-top: 1.5rem;
     }
     
@@ -120,7 +124,6 @@
 /* Mobile phones */
 @media (max-width: 480px) {
     .resultsSection {
-        padding: 1rem;
         margin-top: 1rem;
     }
     
