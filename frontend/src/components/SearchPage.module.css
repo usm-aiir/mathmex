@@ -261,11 +261,6 @@
         margin-bottom: 1rem;
     }
     
-    .inputContainer {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    
     .searchControls {
         margin-top: 1.5rem;
     }
