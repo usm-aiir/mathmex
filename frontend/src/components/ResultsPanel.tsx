@@ -1,6 +1,5 @@
 import styles from "./ResultsPanel.module.css"
-import { FC, ReactNode } from "react"
-import { MathJax } from "better-react-mathjax"
+import { FC, ReactNode, useEffect } from "react"
 import type { SearchResult } from "../types/search"
 
 interface ResultsPanelProps {
@@ -10,6 +9,14 @@ interface ResultsPanelProps {
 }
 
 const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMessage }) => {
+    useEffect(() => {
+        if (results.length > 0) {
+            import("mathlive").then(mathlive => {
+                mathlive.renderMathInDocument();
+            });
+        }
+    }, [results]);
+
     return (
         <section className={styles.resultsSection}>
             <h2 className={styles.resultsSectionTitle}>Results</h2>
@@ -23,11 +30,9 @@ const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMe
                             <a className={styles.source} href={result.link} target="_blank" rel="noopener noreferrer">
                                 {result.link}
                             </a>
-                            <div className={styles.resultFormula}>
-                                <MathJax inline={false}>
-                                     {result.body_text}
-                                </MathJax>
-                            </div>
+                            <p>
+                                {result.body_text}
+                            </p>
                         </div>
                     ))
                 ) : (

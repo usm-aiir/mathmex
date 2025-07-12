@@ -37,23 +37,23 @@
 }
 
 /* MathLive styling */
-math-field {
+.inputContainer math-field {
     width: 100%;
     min-height: 40px;
     border-radius: var(--border-radius);
 }
 
-math-field:focus-within {
+.inputContainer math-field:focus-within {
     outline: 2px solid var(--primary-dark);
     outline-offset: -3px;
 }
 
-math-field::part(placeholder) {
+.inputContainer math-field::part(placeholder) {
     color: rgba(0, 0, 0, 0.2);
 }
 
-math-field::part(virtual-keyboard-toggle),
-math-field::part(menu-toggle) {
+.inputContainer math-field::part(virtual-keyboard-toggle),
+.inputContainer math-field::part(menu-toggle) {
     color: var(--primary-dark);
 }
 
@@ -264,10 +264,6 @@ math-field::part(menu-toggle) {
     .inputContainer {
         flex-direction: column;
         gap: 0.5rem;
-    }
-    
-    .searchButton {
-        display: none;
     }
     
     .searchControls {

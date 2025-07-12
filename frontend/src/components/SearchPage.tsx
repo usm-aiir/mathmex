@@ -7,13 +7,12 @@ import { History, Mic, Search, Square } from "lucide-react"
 import HistoryPanel from "./HistoryPanel.tsx"
 import ResultsPanel from "./ResultsPanel.tsx"
 import { formatDate } from "../lib/utils.ts"
-import MathLiveField, { MathLiveFieldHandle } from "./MathLiveField"
 import "mathlive"
 
 const API_BASE =
-    process.env.NODE_ENV === "development"
-        ? "http://localhost:5000"
-        : "https://api.mathmex.com";
+    // process.env.NODE_ENV === "development"
+    //     ? "http://localhost:5000"
+        "https://api.mathmex.com";
 
 export default function SearchPage() {
     // --- Initialize search param from URL ---
@@ -31,7 +30,7 @@ export default function SearchPage() {
     const [placeholderMessage, setPlaceholderMessage] = useState<ReactNode>(null)
     const [mode, setMode] = useState<"math" | "text">("text")
 
-    const mathFieldRef = useRef<MathLiveFieldHandle>(null)
+    const mathFieldRef = useRef<any>(null)
     const recognitionRef = useRef<SpeechRecognition | null>(null)
 
     // --- Send transcript to backend when listening stops ---
@@ -128,7 +127,7 @@ export default function SearchPage() {
             .then((res) => res.json())
             .then((data) => {
                 if (data.latex && mathFieldRef.current) {
-                    mathFieldRef.current.insertAtCursor(data.latex)
+                    mathFieldRef.current.insert(data.latex)
                 }
             })
             .catch((err) => {
@@ -155,7 +154,7 @@ export default function SearchPage() {
 
     // --- Main search function: sends LaTeX to backend ---
     const performSearch = useCallback(() => {
-        const currentLatex = latex.trim();
+        const currentLatex = mathFieldRef.current?.value?.trim() ?? "";
         if (!currentLatex) return;
 
         setIsLoading(true)
@@ -207,7 +206,7 @@ export default function SearchPage() {
 
     // --- Sync mode state with MathLiveField events ---
     useEffect(() => {
-        const el = mathFieldRef.current?.fieldRef.current;
+        const el = mathFieldRef.current;
         if (!el) return;
         const handler = (evt: any) => setMode(evt.detail.mode);
         el.addEventListener("mode-change", handler);
@@ -218,7 +217,7 @@ export default function SearchPage() {
 
     // --- Handle Enter key in MathLiveField to trigger search ---
     useEffect(() => {
-        const el = mathFieldRef.current?.fieldRef.current;
+        const el = mathFieldRef.current;
         if (!el) return;
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Enter") {
@@ -239,12 +238,10 @@ export default function SearchPage() {
                     <div className={styles.searchContainer}>
                         <div className={styles.inputContainer}>
                             {/* MathLiveField for inline text+math */}
-                            <MathLiveField
+                            <math-field
                                 ref={mathFieldRef}
-                                value={latex}
-                                onChange={setLatex}
                                 placeholder="\mathrm{Search\ mathematics...}"
-                            />
+                            ></math-field>
                             <button className={styles.searchButton} onClick={performSearch} disabled={isLoading}>
                                 <Search size={18} />
                                 <span className={styles.searchButtonText}>{isLoading ? "Searching..." : "Search"}</span>
@@ -262,7 +259,7 @@ export default function SearchPage() {
                                             className={`${styles.modeButton} ${mode === "text" ? styles.active : ""}`}
                                             onClick={() => {
                                                 if (mode !== "text") {
-                                                    const el = mathFieldRef.current?.fieldRef.current;
+                                                    const el = mathFieldRef.current;
                                                     if (el && el.executeCommand) {
                                                         el.executeCommand("switchMode", "text");
                                                         el.focus();
@@ -279,7 +276,7 @@ export default function SearchPage() {
                                             className={`${styles.modeButton} ${mode === "math" ? styles.active : ""}`}
                                             onClick={() => {
                                                 if (mode !== "math") {
-                                                    const el = mathFieldRef.current?.fieldRef.current;
+                                                    const el = mathFieldRef.current;
                                                     if (el && el.executeCommand) {
                                                         el.executeCommand("switchMode", "math");
                                                         el.focus();
