@@ -21,21 +21,6 @@
     position: relative;
 }
 
-.placeholderOverlay {
-    position: absolute;
-    top: 8px;
-    left: 6px;
-    color: rgba(0, 0, 0, 0.3);
-    font-size: 1.2rem;
-    pointer-events: none;
-    z-index: 1;
-    transition: opacity 0.2s ease;
-}
-
-.placeholderOverlay.hidden {
-    opacity: 0;
-}
-
 /* MathLive styling */
 .inputContainer math-field {
     width: 100%;
@@ -221,6 +206,11 @@
     text-align: center;
     color: var(--primary-alt);
     padding: 2rem 0;
+    background-color: var(--container-color);
+    margin: 2rem 0 2rem 0;
+    border: 2px solid var(--gold-accent);
+    box-shadow: var(--box-shadow);
+    border-radius: 8px;
 }
 
 /* Tablet and smaller desktop */

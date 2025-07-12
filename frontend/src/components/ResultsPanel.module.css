@@ -1,9 +1,5 @@
 .resultsSection {
-    background-color: var(--container-color);
-    border-radius: 8px;
-    border: 1px solid var(--gold-accent);
-    padding: 2rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: transparent;
     margin-top: 2rem;
     font-family: var(--font-cormorant-garamond);
 }
@@ -40,16 +36,13 @@
 }
 
 .resultItem {
-    margin-bottom: 2rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid var(--gold-accent);
+    margin: 2rem 0 2rem 0;
+    padding: 2rem;
+    border: 2px solid var(--gold-accent);
+    border-radius: 8px;
+    box-shadow: var(--box-shadow);
     position: relative;
-}
-
-.resultItem:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
+    background-color: var(--container-color);
 }
 
 .resultTitle {
