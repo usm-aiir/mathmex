@@ -67,31 +67,59 @@ def home():
 def search():
     data = request.get_json()
     query = data.get('latex', '')
+    sources = data.get('sources', [])
+    media_types = data.get('mediaTypes', [])
 
     if not query:
         return jsonify({'error': 'No query provided'}), 400
 
+    # Define available sources and their corresponding indices
+    source_to_index = {
+        'arxiv': 'mathmex_arxiv',
+        'math-overflow': 'mathmex_math-overflow',
+        'math-stack-exchange': 'mathmex_math-stack-exchange',
+        'mathematica': 'mathmex_mathematica',
+        'wikipedia': 'mathmex_wikipedia',
+        'youtube': 'mathmex_youtube'
+    }
+
+    # Filter indices based on selected sources
+    if sources:
+        indices = [source_to_index[source] for source in sources if source in source_to_index]
+    else:
+        indices = list(source_to_index.values())
+
     model = get_model()
     query_vec = model.encode(query).tolist()
-    response = client.search(
-        index=['mathmex_arxiv',
-               'mathmex_math-overflow',
-               'mathmex_math-stack-exchange',
-               'mathmex_mathematica',
-               'mathmex_wikipedia',
-               'mathmex_youtube'
-            ],
-        body={
-            "size": 10,
-            "query": {
-                "knn": {
-                    "body_vector": {
-                        "vector": query_vec,
-                        "k": 10
+
+    # Build query with filters
+    query_body = {
+        "size": 10,
+        "query": {
+            "bool": {
+                "must": [
+                    {
+                        "knn": {
+                            "body_vector": {
+                                "vector": query_vec,
+                                "k": 10
+                            }
+                        }
                     }
-                }
+                ]
             }
         }
+    }
+
+    # Add media type filter if specified
+    if media_types:
+        query_body["query"]["bool"]["filter"] = [
+            {"terms": {"media_type": media_types}}
+        ]
+
+    response = client.search(
+        index=indices,
+        body=query_body
     )
 
     results = []
