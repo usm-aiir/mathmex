@@ -66,9 +66,11 @@ def home():
 @app.route("/search", methods=["POST"])
 def search():
     data = request.get_json()
-    query = data.get('latex', '')
+    query = data.get('query', '')
     sources = data.get('sources', [])
     media_types = data.get('mediaTypes', [])
+    from_ = int(data.get('from', 0))
+    size = int(data.get('size', 10))
 
     if not query:
         return jsonify({'error': 'No query provided'}), 400
@@ -94,7 +96,8 @@ def search():
 
     # Build query with filters
     query_body = {
-        "size": 10,
+        "size": size,
+        "from": from_,
         "query": {
             "bool": {
                 "must": [
@@ -102,7 +105,7 @@ def search():
                         "knn": {
                             "body_vector": {
                                 "vector": query_vec,
-                                "k": 10
+                                "k": 1000  # Fixed upper limit for KNN
                             }
                         }
                     }
@@ -134,7 +137,9 @@ def search():
         })
 
     results = delete_dups(results, unique_key="body_text")
-    return jsonify({'results': results})
+    # For KNN, total is capped at k (1000)
+    total = 1000
+    return jsonify({'results': results, 'total': total})
 
 @app.route('/speech-to-latex', methods=['POST'])
 def speech_to_latex():

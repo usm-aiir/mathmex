@@ -35,6 +35,9 @@ export default function SearchPage() {
         sources: [],
         mediaTypes: []
     })
+    const [currentPage, setCurrentPage] = useState<number>(1)
+    const [totalResults, setTotalResults] = useState<number>(0)
+    const pageSize = 5
 
     const mathFieldRef = useRef<any>(null)
     const recognitionRef = useRef<SpeechRecognition | null>(null)
@@ -159,7 +162,7 @@ export default function SearchPage() {
     }
 
     // --- Main search function: sends LaTeX to backend ---
-    const performSearch = useCallback(() => {
+    const performSearch = useCallback((page = 1) => {
         const currentLatex = mathFieldRef.current?.value?.trim() ?? "";
         if (!currentLatex) return;
 
@@ -168,24 +171,28 @@ export default function SearchPage() {
         addToHistory(currentLatex)
         if (isHistoryVisible) setIsHistoryVisible(false)
 
+        const from = (page - 1) * pageSize
+
         fetch(`${API_BASE}/search`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                query: "",
-                functionLatex: "",
-                latex: currentLatex,
+                query: currentLatex,
                 sources: filters.sources,
                 mediaTypes: filters.mediaTypes,
+                from,
+                size: pageSize,
             }),
         })
             .then((res) => res.json())
             .then((data) => {
                 setSearchResults(data.results || [])
+                setTotalResults(data.total || 0)
                 setIsLoading(false)
             })
             .catch(() => {
                 setSearchResults([])
+                setTotalResults(0)
                 setIsLoading(false)
             })
     }, [latex, searchHistory, isHistoryVisible, filters])
@@ -237,6 +244,28 @@ export default function SearchPage() {
         return () => el.removeEventListener("keydown", handleKeyDown);
     }, [performSearch]);
 
+    // When currentPage or filters change, trigger search
+    useEffect(() => {
+        performSearch(currentPage)
+    }, [currentPage, filters])
+
+    // When a new search is triggered (not page change), reset to page 1
+    const handleNewSearch = () => {
+        setCurrentPage(1)
+        performSearch(1)
+    }
+
+    const handleNextPage = () => {
+        if (currentPage < Math.ceil(totalResults / pageSize)) {
+            setCurrentPage(currentPage + 1)
+        }
+    }
+    const handlePrevPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1)
+        }
+    }
+
     // --- Render the search page ---
     return (
         <>
@@ -250,7 +279,7 @@ export default function SearchPage() {
                                 ref={mathFieldRef}
                                 placeholder="\mathrm{Search\ mathematics...}"
                             ></math-field>
-                            <button className={styles.searchButton} onClick={performSearch} disabled={isLoading}>
+                            <button className={styles.searchButton} onClick={handleNewSearch} disabled={isLoading}>
                                 <Search size={18} />
                                 <span className={styles.searchButtonText}>{isLoading ? "Searching..." : "Search"}</span>
                             </button>
@@ -343,7 +372,16 @@ export default function SearchPage() {
                 </section>
 
                 {/* Results panel */}
-                <ResultsPanel results={searchResults} isLoading={isLoading} placeholderMessage={placeholderMessage} />
+                <ResultsPanel
+                    results={searchResults}
+                    isLoading={isLoading}
+                    placeholderMessage={placeholderMessage}
+                    currentPage={currentPage}
+                    totalResults={totalResults}
+                    pageSize={pageSize}
+                    onNextPage={handleNextPage}
+                    onPrevPage={handlePrevPage}
+                />
 
                 {/* Filter Modal */}
                 <FilterModal

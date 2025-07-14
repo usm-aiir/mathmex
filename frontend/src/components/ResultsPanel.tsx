@@ -1,14 +1,20 @@
 import styles from "./ResultsPanel.module.css"
 import { FC, ReactNode, useEffect } from "react"
+import { Download, ArrowLeft, ArrowRight } from "lucide-react"
 import type { SearchResult } from "../types/search"
 
 interface ResultsPanelProps {
     results: SearchResult[]
     isLoading: boolean
     placeholderMessage: ReactNode
+    currentPage: number
+    totalResults: number
+    pageSize: number
+    onNextPage: () => void
+    onPrevPage: () => void
 }
 
-const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMessage }) => {
+const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMessage, currentPage, totalResults, pageSize, onNextPage, onPrevPage }) => {
     useEffect(() => {
         if (results.length > 0) {
             import("mathlive").then(mathlive => {
@@ -16,6 +22,8 @@ const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMe
             });
         }
     }, [results]);
+
+    const totalPages = Math.max(1, Math.ceil(totalResults / pageSize));
 
     return (
         <section className={styles.resultsSection}>
@@ -30,8 +38,7 @@ const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMe
                             <a className={styles.source} href={result.link} target="_blank" rel="noopener noreferrer">
                                 {result.link}
                             </a>
-
-                            {result['media_type'] === "video" ? (
+                            {result.media_type === "video" ? (
                                 <div className={styles.resultDescription}>
                                     <iframe
                                         src={`https://www.youtube.com/embed/${extractYouTubeId(result.link)}`}
@@ -45,12 +52,52 @@ const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMe
                                     {result.body_text}
                                 </p>
                             )}
+                            {result.media_type === "pdf" && (
+                                <a
+                                    className={styles.downloadButton}
+                                    href={result.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    download
+                                >
+                                    <Download size={16} />
+                                    <span>Download PDF</span>
+                                </a>
+                            )}
                         </div>
                     ))
                 ) : (
                     placeholderMessage
                 )}
             </div>
+            {/* Pagination Controls */}
+            {totalResults > pageSize && (
+                <div className={styles.pagination}>
+                    <button
+                        className={styles.pageArrow}
+                        onClick={onPrevPage}
+                        disabled={currentPage === 1}
+                        aria-label="Previous page"
+                    >
+                        <ArrowLeft size={20} />
+                    </button>
+                    <div className={styles.resultsRangeInfo}>
+                        {(() => {
+                            const start = (currentPage - 1) * pageSize + 1;
+                            const end = Math.min(currentPage * pageSize, totalResults);
+                            return `Showing results ${start}-${end}`;
+                        })()}
+                    </div>
+                    <button
+                        className={styles.pageArrow}
+                        onClick={onNextPage}
+                        disabled={currentPage === totalPages}
+                        aria-label="Next page"
+                    >
+                        <ArrowRight size={20} />
+                    </button>
+                </div>
+            )}
         </section>
     )
 }
