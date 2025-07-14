@@ -172,9 +172,7 @@ export default function SearchPage() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                query: "",
-                functionLatex: "",
-                latex: currentLatex,
+                query: currentLatex,
                 sources: filters.sources,
                 mediaTypes: filters.mediaTypes,
             }),

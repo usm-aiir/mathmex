@@ -66,7 +66,7 @@ def home():
 @app.route("/search", methods=["POST"])
 def search():
     data = request.get_json()
-    query = data.get('latex', '')
+    query = data.get('query', '')
     sources = data.get('sources', [])
     media_types = data.get('mediaTypes', [])
 
