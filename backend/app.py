@@ -92,7 +92,7 @@ def search():
         indices = list(source_to_index.values())
 
     model = get_model()
-    query_vec = model.encode( latex_to_storage_format( query ) ).tolist()
+    query_vec = model.encode(query).tolist()
 
     # Build query with filters
     query_body = {
