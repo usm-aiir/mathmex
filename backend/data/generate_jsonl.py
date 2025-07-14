@@ -1,3 +1,9 @@
+"""
+generate_jsonl.py
+
+Script to generate a JSONL file for bulk indexing into OpenSearch.
+Combines TSV metadata and NumPy vector embeddings into a single JSONL output.
+"""
 import numpy as np
 import csv
 import json
@@ -14,15 +20,16 @@ media_type = {
     "youtube" : "video"
 }
 
-# Change as needed
+# Change as needed: input TSV, NPY, and output JSONL file paths
 TSV_FILE = 'tsvs/YouTube.tsv'
 NPY_FILE = 'vectors/YouTube.npy'
 OUT_JSONL_FILE = 'jsonl/youtube.jsonl'
 
-
+# Load vector embeddings from .npy file
 embeddings = np.load(NPY_FILE)
 print(f"Loaded embeddings of shape: {embeddings.shape}")
 
+# Open TSV and output JSONL file
 with open(TSV_FILE, 'r', encoding='utf-8') as f_in, \
         open(OUT_JSONL_FILE, 'w', encoding='utf-8') as f_out:
     reader = csv.reader(f_in, delimiter='\t')
@@ -36,11 +43,11 @@ with open(TSV_FILE, 'r', encoding='utf-8') as f_in, \
             # Change this depending on what type of data you are generating a *.jsonl for
             "media_type": "video",
 
-
             "body_text": row[1],
             "body_vector": embeddings[i].tolist(),
             "link": row[2],
         }
+        # Write each object as a line in the JSONL file
         f_out.write(json.dumps(obj) + '\n')
 
 print(f"Combined file saved to {OUT_JSONL_FILE}")

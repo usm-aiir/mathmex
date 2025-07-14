@@ -2,6 +2,20 @@ import styles from './FilterModal.module.css';
 import { X, Check } from 'lucide-react';
 import type { SearchFilters } from '../types/search';
 
+/**
+ * FilterModal.tsx
+ *
+ * Modal dialog for selecting search filters (sources and media types) in the MathMex app.
+ * Allows users to filter search results by source and media type.
+ */
+/**
+ * Props for the FilterModal component.
+ * @typedef {Object} FilterModalProps
+ * @property {boolean} isOpen - Whether the modal is open.
+ * @property {() => void} onClose - Function to close the modal.
+ * @property {SearchFilters} filters - Current filter state.
+ * @property {(filters: SearchFilters) => void} onFiltersChange - Callback to update filters.
+ */
 interface FilterModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -9,6 +23,9 @@ interface FilterModalProps {
     onFiltersChange: (filters: SearchFilters) => void;
 }
 
+/**
+ * List of available sources for filtering.
+ */
 const AVAILABLE_SOURCES = [
     { id: 'arxiv', name: 'arXiv', description: 'Research papers and preprints' },
     { id: 'math-overflow', name: 'Math Overflow', description: 'Research-level mathematics' },
@@ -18,15 +35,25 @@ const AVAILABLE_SOURCES = [
     { id: 'youtube', name: 'YouTube', description: 'Educational videos' }
 ];
 
+/**
+ * List of available media types for filtering.
+ */
 const AVAILABLE_MEDIA_TYPES = [
     { id: 'article', name: 'Articles', description: 'Text-based content' },
     { id: 'pdf', name: 'PDFs', description: 'Research papers and documents' },
     { id: 'video', name: 'Videos', description: 'Educational videos and lectures' }
 ];
 
+/**
+ * Modal dialog for selecting search filters (sources and media types).
+ *
+ * @param {FilterModalProps} props - The props for the component.
+ * @returns {JSX.Element|null} The rendered modal, or null if not open.
+ */
 export default function FilterModal({ isOpen, onClose, filters, onFiltersChange }: FilterModalProps) {
     if (!isOpen) return null;
 
+    // Toggle a source in the filter list
     const toggleSource = (sourceId: string) => {
         const newSources = filters.sources.includes(sourceId)
             ? filters.sources.filter(id => id !== sourceId)
@@ -34,6 +61,7 @@ export default function FilterModal({ isOpen, onClose, filters, onFiltersChange 
         onFiltersChange({ ...filters, sources: newSources });
     };
 
+    // Toggle a media type in the filter list
     const toggleMediaType = (mediaTypeId: string) => {
         const newMediaTypes = filters.mediaTypes.includes(mediaTypeId)
             ? filters.mediaTypes.filter(id => id !== mediaTypeId)
@@ -41,18 +69,22 @@ export default function FilterModal({ isOpen, onClose, filters, onFiltersChange 
         onFiltersChange({ ...filters, mediaTypes: newMediaTypes });
     };
 
+    // Select all sources
     const selectAllSources = () => {
         onFiltersChange({ ...filters, sources: AVAILABLE_SOURCES.map(s => s.id) });
     };
 
+    // Clear all sources
     const clearAllSources = () => {
         onFiltersChange({ ...filters, sources: [] });
     };
 
+    // Select all media types
     const selectAllMediaTypes = () => {
         onFiltersChange({ ...filters, mediaTypes: AVAILABLE_MEDIA_TYPES.map(m => m.id) });
     };
 
+    // Clear all media types
     const clearAllMediaTypes = () => {
         onFiltersChange({ ...filters, mediaTypes: [] });
     };

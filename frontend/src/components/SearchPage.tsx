@@ -10,11 +10,25 @@ import FilterModal from "./FilterModal.tsx"
 import { formatDate } from "../lib/utils.ts"
 import "mathlive"
 
+/**
+ * SearchPage.tsx
+ *
+ * Main search interface for MathMex. Handles input, search, history, filters, and result display.
+ * Integrates with backend API for search and speech-to-LaTeX, and manages session state.
+ */
+
 const API_BASE =
     // process.env.NODE_ENV === "development"
     //     ? "http://localhost:5000"
         "https://api.mathmex.com";
 
+/**
+ * SearchPage component for the main search UI.
+ *
+ * Handles user input, search execution, history, filters, and result display.
+ *
+ * @returns {JSX.Element} The rendered search page.
+ */
 export default function SearchPage() {
     // --- Initialize search param from URL ---
     const searchParam = new URLSearchParams(window.location.search).get("q") || "";

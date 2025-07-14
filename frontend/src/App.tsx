@@ -1,4 +1,3 @@
-import { MathJaxContext } from "better-react-mathjax"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import SearchPage from "./components/SearchPage"
 import AboutPage from "./components/AboutPage"
@@ -7,44 +6,54 @@ import Footer from "./components/Footer"
 import HelpModal, { shouldShowFirstTimePopup } from "./components/HelpModal"
 import React from "react"
 
-const mathJaxConfig = {
-    tex: {
-        inlineMath: [
-            ["$", "$"],
-            ["$$", "$$"],
-        ],
-        displayMath: [
-            ["$$", "$$"],
-            ["\\[", "\\]"],
-        ],
-        processEscapes: true,
-        processEnvironments: true,
-    },
-    options: {
-        skipHtmlTags: ["script", "noscript", "style", "textarea", "pre"],
-    },
-}
+/**
+ * App.tsx
+ *
+ * The root component for the MathMex frontend application. Sets up global providers (MathJax, Router),
+ * renders the main layout, and handles global modals and navigation.
+ */
+// MathJax configuration for rendering LaTeX math expressions throughout the app
 
+
+/**
+ * Root application component.
+ *
+ * - Provides MathJax context for math rendering
+ * - Sets up React Router for navigation
+ * - Handles global Help modal state
+ *
+ * @returns {JSX.Element} The rendered application
+ */
 function App() {
+    // State to control visibility of the Help modal (shows on first visit)
     const [showHelp, setShowHelp] = React.useState(shouldShowFirstTimePopup());
 
+    /**
+     * Opens the Help modal.
+     */
     const handleOpenHelp = () => setShowHelp(true);
+    /**
+     * Closes the Help modal.
+     */
     const handleCloseHelp = () => setShowHelp(false);
 
     return (
-        <MathJaxContext version={3} config={mathJaxConfig}>
-            <Router>
-                <div className="parchment-background">
-                    <Header />
-                    <Routes>
-                        <Route path="/" element={<SearchPage />} />
-                        <Route path="/about" element={<AboutPage />} />
-                    </Routes>
-                    <Footer onHelpClick={handleOpenHelp} />
-                    <HelpModal open={showHelp} onClose={handleCloseHelp} />
-                </div>
-            </Router>
-        </MathJaxContext>
+        <Router>
+            {/* Main application background and layout */}
+            <div className="parchment-background">
+                <Header />
+                <Routes>
+                    {/* Main search page route */}
+                    <Route path="/" element={<SearchPage />} />
+                    {/* About page route */}
+                    <Route path="/about" element={<AboutPage />} />
+                </Routes>
+                {/* Footer with Help button */}
+                <Footer onHelpClick={handleOpenHelp} />
+                {/* Global Help modal */}
+                <HelpModal open={showHelp} onClose={handleCloseHelp} />
+            </div>
+        </Router>
     )
 }
 

@@ -1,3 +1,10 @@
+"""
+app.py
+
+Main Flask application for the MathMex backend API.
+Handles search, speech-to-LaTeX, and utility endpoints for the frontend.
+Integrates with OpenSearch and SentenceTransformer for semantic search.
+"""
 # Import Flask and CORS libraries
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -24,36 +31,24 @@ client = OpenSearch(
 
 _model = None
 def get_model():
+    """
+    Loads and caches the SentenceTransformer model for semantic search.
+    Returns:
+        SentenceTransformer: The loaded model instance.
+    """
     global _model
     if _model is None:
         _model = SentenceTransformer('/home/global/dev/MathMex/backend/models/arq1thru3-finetuned-all-mpnet-jul-27')
     return _model
 
-def clean_for_mathlive(text: str) -> str:
-    """
-    Replaces single $...$ wrappers with $$...$$ for MathLive consistency,
-    while leaving existing $$...$$ untouched.
-    """
-    # Use a regex to find single $...$ not already part of $$...$$
-    # Matches a single $...$ with no extra $ next to it
-    pattern = re.compile(r'(?<!\$)\$(?!\$)(.+?)(?<!\$)\$(?!\$)')
-
-    return pattern.sub(r'$$\1$$', text)
-
-def delete_dups(list, unique_key="body_text"):
-    seen_ids = set()
-    unique_dicts = []
-
-    for d in list:
-        if d[unique_key] not in seen_ids:
-            seen_ids.add(d[unique_key])
-            unique_dicts.append(d)
-
-    return unique_dicts
-
 # Route for the root URL
 @app.route("/")
 def home():
+    """
+    Root endpoint. Displays the most recent cleaned LaTeX and function/operator sent to /search (if any).
+    Returns:
+        str: HTML message with last LaTeX and function/operator.
+    """
     # Display the most recent cleaned LaTeX and function/operator sent to /search (if any)
     latex = app.config.get("last_latex", None)
     function_latex = app.config.get("last_function_latex", None)
@@ -65,6 +60,11 @@ def home():
 
 @app.route("/search", methods=["POST"])
 def search():
+    """
+    Search endpoint. Accepts a query and optional filters, performs semantic search using OpenSearch and SentenceTransformer.
+    Returns:
+        JSON: Search results and total count.
+    """
     data = request.get_json()
     query = data.get('query', '')
     sources = data.get('sources', [])
@@ -92,7 +92,7 @@ def search():
         indices = list(source_to_index.values())
 
     model = get_model()
-    query_vec = model.encode(query).tolist()
+    query_vec = model.encode( latex_to_storage_format( query ) ).tolist()
 
     # Build query with filters
     query_body = {
@@ -143,6 +143,11 @@ def search():
 
 @app.route('/speech-to-latex', methods=['POST'])
 def speech_to_latex():
+    """
+    Converts spoken math (text) to LaTeX using SayTeX.
+    Returns:
+        JSON: The generated LaTeX string or error message.
+    """
     data = request.get_json()
     print(f"Received data: {data}")
     text = data.get('text')
@@ -177,10 +182,51 @@ def speech_to_latex():
         print(f"Error during LaTeX conversion: {e}")
         return jsonify({'error': str(e)}), 500
 
+def clean_for_mathlive(text: str) -> str:
+    """
+    Replaces single $...$ wrappers with $$...$$ for MathLive consistency,
+    while leaving existing $$...$$ untouched.
+
+    Args:
+        text (str): The input string containing LaTeX math.
+    Returns:
+        str: The string with single $...$ replaced by $$...$$
+    """
+    # Use a regex to find single $...$ not already part of $$...$$
+    # Matches a single $...$ with no extra $ next to it
+    pattern = re.compile(r'(?<!\$)\$(?!\$)(.+?)(?<!\$)\$(?!\$)')
+
+    return pattern.sub(r'$$\1$$', text)
+
+def delete_dups(list, unique_key="body_text"):
+    """
+    Removes duplicate dictionaries from a list based on a unique key.
+
+    Args:
+        list (list): List of dictionaries.
+        unique_key (str): Key to determine uniqueness.
+    Returns:
+        list: List with duplicates removed.
+    """
+    seen_ids = set()
+    unique_dicts = []
+
+    for d in list:
+        if d[unique_key] not in seen_ids:
+            seen_ids.add(d[unique_key])
+            unique_dicts.append(d)
+
+    return unique_dicts
+
 def latex_to_storage_format(latex):
     """
     Converts LaTeX like '\\text{abc} x^2 \\text{def} y' to
-    'abc $x^2$ def $y$'
+    'abc $x^2$ def $y$'.
+
+    Args:
+        latex (str): The LaTeX string to convert.
+    Returns:
+        str: The formatted string for storage.
     """
     # Pattern: \text{...}
     text_pattern = re.compile(r'\\text\{([^}]*)\}')
@@ -193,7 +239,7 @@ def latex_to_storage_format(latex):
         if m.start() > last_end:
             math_part = latex[last_end:m.start()].strip()
             if math_part:
-                parts.append(f"${math_part}$")
+                parts.append(f"$${math_part}$$")
         # Add the plain text
         parts.append(m.group(1))
         last_end = m.end()
@@ -212,4 +258,5 @@ def latex_to_storage_format(latex):
 
 # Run the Flask development server if this script is executed directly
 if __name__ == "__main__":
+    # Run the Flask development server if this script is executed directly
     app.run(debug=True)

@@ -1,3 +1,9 @@
+/**
+ * AboutPage.tsx
+ *
+ * Displays information about the MathMex project, its mission, features, and links to the research group and GitHub repository.
+ * This is a static informational page.
+ */
 import styles from "./AboutPage.module.css";
 
 const AboutPage = () => (

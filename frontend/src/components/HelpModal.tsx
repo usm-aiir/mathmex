@@ -4,11 +4,26 @@ import inputSwitchVideo from '../assets/input-mode-switch.mp4';
 import functionInsertionVideo from '../assets/function-insertion.mp4';
 import { Search, Keyboard, Goal } from "lucide-react";
 
+/**
+ * HelpModal.tsx
+ *
+ * Displays a multi-page modal tour/introduction for MathMex, including feature highlights and usage guides.
+ * Used for onboarding new users and can be triggered from the Help button.
+ */
+/**
+ * Props for the HelpModal component.
+ * @typedef {Object} HelpModalProps
+ * @property {boolean} open - Whether the modal is open.
+ * @property {() => void} onClose - Function to close the modal.
+ */
 interface HelpModalProps {
   open: boolean;
   onClose: () => void;
 }
 
+/**
+ * Pages for the onboarding tour, each with a title and content.
+ */
 const PAGES = [
   {
     title: 'Welcome to MathMex!',
@@ -96,22 +111,39 @@ const PAGES = [
   },
 ];
 
+/**
+ * Key for localStorage to track if the user has seen the intro.
+ */
 const LOCALSTORAGE_KEY = 'mathmex_seen_intro';
 
+/**
+ * HelpModal component for onboarding and feature tour.
+ *
+ * @param {HelpModalProps} props - The props for the component.
+ * @returns {JSX.Element|null} The rendered modal, or null if not visible.
+ */
 const HelpModal: React.FC<HelpModalProps> = ({ open, onClose }) => {
+  // Current page of the tour
   const [page, setPage] = useState(0);
+  // Modal visibility state (syncs with open prop)
   const [visible, setVisible] = useState(open);
 
   useEffect(() => {
     setVisible(open);
   }, [open]);
 
+  /**
+   * Skip the tour, mark as seen in localStorage, and close the modal.
+   */
   const handleSkip = () => {
     localStorage.setItem(LOCALSTORAGE_KEY, 'true');
     setVisible(false);
     onClose();
   };
 
+  /**
+   * Go to the next page, or finish the tour if on the last page.
+   */
   const handleNext = () => {
     if (page < PAGES.length - 1) {
       setPage(page + 1);
@@ -120,6 +152,9 @@ const HelpModal: React.FC<HelpModalProps> = ({ open, onClose }) => {
     }
   };
 
+  /**
+   * Go to the previous page.
+   */
   const handleBack = () => {
     if (page > 0) setPage(page - 1);
   };
@@ -138,10 +173,12 @@ const HelpModal: React.FC<HelpModalProps> = ({ open, onClose }) => {
         </div>
         
         <div className={styles.footer}>
+          {/* Skip button closes the tour and marks as seen */}
           <button className={styles.skipButton} onClick={handleSkip}>
             Skip Tour
           </button>
           
+          {/* Page indicator dots */}
           <div className={styles.dotContainer}>
             {PAGES.map((_, i) => (
               <button
@@ -153,6 +190,7 @@ const HelpModal: React.FC<HelpModalProps> = ({ open, onClose }) => {
             ))}
           </div>
           
+          {/* Navigation buttons */}
           <div className={styles.navButtons}>
             <button 
               onClick={handleBack} 
@@ -174,6 +212,12 @@ const HelpModal: React.FC<HelpModalProps> = ({ open, onClose }) => {
   );
 };
 
+/**
+ * Returns true if the user has not seen the intro tour (based on localStorage).
+ * Used to determine if the HelpModal should be shown on first visit.
+ *
+ * @returns {boolean} Whether to show the first-time popup.
+ */
 export function shouldShowFirstTimePopup() {
   return !localStorage.getItem(LOCALSTORAGE_KEY);
 }

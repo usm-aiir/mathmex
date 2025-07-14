@@ -2,6 +2,20 @@ import styles from "./HistoryPanel.module.css"
 import {FC, useEffect} from "react"
 import type { SearchHistoryItem } from "../types/search"
 
+/**
+ * HistoryPanel.tsx
+ *
+ * Displays the user's search history for the current session, allowing re-search and clearing history.
+ * Renders a list of previous queries and integrates with MathLive for math rendering.
+ */
+/**
+ * Props for the HistoryPanel component.
+ * @typedef {Object} SearchHistoryDisplayProps
+ * @property {SearchHistoryItem[]} history - List of search history items.
+ * @property {() => void} onClearHistory - Callback to clear the history.
+ * @property {(latex: string) => void} onHistoryItemClick - Callback for clicking a history item.
+ * @property {(date: Date) => string} formatDate - Function to format timestamps.
+ */
 interface SearchHistoryDisplayProps {
     history: SearchHistoryItem[]
     onClearHistory: () => void
@@ -9,14 +23,20 @@ interface SearchHistoryDisplayProps {
     formatDate: (date: Date) => string
 }
 
+/**
+ * HistoryPanel component for displaying and interacting with search history.
+ *
+ * @param {SearchHistoryDisplayProps} props - The props for the component.
+ * @returns {JSX.Element} The rendered history panel.
+ */
 const HistoryPanel: FC<SearchHistoryDisplayProps> = ({
-                                                                       history,
-                                                                       onClearHistory,
-                                                                       onHistoryItemClick,
-                                                                       formatDate,
-                                                                   }) => {
-
+    history,
+    onClearHistory,
+    onHistoryItemClick,
+    formatDate,
+}) => {
     useEffect(() => {
+        // Re-render math expressions in history when history changes
         if (history.length > 0) {
             import("mathlive").then(mathlive => {
                 mathlive.renderMathInDocument();
@@ -28,6 +48,7 @@ const HistoryPanel: FC<SearchHistoryDisplayProps> = ({
         <div className={styles.searchHistory}>
             <div className={styles.historyHeader}>
                 <h4>Search History</h4>
+                {/* Button to clear history */}
                 <button className={styles.clearHistoryBtn} onClick={onClearHistory}>
                     Clear
                 </button>
@@ -44,6 +65,7 @@ const HistoryPanel: FC<SearchHistoryDisplayProps> = ({
                             title={`Search for: ${item.latex}\nSearched: ${formatDate(new Date(item.timestamp))}`}
                         >
                             <div className={styles.historyFormula}>
+                                {/* Render math expression as LaTeX */}
                                 <p>{`\$$${item.latex}\$$`}</p>
                             </div>
                             <div className="history-time">{formatDate(new Date(item.timestamp))}</div>
