@@ -1,6 +1,6 @@
 import styles from "./ResultsPanel.module.css"
 import { FC, ReactNode, useEffect } from "react"
-import { Download, ArrowLeft, ArrowRight } from "lucide-react"
+import { ArrowLeft, ArrowRight } from "lucide-react"
 import type { SearchResult } from "../types/search"
 
 interface ResultsPanelProps {
@@ -51,18 +51,6 @@ const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMe
                                 <p className={styles.resultDescription}>
                                     {result.body_text}
                                 </p>
-                            )}
-                            {result.media_type === "pdf" && (
-                                <a
-                                    className={styles.downloadButton}
-                                    href={result.link}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    download
-                                >
-                                    <Download size={16} />
-                                    <span>Download PDF</span>
-                                </a>
                             )}
                         </div>
                     ))
