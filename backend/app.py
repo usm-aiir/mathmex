@@ -28,8 +28,8 @@ config.read('config.ini')
 # OpenSearch Client Configuration from file
 OPENSEARCH_HOST = config.get('opensearch', 'host')
 OPENSEARCH_PORT = config.getint('opensearch', 'port') # Use getint for numbers
-OPENSEARCH_USER = config.get('opensearch', 'public_user')
-OPENSEARCH_PASSWORD = config.get('opensearch', 'public_user_password')
+OPENSEARCH_USER = config.get('opensearch', 'admin_user')
+OPENSEARCH_PASSWORD = config.get('opensearch', 'admin_password')
 INDEX_NAME = config.get('opensearch', 'index_name')
 MODEL = config.get('opensearch', 'model')
 

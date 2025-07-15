@@ -7,13 +7,17 @@ Run this script to initialize a new index before bulk uploading documents.
 from opensearchpy import OpenSearch
 from mappings import mapping
 import json
+import configparser
 
-# --- CONFIG ---
-# OpenSearch connection settings
-HOST = 'localhost'
-PORT = 9200
-USER = 'admin'
-PASSWORD = 'Str0ngP0ssw0rd'
+# --- Load Configuration from config.ini ---
+config = configparser.ConfigParser()
+config.read('../config.ini')
+
+# OpenSearch Client Configuration from file
+HOST = config.get('opensearch', 'host')
+PORT = config.getint('opensearch', 'port') # Use getint for numbers
+USER = config.get('opensearch', 'admin_user')
+PASSWORD = config.get('opensearch', 'admin_password')
 
 # Name of the index to create (change as needed)
 INDEX_NAME = 'mathmex_wikipedia'

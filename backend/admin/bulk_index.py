@@ -8,13 +8,19 @@ import json
 from opensearchpy import OpenSearch, RequestsHttpConnection
 from opensearchpy.helpers import bulk
 import warnings
+import configparser
 
-# --- Configuration ---
-# IMPORTANT: Use the 'admin' user for this script as it needs write permissions.
-OPENSEARCH_HOST = 'localhost'
-OPENSEARCH_PORT = 9200
-OPENSEARCH_USER = 'admin'
-OPENSEARCH_PASSWORD = 'Str0ngP0ssw0rd'
+# --- Load Configuration from config.ini ---
+config = configparser.ConfigParser()
+config.read('../config.ini')
+
+# OpenSearch Client Configuration from file
+OPENSEARCH_HOST = config.get('opensearch', 'host')
+OPENSEARCH_PORT = config.getint('opensearch', 'port') # Use getint for numbers
+OPENSEARCH_USER = config.get('opensearch', 'admin_user')
+OPENSEARCH_PASSWORD = config.get('opensearch', 'admin_password')
+INDEX_NAME = config.get('opensearch', 'index_name')
+MODEL = config.get('opensearch', 'model')
 
 # Name of the data source and index (change as needed)
 SOURCE_NAME = 'arxiv'
