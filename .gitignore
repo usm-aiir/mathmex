@@ -1,6 +1,10 @@
 # For use with virtual environments
 .venv/
 
+# Python cache
+__pycache__/
+*.pyc
+
 # Frontend dependecies
 frontend/node_modules/
 

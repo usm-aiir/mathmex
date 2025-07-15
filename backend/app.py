@@ -10,6 +10,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from opensearchpy import OpenSearch
 from sentence_transformers import SentenceTransformer
+import configparser
 import saytex
 import re
 
@@ -20,10 +21,26 @@ app = Flask(__name__)
 # Enable Cross-Origin Resource Sharing (CORS) so the frontend (React) can communicate with this backend
 CORS(app)
 
+# --- Load Configuration from config.ini ---
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+# OpenSearch Client Configuration from file
+OPENSEARCH_HOST = config.get('opensearch', 'host')
+OPENSEARCH_PORT = config.getint('opensearch', 'port') # Use getint for numbers
+OPENSEARCH_USER = config.get('opensearch', 'public_user')
+OPENSEARCH_PASSWORD = config.get('opensearch', 'public_user_password')
+INDEX_NAME = config.get('opensearch', 'index_name')
+MODEL = config.get('opensearch', 'model')
+
+# Flask App Configuration from file
+FLASK_PORT = config.getint('flask_app', 'port')
+FLASK_DEBUG = config.getboolean('flask_app', 'debug')
+
 # OpenSearch client
 client = OpenSearch(
-    hosts=[{'host': 'localhost', 'port': 9200}],
-    http_auth=('admin', 'Str0ngP0ssw0rd'),
+    hosts=[{'host': OPENSEARCH_HOST, 'port': OPENSEARCH_PORT}],
+    http_auth=(OPENSEARCH_USER, OPENSEARCH_PASSWORD),
     use_ssl=True,
     verify_certs=False,
     ssl_show_warn=False
@@ -38,7 +55,7 @@ def get_model():
     """
     global _model
     if _model is None:
-        _model = SentenceTransformer('/home/global/dev/MathMex/backend/models/arq1thru3-finetuned-all-mpnet-jul-27')
+        _model = SentenceTransformer(MODEL)
     return _model
 @app.route("/api/search", methods=["POST"])
 def search():
@@ -241,4 +258,4 @@ def latex_to_storage_format(latex):
 # Run the Flask development server if this script is executed directly
 if __name__ == "__main__":
     # Run the Flask development server if this script is executed directly
-    app.run(debug=True)
+    app.run(port=FLASK_PORT, debug=FLASK_DEBUG)
