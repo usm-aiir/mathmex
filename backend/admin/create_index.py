@@ -20,7 +20,7 @@ USER = config.get('opensearch', 'admin_user')
 PASSWORD = config.get('opensearch', 'admin_password')
 
 # Name of the index to create (change as needed)
-INDEX_NAME = 'mathmex_wikipedia'
+INDEX_NAME = ''
 
 # --- Connect ---
 # Initialize the OpenSearch client

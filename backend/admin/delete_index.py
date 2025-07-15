@@ -17,7 +17,7 @@ PORT = config.getint('opensearch', 'port') # Use getint for numbers
 USER = config.get('opensearch', 'admin_user')
 PASSWORD = config.get('opensearch', 'admin_password')
 # Name of the index to delete (change as needed)
-INDEX_NAME = 'mathmex_math-stack-exchange'
+INDEX_NAME = ''
 
 # --- Connect ---
 # Initialize the OpenSearch client

@@ -18,7 +18,7 @@ USER = config.get('opensearch', 'admin_user')
 PASSWORD = config.get('opensearch', 'admin_password')
 
 # Name or pattern of the index to clear (wildcards allowed)
-INDEX_NAME = 'mathmex*'
+INDEX_NAME = ''
 
 # --- Connect ---
 # Initialize the OpenSearch client
