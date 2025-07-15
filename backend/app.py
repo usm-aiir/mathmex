@@ -143,7 +143,7 @@ def search():
             'media_type': source.get('media_type'),
             'body_text': format_for_mathlive(source.get("body_text")),
             'link': source.get('link'),
-            'score': source.get('_score')
+            'score': hit.get('_score')
         })
 
     results = delete_dups(results, unique_key="body_text")

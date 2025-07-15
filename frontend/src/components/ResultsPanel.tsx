@@ -32,6 +32,8 @@ interface ResultsPanelProps {
     onPrevPage: () => void
 }
 
+const IS_DEV = process.env.NODE_ENV === "development";
+
 /**
  * ResultsPanel component for displaying search results and pagination.
  *
@@ -60,7 +62,15 @@ const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMe
                 ) : results.length > 0 ? (
                     results.map((result, index) => (
                         <div key={index} className={styles.resultItem}>
-                            <h3 className={styles.resultTitle}>{result.title}</h3>
+                            <div className={styles.resultHeader}>
+                                <h3 className={styles.resultTitle}>{result.title}</h3>
+                                {/* Add visual relevance scores if in dev */}
+                                {IS_DEV && (
+                                    <span className={styles.resultScore} title="Relevance score">
+                                        {parseFloat(result.score).toFixed(2)}
+                                    </span>
+                                )}
+                            </div>
                             <a className={styles.source} href={result.link} target="_blank" rel="noopener noreferrer">
                                 {result.link}
                             </a>

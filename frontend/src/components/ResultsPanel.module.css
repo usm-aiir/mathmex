@@ -121,6 +121,31 @@
     font-weight: 500;
 }
 
+.resultHeader {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
+}
+
+.resultScore {
+    font-size: 0.95em;
+    color: #fff;
+    background: var(--button-color);
+    border-radius: 999px;
+    padding: 4px 16px;
+    margin-left: 1rem;
+    font-family: var(--font-cormorant-garamond);
+    box-shadow: 0 2px 8px rgba(193, 154, 73, 0.15);
+    letter-spacing: 0.03em;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+:root[data-theme="dark"] .resultScore {
+    color: var(--primary-dark);
+}
+
 /* Tablet and smaller desktop */
 @media (max-width: 768px) {
     .resultsSection {

@@ -19,8 +19,8 @@ import "mathlive"
 
 const API_BASE =
     process.env.NODE_ENV === "development"
-        ? "http://localhost:5000"
-        : "/api/";
+        ? "https://mathmex.com/api"
+        : "/api";
 
 /**
  * SearchPage component for the main search UI.
