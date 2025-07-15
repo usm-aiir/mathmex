@@ -7,12 +7,14 @@ Integrates with OpenSearch and SentenceTransformer for semantic search.
 """
 # Import Flask and CORS libraries
 from flask import Flask, request, jsonify
+from dotenv import load_dotenv
 from flask_cors import CORS
 from opensearchpy import OpenSearch
 from sentence_transformers import SentenceTransformer
 import configparser
 import saytex
 import re
+import os
 
 
 # Create the Flask application instance
@@ -21,9 +23,12 @@ app = Flask(__name__)
 # Enable Cross-Origin Resource Sharing (CORS) so the frontend (React) can communicate with this backend
 CORS(app)
 
+# Load environment variables
+load_dotenv()
+
 # --- Load Configuration from config.ini ---
 config = configparser.ConfigParser()
-config.read('config.ini')
+config.read( os.getenv("BACKEND_CONFIG") )
 
 # OpenSearch Client Configuration from file
 OPENSEARCH_HOST = config.get('opensearch', 'host')
@@ -90,7 +95,13 @@ def search():
     else:
         indices = list(source_to_index.values())
 
+
     model = get_model()
+
+    # Convert MathLive query to MathMex data format
+    query = format_for_mathmex(query)
+
+    # Vectorize query
     query_vec = model.encode(query).tolist()
 
     # Build query with filters
@@ -130,7 +141,7 @@ def search():
         results.append({
             'title': source.get('title'),
             'media_type': source.get('media_type'),
-            'body_text': clean_for_mathlive(source.get("body_text")),
+            'body_text': format_for_mathlive(source.get("body_text")),
             'link': source.get('link'),
             'score': source.get('_score')
         })
@@ -181,7 +192,7 @@ def speech_to_latex():
         print(f"Error during LaTeX conversion: {e}")
         return jsonify({'error': str(e)}), 500
 
-def clean_for_mathlive(text: str) -> str:
+def format_for_mathlive(text: str) -> str:
     """
     Replaces single $...$ wrappers with $$...$$ for MathLive consistency,
     while leaving existing $$...$$ untouched.
@@ -217,7 +228,7 @@ def delete_dups(list, unique_key="body_text"):
 
     return unique_dicts
 
-def latex_to_storage_format(latex):
+def format_for_mathmex(latex):
     """
     Converts LaTeX like '\\text{abc} x^2 \\text{def} y' to
     'abc $x^2$ def $y$'.
