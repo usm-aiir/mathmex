@@ -6,6 +6,7 @@ frontend/node_modules/
 
 # Frontend build files
 frontend/dist/
+frontend/package-lock.json
 
 # Data
 backend/data/jsonl
