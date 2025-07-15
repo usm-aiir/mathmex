@@ -40,25 +40,7 @@ def get_model():
     if _model is None:
         _model = SentenceTransformer('/home/global/dev/MathMex/backend/models/arq1thru3-finetuned-all-mpnet-jul-27')
     return _model
-
-# Route for the root URL
-@app.route("/")
-def home():
-    """
-    Root endpoint. Displays the most recent cleaned LaTeX and function/operator sent to /search (if any).
-    Returns:
-        str: HTML message with last LaTeX and function/operator.
-    """
-    # Display the most recent cleaned LaTeX and function/operator sent to /search (if any)
-    latex = app.config.get("last_latex", None)
-    function_latex = app.config.get("last_function_latex", None)
-
-    msg = "Hello, MathMex!<br>"
-    msg += f"Last CLEANED LaTeX string from frontend: <code>{latex if latex is not None else 'None'}</code><br>"
-    msg += f"Last function/operator from frontend: <code>{function_latex if function_latex is not None else 'None'}</code><br>"
-    return msg
-
-@app.route("/search", methods=["POST"])
+@app.route("/api/search", methods=["POST"])
 def search():
     """
     Search endpoint. Accepts a query and optional filters, performs semantic search using OpenSearch and SentenceTransformer.
@@ -141,7 +123,7 @@ def search():
     total = 1000
     return jsonify({'results': results, 'total': total})
 
-@app.route('/speech-to-latex', methods=['POST'])
+@app.route('/api/speech-to-latex', methods=['POST'])
 def speech_to_latex():
     """
     Converts spoken math (text) to LaTeX using SayTeX.
