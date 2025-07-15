@@ -237,12 +237,23 @@ export default function SearchPage() {
     useEffect(() => {
         const el = mathFieldRef.current;
         if (!el) return;
-        const handler = (evt: any) => setMode(evt.detail.mode);
-        el.addEventListener("mode-change", handler);
+        // Handler for mode-change event
+        const modeChangeHandler = (evt: any) => setMode(evt.detail.mode);
+        // Handler for input event (check mode on every input)
+        const inputHandler = () => {
+            if (el.mode && el.mode !== mode) {
+                setMode(el.mode);
+            }
+        };
+        el.addEventListener("mode-change", modeChangeHandler);
+        el.addEventListener("input", inputHandler);
         // Set initial mode
         setMode(el.mode || "text");
-        return () => el.removeEventListener("mode-change", handler);
-    }, [mathFieldRef]);
+        return () => {
+            el.removeEventListener("mode-change", modeChangeHandler);
+            el.removeEventListener("input", inputHandler);
+        };
+    }, [mathFieldRef, mode]);
 
     // --- Handle Enter key in MathLiveField to trigger search ---
     useEffect(() => {
