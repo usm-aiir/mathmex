@@ -303,7 +303,7 @@ export default function SearchPage() {
                             <math-field
                                 ref={mathFieldRef}
                                 placeholder="\mathrm{Search\ mathematics...}"
-                            ></math-field>
+                            >{initialLatex}</math-field>
                             <button className={styles.searchButton} onClick={handleNewSearch} disabled={isLoading}>
                                 <Search size={18} />
                                 <span className={styles.searchButtonText}>{isLoading ? "Searching..." : "Search"}</span>
