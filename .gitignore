@@ -14,5 +14,10 @@ backend/data/tsvs
 backend/data/vectors
 
 # Vectorization/embedding model
-backend/models/*
+backend/models
 
+# Docker Compose
+*.yml
+
+# Config File
+*.ini
