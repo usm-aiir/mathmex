@@ -1,8 +1,11 @@
 # For use with virtual environments
 .venv/
 
-# Ignore dependency installations for front-end
+# Frontend dependecies
 frontend/node_modules/
+
+# Frontend build files
+frontend/dist/
 
 # Data
 backend/data/jsonl
