@@ -1,3 +1,6 @@
+### Python Scripts
+The Python scripts in this directory are for data-file generation
+
 ### TSVs
 The *.tsv files in the data directory contain qualitative data.
 These files are comprised of data entries with a title, description, and source.

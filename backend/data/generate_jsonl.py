@@ -21,9 +21,9 @@ media_type = {
 }
 
 # Change as needed: input TSV, NPY, and output JSONL file paths
-TSV_FILE = 'tsvs/YouTube.tsv'
-NPY_FILE = 'vectors/YouTube.npy'
-OUT_JSONL_FILE = 'jsonl/youtube.jsonl'
+TSV_FILE = 'tsvs/'
+NPY_FILE = 'vectors/'
+OUT_JSONL_FILE = 'jsonl/'
 
 # Load vector embeddings from .npy file
 embeddings = np.load(NPY_FILE)

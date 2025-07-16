@@ -23,7 +23,7 @@ INDEX_NAME = config.get('opensearch', 'index_name')
 MODEL = config.get('opensearch', 'model')
 
 # Name of the data source and index (change as needed)
-SOURCE_NAME = 'arxiv'
+SOURCE_NAME = ''
 INDEX_NAME = f'mathmex_{SOURCE_NAME}'
 JSONL_FILE_PATH = f'../data/jsonl/{SOURCE_NAME}.jsonl'
 

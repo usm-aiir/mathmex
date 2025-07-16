@@ -1,5 +1,5 @@
 """
-delete_index_data.py
+clear_index.py
 
 Script to delete all documents from one or more OpenSearch indices for MathMex.
 Run this script to clear all data from the specified index or indices, but keep the index structure.
