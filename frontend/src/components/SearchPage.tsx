@@ -237,23 +237,12 @@ export default function SearchPage() {
     useEffect(() => {
         const el = mathFieldRef.current;
         if (!el) return;
-        // Handler for mode-change event
-        const modeChangeHandler = (evt: any) => setMode(evt.detail.mode);
-        // Handler for input event (check mode on every input)
-        const inputHandler = () => {
-            if (el.mode && el.mode !== mode) {
-                setMode(el.mode);
-            }
-        };
-        el.addEventListener("mode-change", modeChangeHandler);
-        el.addEventListener("input", inputHandler);
+        const handler = (evt: any) => setMode(evt.detail.mode);
+        el.addEventListener("mode-change", handler);
         // Set initial mode
         setMode(el.mode || "text");
-        return () => {
-            el.removeEventListener("mode-change", modeChangeHandler);
-            el.removeEventListener("input", inputHandler);
-        };
-    }, [mathFieldRef, mode]);
+        return () => el.removeEventListener("mode-change", handler);
+    }, [mathFieldRef]);
 
     // --- Handle Enter key in MathLiveField to trigger search ---
     useEffect(() => {
@@ -302,8 +291,16 @@ export default function SearchPage() {
                             {/* MathLiveField for inline text+math */}
                             <math-field
                                 ref={mathFieldRef}
+                                value={latex}
+                                onInput={(e: any) => setLatex(e.target.value)}
                                 placeholder="\mathrm{Search\ mathematics...}"
-                            >{initialLatex}</math-field>
+                                onKeyDown={(e: any) => {
+                                    if (e.key === "Enter") {
+                                        e.preventDefault();
+                                        handleNewSearch();
+                                    }
+                                }}
+                            ></math-field>
                             <button className={styles.searchButton} onClick={handleNewSearch} disabled={isLoading}>
                                 <Search size={18} />
                                 <span className={styles.searchButtonText}>{isLoading ? "Searching..." : "Search"}</span>
