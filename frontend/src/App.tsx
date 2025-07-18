@@ -5,6 +5,7 @@ import Header from "./components/Header"
 import Footer from "./components/Footer"
 import HelpModal, { shouldShowFirstTimePopup } from "./components/HelpModal"
 import React from "react"
+import SurveyPage from "./components/SurveyPage";
 
 /**
  * App.tsx
@@ -47,6 +48,10 @@ function App() {
                     <Route path="/" element={<SearchPage />} />
                     {/* About page route */}
                     <Route path="/about" element={<AboutPage />} />
+                    {/* Catch-all route for 404 Not Found */}
+                    <Route path="*" element={<SearchPage />} />
+                    {/* Survey page route */}
+                    <Route path="/survey" element={<SurveyPage />} />
                 </Routes>
                 {/* Footer with Help button */}
                 <Footer onHelpClick={handleOpenHelp} />

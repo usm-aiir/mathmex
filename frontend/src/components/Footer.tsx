@@ -31,6 +31,8 @@ const Footer: FC<FooterProps> = ({ onHelpClick }) => {
                 {" | "}
                 <Link to="/about" className={styles.link}>About</Link>
                 {" | "}
+                <Link to="/survey" className={styles.link}>Survey</Link>
+                {" | "}
                 {/* Help button triggers the Help modal */}
                 <button
                     aria-label="Show help / introduction"
