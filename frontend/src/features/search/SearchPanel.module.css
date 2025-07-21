@@ -234,9 +234,15 @@
     .inputContainer {
         margin: 0;
     }
+
+    .inputContainer math-field::part(menu-toggle) {
+        margin-right: 1.2em;
+    }
     .searchButton {
         width: 32px;
+        height: 6em;
         padding: 0;
+        margin-left: -61px;
     }
     .controlButton {
         width: 28px;
