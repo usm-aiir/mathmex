@@ -24,8 +24,16 @@
     position: absolute;
     top: 1.2rem;
     right: 1.2rem;
+
+    height: 28px;
+    width: 28px;
+
     background: none;
     border: none;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
     color: var(--primary-text);
     font-size: 1.5rem;
     cursor: pointer;
@@ -34,6 +42,7 @@
     border-radius: 50%;
     transition: background 0.2s;
 }
+
 .closeButton:hover {
     background: var(--primary-alt);
     color: var(--container-color);
@@ -58,6 +67,7 @@
 
 .label {
     font-size: 1.1rem;
+    margin-left: 1rem;
     color: var(--primary-text);
     font-family: var(--font-eb-garamond);
     font-weight: 500;

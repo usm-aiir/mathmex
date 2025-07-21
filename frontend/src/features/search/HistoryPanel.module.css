@@ -139,7 +139,7 @@
     }
     
     .historyHeader {
-        padding: 0.6rem 0.7rem;
+        margin: 3rem 0.5rem 0.5rem 0.5rem;
     }
     
     .historyTitle {
@@ -148,7 +148,6 @@
     
     .clearHistoryBtn {
         padding: 0.25rem 0.6rem;
-        margin: 0 2rem;
         font-size: 0.85rem;
     }
     

@@ -142,6 +142,11 @@
     .settingsButton {
         right: 2%;
     }
+    .historyButton svg,
+    .settingsButton svg {
+        width: 18px;
+        height: 18px;
+    }
     
     .headerContent {
         flex-direction: row;
