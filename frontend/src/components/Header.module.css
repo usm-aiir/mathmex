@@ -3,16 +3,19 @@
     text-align: center;
     background-color: var(--container-color);
     box-shadow: var(--box-shadow);
-    margin-bottom: 1.5rem;
     position: relative;
+    font-family: Inter;
+}
+
+:root[data-theme="dark"] .header {
+    box-shadow: none;
 }
 
 .header h1 {
-    font-family: var(--font-cormorant-garamond);
-    font-size: 2.8rem;
+    font-size: 2.6rem;
     margin-bottom: 0.3rem;
     color: var(--button-color);
-    font-weight: 600;
+    font-weight: 200;
     letter-spacing: 1.5px;
 }
 
@@ -71,7 +74,7 @@
 }
 
 .tagline {
-    font-family: var(--font-eb-garamond);
+    font-family: var(--font-cormorant-garamond);
     font-size: 1rem;
     color: var(--primary-alt);
     margin: 0;

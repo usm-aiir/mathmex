@@ -4,7 +4,7 @@
     box-shadow: var(--box-shadow);
     padding: 1.5rem 0;
     text-align: center;
-    margin-top: 3rem;
+    margin-top: auto;
 }
 
 .link {

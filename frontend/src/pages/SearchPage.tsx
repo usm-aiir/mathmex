@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"
+import { ReactNode, useState, useRef, useEffect } from "react"
 import styles from "./SearchPage.module.css"
 import SearchPanel from "../features/search/SearchPanel"
 import HistoryPanel from "../features/search/HistoryPanel"
@@ -19,16 +19,37 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
     // const searchParam = new URLSearchParams(window.location.search).get("q") || "";
     // mathFieldRef.current.value = searchParam ? decodeURIComponent(searchParam) : "";
 
+    // Microphone status, Speech-to-LaTeX
     const [isListening, setIsListening] = useState(false)
+
+    // Text/math mode
     const [mode, setMode] = useState<"math" | "text">("text")
+
+    // Search filter modal
     const [isFilterVisible, setIsFilterVisible] = useState(false)
     const [filters, setFilters] = useState<SearchFilters>({ sources: [], mediaTypes: [] })
+
+    // Search results
     const [searchResults, setSearchResults] = useState<SearchResult[]>([])
     const [isLoading, setIsLoading] = useState(false)
+
+    // History
     const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([])
     const [isHistoryOpenInternal, setIsHistoryOpenInternal] = useState(false)
     const isHistoryOpen = externalHistoryOpen !== undefined ? externalHistoryOpen : isHistoryOpenInternal
     const setIsHistoryOpen = setExternalHistoryOpen || setIsHistoryOpenInternal
+
+    // Results placeholder, set on mount
+    const [placeholderMessage, setPlaceholderMessage] = useState<ReactNode>(null)
+    useEffect(() => {
+        setPlaceholderMessage(
+            <div className={styles.resultsPlaceholderMessage}>
+                <p>
+                    Search for any mathematical topic, e.g. "Pythagorean Theorem," or a² + b² = c²
+                </p>
+            </div>
+        )
+    })
 
     const performSearch = () => {
         const currentLatex = mathFieldRef.current?.value?.trim() ?? ""
@@ -40,7 +61,6 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
         const newItem: SearchHistoryItem = { latex: currentLatex, timestamp: Date.now() }
         let updatedHistory = searchHistory.filter(item => item.latex !== currentLatex)
         updatedHistory.push(newItem)
-        if (updatedHistory.length > 15) updatedHistory = updatedHistory.slice(-15)
         setSearchHistory(updatedHistory)
         sessionStorage.setItem("mathMexSearchHistory", JSON.stringify(updatedHistory))
 
@@ -74,6 +94,7 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
                         mode={mode}
                         setMode={setMode}
                         filtersActive={filters.sources.length > 0 || filters.mediaTypes.length > 0}
+                        activeFiltersCount={filters.sources.length + filters.mediaTypes.length}
                         mathFieldRef={mathFieldRef}
                         onSearch={() => performSearch()}
                         onToggleFilter={() => setIsFilterVisible(!isFilterVisible)}
@@ -100,7 +121,7 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
                     <ResultsPanel
                         results={searchResults}
                         isLoading={isLoading}
-                        placeholderMessage={null}
+                        placeholderMessage={placeholderMessage}
                     />
                 </div>
             </div>

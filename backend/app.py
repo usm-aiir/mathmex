@@ -105,7 +105,7 @@ def search():
     # Build query with filters
     query_body = {
         "from": 0,
-        "size": 1000,
+        "size": 100,
         "query": {
             "bool": {
                 "must": [

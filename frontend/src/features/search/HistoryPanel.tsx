@@ -61,7 +61,7 @@ const HistoryPanel: FC<SearchHistoryDisplayProps> = ({
             }
         >
             <div className={styles.historyHeader}>
-                <h4>Search History</h4>
+                <h4 className={styles.historyTitle}>Search History</h4>
                 {/* Button to clear history */}
                 <button className={styles.clearHistoryBtn} onClick={onClearHistory}>
                     Clear

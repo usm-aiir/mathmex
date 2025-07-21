@@ -43,7 +43,7 @@ function App() {
     return (
         <Router>
             {/* Main application background and layout */}
-            <div className="parchment-background">
+            <div className="primary-content">
                 <Header onOpenHistorySidebar={() => setIsHistoryOpen(true)} />
                 <Routes>
                     {/* Main search page route */}
@@ -51,11 +51,11 @@ function App() {
                     {/* About page route */}
                     <Route path="/about" element={<AboutPage />} />
                 </Routes>
-                {/* Footer with Help button */}
-                <Footer onHelpClick={handleOpenHelp} />
-                {/* Global Help modal */}
-                <HelpModal open={showHelp} onClose={handleCloseHelp} />
             </div>
+            {/* Footer with Help button */}
+            <Footer onHelpClick={handleOpenHelp} />
+            {/* Global Help modal */}
+            <HelpModal open={showHelp} onClose={handleCloseHelp} />
         </Router>
     )
 }

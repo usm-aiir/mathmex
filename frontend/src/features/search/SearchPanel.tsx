@@ -1,11 +1,12 @@
 import { useRef, useEffect } from "react"
-import { Mic, Send, Square, Filter } from "lucide-react"
+import { Mic, Send, Square, Filter, Type, FunctionSquare } from "lucide-react"
 import styles from "./SearchPanel.module.css"
 
 interface Props {
     isListening: boolean
     mode: "math" | "text"
     filtersActive: boolean
+    activeFiltersCount: number
     mathFieldRef: React.RefObject<any>
     setIsListening: (listening: boolean) => void
     setMode: (mode: "math" | "text") => void
@@ -18,6 +19,7 @@ export default function SearchPanel({
     isListening,
     mode,
     filtersActive,
+    activeFiltersCount,
     mathFieldRef,
     setIsListening,
     setMode,
@@ -119,12 +121,19 @@ export default function SearchPanel({
 
             <div className={styles.searchControls}>
                 <div className={styles.controlsRow}>
+
                     <div className={styles.modeSwitchGroup}>
-                        <span className={styles.modeSwitchLabel}>Input Mode...</span>
-                        <div className={styles.modeButtonRow}>
+                        <div className={styles.modeSliderRow}>
+                            <span className={`${styles.modeSliderIcon} ${styles.text}`}> <Type size={16} /> </span>
+                            <span className={`${styles.modeSliderIcon} ${styles.math}`}> <FunctionSquare size={22} /> </span>
+                            <div className={styles.modeSliderTrack}></div>
+                            <div
+                                className={styles.modeSliderThumb}
+                                style={{ left: mode === "math" ? "36px" : "0" }}
+                            />
                             <button
                                 type="button"
-                                className={`${styles.modeButton} ${mode === "text" ? styles.active : ""}`}
+                                className={`${styles.modeSliderButton} ${styles.text}`}
                                 onClick={() => {
                                     const el = mathFieldRef.current;
                                     if (el && el.executeCommand) {
@@ -134,12 +143,12 @@ export default function SearchPanel({
                                     }
                                 }}
                                 aria-pressed={mode === "text"}
-                            >
-                                Text
-                            </button>
+                                aria-label="Text input mode"
+                                tabIndex={0}
+                            />
                             <button
                                 type="button"
-                                className={`${styles.modeButton} ${mode === "math" ? styles.active : ""}`}
+                                className={`${styles.modeSliderButton} ${styles.math}`}
                                 onClick={() => {
                                     const el = mathFieldRef.current;
                                     if (el && el.executeCommand) {
@@ -149,9 +158,9 @@ export default function SearchPanel({
                                     }
                                 }}
                                 aria-pressed={mode === "math"}
-                            >
-                                Math
-                            </button>
+                                aria-label="Math input mode"
+                                tabIndex={0}
+                            />
                         </div>
                     </div>
 
@@ -170,7 +179,7 @@ export default function SearchPanel({
                         >
                             <Filter size={20} />
                             {filtersActive && (
-                                <span className={styles.filterBadge}>!</span>
+                                <span className={styles.filterBadge}>{activeFiltersCount}</span>
                             )}
                         </button>
                     </div>

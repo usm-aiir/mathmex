@@ -50,7 +50,6 @@
 
 .title {
     font-size: 1.5rem;
-    font-family: var(--font-cormorant-garamond);
     color: var(--primary-text);
     margin-bottom: 2rem;
     margin-top: 0.5rem;
@@ -69,8 +68,64 @@
     font-size: 1.1rem;
     margin-left: 1rem;
     color: var(--primary-text);
-    font-family: var(--font-eb-garamond);
     font-weight: 500;
+}
+
+.pillSwitch {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    padding: 0.25rem 0.5rem;
+    transition: background 0.2s;
+}
+
+.track {
+    width: 44px;
+    height: 24px;
+    background: var(--primary-alt, #c7c1e6);
+    border-radius: 999px;
+    position: relative;
+    transition: background 0.3s;
+    display: flex;
+    align-items: center;
+}
+
+.on {
+    background: var(--primary-accent, #6c4fc1);
+}
+
+.thumb {
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+    transition: left 0.25s cubic-bezier(.4,0,.2,1), background 0.2s;
+}
+
+.thumbOn {
+    left: 22px;
+    background: var(--primary-light, #ececf0);
+}
+
+.switchLabel {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--primary-text, #23223a);
+    min-width: 2.5em;
+    text-align: left;
+    user-select: none;
+}
+
+.pillSwitch:focus .track {
+    box-shadow: 0 0 0 2px var(--primary-accent, #6c4fc1);
 }
 
 @media (max-width: 480px) {
