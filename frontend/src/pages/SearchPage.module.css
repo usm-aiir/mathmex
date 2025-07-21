@@ -1,0 +1,69 @@
+.parentContainer {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin: 0;
+    padding: 0;
+}
+
+.contentWrapper {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2rem 0;
+}
+
+.topSection {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.bottomSection {
+    flex: 1 1 0;
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+}
+
+.resultsPlaceholderMessage {
+    text-align: center;
+    color: var(--primary-alt);
+    padding: 2rem 0;
+    background-color: var(--container-color);
+    margin: auto;
+    border: 2px solid var(--gold-accent);
+    box-shadow: var(--box-shadow);
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.5);
+    z-index: 2000;
+    backdrop-filter: blur(2px);
+}
+
+@media (max-width: 768px) {
+    .contentWrapper {
+        padding: 1rem 0;
+    }
+    .bottomSection {
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .bottomSection {
+        flex-direction: column;
+        gap: 0;
+    }
+    /* Hide HistoryPanel in column unless sidebar is open (handled in component) */
+}

@@ -1,26 +1,28 @@
-.searchHistory {
+.historyContainer {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-height: 0;
+    height: 100%;
+    max-width: 300px;
     background-color: var(--container-color);
-    border-radius: 8px;
-    border: 1px solid var(--gold-accent);
-    overflow: hidden;
-    margin: 1rem 0 0;
+    border-radius: 25px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-height: 300px;
-    overflow-y: auto;
 }
+
 
 .historyHeader {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.8rem 1rem;
-    background-color: rgba(92, 56, 54, 0.1);
-    border-bottom: 1px solid var(--gold-accent);
+    padding: 1rem 2rem;
+    border-radius: var(--border-radius);
+    color: var(--primary-text);
 }
 
 .historyTitle {
     margin: 0;
-    color: var(--button-color);
+    color: var(--primary-text);
     font-size: 1rem;
     font-family: var(--font-cormorant-garamond);
     font-weight: 600;
@@ -39,15 +41,32 @@
 }
 
 .clearHistoryBtn:hover {
-    background-color: rgba(92, 56, 54, 0.1);
+    color: var(--primary-light);
+    background-color: var(--button-color);
+
 }
 
 .historyList {
     padding: 0.5rem 0;
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    max-height: 100%;
+    border-radius: inherit;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-alt) var(--container-color);
+    word-break: break-word;
 }
 
+.historyList::-webkit-scrollbar {
+    width: 10px;
+    background: var(--container-color);
+}
+
+
+
 .historyItem {
-    padding: 0.8rem 1rem;
+    padding: 0.8rem 2rem;
     border-bottom: 1px solid rgba(193, 154, 73, 0.3);
     cursor: pointer;
     transition: background-color 0.2s;
@@ -61,33 +80,21 @@
 }
 
 .historyItem:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(1, 1, 1, 0.05);
 }
 
 .historyFormula {
     flex: 1;
+    color: var(--primary-text);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     padding-right: 10px;
 }
 
-.historyFormula .mq-math-mode {
-    font-size: 0.9rem !important;
-    padding: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
-    background: transparent !important;
-}
-
-.historyFormula .MathJax {
-    font-size: 0.9rem !important;
-    display: inline !important;
-}
-
 .historyTime {
     font-size: 0.8rem;
-    color: var(--primary-alt);
+    color: var(--primary-alt) !important; 
     white-space: nowrap;
 }
 
@@ -96,6 +103,7 @@
     text-align: center;
     color: var(--primary-alt);
     font-style: italic;
+    font-size: 1rem;
 }
 
 /* Tablet and smaller desktop */
@@ -140,6 +148,7 @@
     
     .clearHistoryBtn {
         padding: 0.25rem 0.6rem;
+        margin: 0 2rem;
         font-size: 0.85rem;
     }
     
@@ -200,5 +209,75 @@
     
     .historyTime {
         font-size: 0.65rem;
+    }
+}
+
+/* Sidebar overlay for mobile */
+.historySidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 320px;
+    max-width: 90vw;
+    background: var(--container-color);
+    box-shadow: 2px 0 16px rgba(0,0,0,0.18);
+    z-index: 2100;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    border-radius: 0 18px 18px 0;
+}
+
+.historySidebar.open {
+    transform: translateX(0);
+}
+
+.closeButton {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.2rem;
+    background: none;
+    border: none;
+    color: var(--primary-text);
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 10;
+    padding: 0.2rem;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+.closeButton:hover {
+    background: var(--primary-alt);
+    color: var(--container-color);
+}
+
+@media (max-width: 480px) {
+    .historyContainer {
+        display: none;
+    }
+    .historySidebar {
+        width: 86vw;
+        max-width: 86vw;
+        margin: 0;
+        left: 0;
+        padding: 1.2rem 0.7rem 1rem 0.7rem;
+        border-radius: 0 16px 16px 0;
+    }
+    .closeButton {
+        width: 28px;
+        height: 28px;
+        font-size: 1.1rem;
+        top: 0.7rem;
+        right: 0.7rem;
+        padding: 0.1rem;
+    }
+    .historyHeader {
+        padding: 0.6rem 0.7rem 0.6rem 0.7rem;
+    }
+    .historyList {
+        padding: 0.3rem 0.3rem;
     }
 }

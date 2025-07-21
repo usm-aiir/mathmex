@@ -73,8 +73,6 @@ def search():
     query = data.get('query', '')
     sources = data.get('sources', [])
     media_types = data.get('mediaTypes', [])
-    from_ = int(data.get('from', 0))
-    size = int(data.get('size', 10))
 
     if not query:
         return jsonify({'error': 'No query provided'}), 400
@@ -106,8 +104,8 @@ def search():
 
     # Build query with filters
     query_body = {
-        "size": size,
-        "from": from_,
+        "from": 0,
+        "size": 1000,
         "query": {
             "bool": {
                 "must": [

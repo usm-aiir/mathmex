@@ -1,6 +1,7 @@
 import styles from "./HistoryPanel.module.css"
 import {FC, useEffect} from "react"
-import type { SearchHistoryItem } from "../types/search"
+import type { SearchHistoryItem } from "../../types/search.ts"
+import { X } from "lucide-react"
 
 /**
  * HistoryPanel.tsx
@@ -21,6 +22,8 @@ interface SearchHistoryDisplayProps {
     onClearHistory: () => void
     onHistoryItemClick: (latex: string) => void
     formatDate: (date: Date) => string
+    isSidebarOpen?: boolean
+    onCloseSidebar?: () => void
 }
 
 /**
@@ -34,6 +37,8 @@ const HistoryPanel: FC<SearchHistoryDisplayProps> = ({
     onClearHistory,
     onHistoryItemClick,
     formatDate,
+    isSidebarOpen = false,
+    onCloseSidebar,
 }) => {
     useEffect(() => {
         // Re-render math expressions in history when history changes
@@ -44,14 +49,29 @@ const HistoryPanel: FC<SearchHistoryDisplayProps> = ({
         }
     }, [history]);
 
+    // Determine if mobile (window width <= 480px)
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 480;
+
     return (
-        <div className={styles.searchHistory}>
+        <div
+            className={
+                isMobile
+                    ? `${styles.historySidebar} ${isSidebarOpen ? styles.open : ''}`
+                    : styles.historyContainer
+            }
+        >
             <div className={styles.historyHeader}>
                 <h4>Search History</h4>
                 {/* Button to clear history */}
                 <button className={styles.clearHistoryBtn} onClick={onClearHistory}>
                     Clear
                 </button>
+                {/* Close button for mobile sidebar */}
+                {isMobile && onCloseSidebar && (
+                    <button className={styles.closeButton} onClick={onCloseSidebar} aria-label="Close history sidebar">
+                        <X size={24} />
+                    </button>
+                )}
             </div>
             <div className={styles.historyList}>
                 {history.length === 0 ? (
@@ -68,7 +88,7 @@ const HistoryPanel: FC<SearchHistoryDisplayProps> = ({
                                 {/* Render math expression as LaTeX */}
                                 <p>{`\$$${item.latex}\$$`}</p>
                             </div>
-                            <div className="history-time">{formatDate(new Date(item.timestamp))}</div>
+                            <div className={styles.historyTime}>{formatDate(new Date(item.timestamp))}</div>
                         </div>
                     ))
                 )}

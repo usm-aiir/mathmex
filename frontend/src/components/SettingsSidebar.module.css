@@ -1,0 +1,75 @@
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 320px;
+    max-width: 90vw;
+    background: var(--container-color);
+    box-shadow: 2px 0 16px rgba(0,0,0,0.18);
+    z-index: 2000;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    border-radius: 0 18px 18px 0;
+}
+
+.sidebar.open {
+    transform: translateX(0);
+}
+
+.closeButton {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.2rem;
+    background: none;
+    border: none;
+    color: var(--primary-text);
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 10;
+    padding: 0.2rem;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+.closeButton:hover {
+    background: var(--primary-alt);
+    color: var(--container-color);
+}
+
+.title {
+    font-size: 1.5rem;
+    font-family: var(--font-cormorant-garamond);
+    color: var(--primary-text);
+    margin-bottom: 2rem;
+    margin-top: 0.5rem;
+    letter-spacing: 0.03em;
+}
+
+.section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    padding: 0.5rem 0;
+}
+
+.label {
+    font-size: 1.1rem;
+    color: var(--primary-text);
+    font-family: var(--font-eb-garamond);
+    font-weight: 500;
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 90vw;
+        padding: 1.2rem 0.7rem 1rem 0.7rem;
+    }
+    .title {
+        font-size: 1.15rem;
+        margin-bottom: 1.2rem;
+    }
+} 
