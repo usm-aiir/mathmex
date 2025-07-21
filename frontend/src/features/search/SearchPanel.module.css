@@ -37,7 +37,16 @@
     color: var(--primary-dark);
 }
 
-.searchButton {
+:root[data-theme="dark"] .inputContainer math-field {
+    color: var(--primary-light);
+}
+
+:root[data-theme="dark"] .inputContainer math-field::part(virtual-keyboard-toggle),
+:root[data-theme="dark"] .inputContainer math-field::part(menu-toggle) {
+    color: var(--primary-light);
+}
+
+searchButton {
     margin-left: -48px;
     width: 48px;
     height: 42px;
