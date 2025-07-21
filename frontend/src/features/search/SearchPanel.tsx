@@ -22,8 +22,7 @@ export default function SearchPanel({
     setIsListening,
     setMode,
     onSearch,
-    onToggleFilter,
-    onOpenHistorySidebar,
+    onToggleFilter
 }: Props) {
     const recognitionRef = useRef<SpeechRecognition | null>(null);
 
@@ -95,9 +94,6 @@ export default function SearchPanel({
         recognition.start();
         setIsListening(true);
     };
-
-    // Determine if mobile (window width <= 480px)
-    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 480;
 
     return (
         <div className={styles.searchContainer}>

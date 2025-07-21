@@ -6,7 +6,6 @@ import ResultsPanel from "../features/search/ResultsPanel"
 import FilterModal from "../features/search/FilterModal.tsx"
 import type { SearchFilters, SearchResult, SearchHistoryItem } from "../types/search"
 import { formatDate } from "../lib/utils"
-import { X } from "lucide-react"
 
 const API_BASE = process.env.NODE_ENV === "development" ? "http://localhost:440/api" : "/api"
 
