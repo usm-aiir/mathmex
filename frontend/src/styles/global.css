@@ -7,7 +7,6 @@
 
     --primary-accent: #6c4fc1;
     --accent-alt: #bcb3ee;
-    --gold-accent: var(--primary-accent); /* Replace gold with purple */
     --glow-accent: rgba(168, 158, 232, 0.15);
 
     --border-radius: 25px;
@@ -145,7 +144,7 @@ body, html {
 
     --primary-accent: #bcb3ee;
     --accent-alt: #a89ee8;
-    --gold-accent: var(--primary-accent); /* Replace gold with purple */
+    --primary-accent: var(--primary-accent); /* Replace gold with purple */
     --glow-accent: rgba(188, 179, 238, 0.10);
 
     --container-color: #23223a;

@@ -1,6 +1,6 @@
 .darkModeToggle {
     background-color: var(--button-color);
-    border: 2px solid var(--gold-accent);
+    border: 2px solid var(--primary-accent);
     border-radius: 50%;
     width: 45px;
     height: 45px;

@@ -48,7 +48,7 @@
 }
 
 .resultsDisplay::-webkit-scrollbar-thumb {
-    background: var(--gold-accent);
+    background: var(--primary-accent);
     border-radius: 8px;
     border: 2px solid var(--container-color);
 }
