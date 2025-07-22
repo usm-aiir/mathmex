@@ -9,6 +9,7 @@
     border-radius: 25px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     position: relative;
+    overflow: hidden;
 }
 
 
@@ -82,16 +83,11 @@
 
 .historyItem {
     padding: 0.8rem 2rem;
-    border-bottom: 1px solid rgba(193, 154, 73, 0.3);
     cursor: pointer;
     transition: background-color 0.2s;
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.historyItem:last-child {
-    border-bottom: none;
 }
 
 .historyItem:hover {
@@ -105,6 +101,19 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     padding-right: 10px;
+    min-width: 0;
+}
+
+.historyFormula p {
+    width: 75%;
+    overflow: hidden;
+}
+
+.historyFormula span {
+    display: inline;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .historyTime {
