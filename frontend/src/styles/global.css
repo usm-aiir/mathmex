@@ -141,7 +141,6 @@ body, html {
 
     --primary-accent: #bcb3ee;
     --accent-alt: #a89ee8;
-    --primary-accent: var(--primary-accent); /* Replace gold with purple */
     --glow-accent: rgba(188, 179, 238, 0.10);
 
     --container-color: #23223a;
@@ -168,6 +167,9 @@ body, html {
     --keycap-background-hover: var(--primary-light);
     --keycap-text-hover: var(--primary-dark);
     --keycap-secondary-text-hover: var(--primary-light);
+
+    --caret-color: var(--primary-light);
+
     .themeButton {
         color: var(--primary-accent);
     }
