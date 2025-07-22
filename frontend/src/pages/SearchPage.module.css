@@ -30,6 +30,9 @@
     display: flex;
     gap: 2rem;
     justify-content: center;
+    min-height: 0;
+    overflow: visible;
+    margin-bottom: 2rem;
 }
 
 .resultsPlaceholderMessage {
