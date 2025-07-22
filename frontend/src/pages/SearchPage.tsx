@@ -33,6 +33,18 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
     const isHistoryOpen = externalHistoryOpen !== undefined ? externalHistoryOpen : isHistoryOpenInternal
     const setIsHistoryOpen = setExternalHistoryOpen || setIsHistoryOpenInternal
 
+    // Load search history from localStorage on mount
+    useEffect(() => {
+        const stored = localStorage.getItem("mathMexSearchHistory")
+        if (stored) {
+            try {
+                setSearchHistory(JSON.parse(stored))
+            } catch (e) {
+                setSearchHistory([])
+            }
+        }
+    }, [])
+
     // Results placeholder, set on mount
     const [placeholderMessage, setPlaceholderMessage] = useState<ReactNode>(null)
     useEffect(() => {
@@ -43,7 +55,7 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
                 </p>
             </div>
         )
-    })
+    }, [])
 
     const performSearch = () => {
         const currentLatex = mathFieldRef.current?.value?.trim() ?? ""
@@ -56,7 +68,7 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
         let updatedHistory = searchHistory.filter(item => item.latex !== currentLatex)
         updatedHistory.push(newItem)
         setSearchHistory(updatedHistory)
-        sessionStorage.setItem("mathMexSearchHistory", JSON.stringify(updatedHistory))
+        localStorage.setItem("mathMexSearchHistory", JSON.stringify(updatedHistory))
 
         fetch(`${API_BASE}/search`, {
             method: "POST",
@@ -96,7 +108,7 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
                         history={searchHistory.slice().reverse()}
                         onClearHistory={() => {
                             setSearchHistory([])
-                            sessionStorage.removeItem("mathMexSearchHistory")
+                            localStorage.removeItem("mathMexSearchHistory")
                         }}
                         onHistoryItemClick={(latex) => {
                             if (mathFieldRef.current) {
