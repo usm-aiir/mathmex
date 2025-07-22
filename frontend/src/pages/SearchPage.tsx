@@ -16,8 +16,8 @@ interface SearchPageProps {
 
 export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHistoryOpen: setExternalHistoryOpen }: SearchPageProps) {
     const mathFieldRef = useRef<any>(null)
-    // const searchParam = new URLSearchParams(window.location.search).get("q") || "";
-    // mathFieldRef.current.value = searchParam ? decodeURIComponent(searchParam) : "";
+    const searchParam = new URLSearchParams(window.location.search).get("q") || "";
+    const initialLatex = searchParam ? decodeURIComponent(searchParam) : "";
 
     // Microphone status, Speech-to-LaTeX
     const [isListening, setIsListening] = useState(false)
@@ -99,6 +99,7 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
                         onSearch={() => performSearch()}
                         onToggleFilter={() => setIsFilterVisible(!isFilterVisible)}
                         onOpenHistorySidebar={() => setIsHistoryOpen(true)}
+                        initialLatex={initialLatex}
                     />
                 </div>
                 <div className={styles.bottomSection}>

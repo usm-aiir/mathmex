@@ -13,6 +13,7 @@ interface Props {
     onSearch: () => void
     onToggleFilter: () => void
     onOpenHistorySidebar?: () => void // new prop
+    initialLatex?: string
 }
 
 export default function SearchPanel({
@@ -24,7 +25,8 @@ export default function SearchPanel({
     setIsListening,
     setMode,
     onSearch,
-    onToggleFilter
+    onToggleFilter,
+    initialLatex
 }: Props) {
     const recognitionRef = useRef<SpeechRecognition | null>(null);
 
@@ -110,7 +112,7 @@ export default function SearchPanel({
                             onSearch();
                         }
                     }}
-                ></math-field>
+                >{initialLatex}</math-field>
                 <button
                     className={styles.searchButton}
                     onClick={onSearch}
