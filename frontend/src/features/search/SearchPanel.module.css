@@ -115,13 +115,12 @@
 }
 
 .controlButton.listening {
-    background: var(--primary-accent);
-    color: var(--container-color);
+    background: var(--button-color);
+    color: var(--primary-light);
 }
 
 .controlButton:hover {
     background: var(--button-active-color);
-    color: var(--container-color);
     transform: translate(-2px, -4px);
     box-shadow: 2px 4px 3px rgba(0, 0, 0, 0.5);
 }

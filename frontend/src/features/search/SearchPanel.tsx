@@ -1,34 +1,38 @@
-import { useRef, useEffect } from "react"
+import { useRef, useEffect, useState } from "react"
 import { Mic, Send, Square, Filter, Type, FunctionSquare } from "lucide-react"
 import styles from "./SearchPanel.module.css"
 
 interface Props {
-    isListening: boolean
-    mode: "math" | "text"
+    // filters
     filtersActive: boolean
     activeFiltersCount: number
-    mathFieldRef: React.RefObject<any>
-    setIsListening: (listening: boolean) => void
-    setMode: (mode: "math" | "text") => void
-    onSearch: () => void
     onToggleFilter: () => void
-    onOpenHistorySidebar?: () => void // new prop
+
+    // math-field
+    onSearch: () => void
+    mathFieldRef: React.RefObject<any>
     initialLatex?: string
 }
 
 export default function SearchPanel({
-    isListening,
-    mode,
+    // filters
     filtersActive,
     activeFiltersCount,
-    mathFieldRef,
-    setIsListening,
-    setMode,
-    onSearch,
     onToggleFilter,
+
+    // math-field
+    mathFieldRef,
+    onSearch,
     initialLatex
 }: Props) {
     const recognitionRef = useRef<SpeechRecognition | null>(null);
+
+    // input mode hook
+    const [mode, setMode] = useState<"math" | "text">("text")
+
+    // speech-to-latex hooks
+    const [isListening, setIsListening] = useState(false)
+    const [transcript, setTranscript] = useState<string>("");
 
     // Make sure UI mode is sync'd with current math-field mode
     useEffect(() => {
@@ -52,6 +56,7 @@ export default function SearchPanel({
         };
     }, [mathFieldRef, mode]);
 
+    /* Speech recognition */
     const toggleSpeechRecognition = () => {
         if (isListening) {
             recognitionRef.current?.stop();
@@ -81,8 +86,8 @@ export default function SearchPanel({
                     interimTranscript += transcriptPart;
                 }
             }
-            // This function should be passed in via props if needed externally
-            console.log("Transcript:", finalTranscript);
+
+            setTranscript(finalTranscript);
         };
 
         recognition.onend = () => {
@@ -98,6 +103,34 @@ export default function SearchPanel({
         recognition.start();
         setIsListening(true);
     };
+
+    /* Speech-to-LaTeX backend connection */
+    const speechToLatex = (text: string) => {
+        fetch(`/api/speech-to-latex`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text }),
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.latex && mathFieldRef.current) {
+                    mathFieldRef.current.insert(data.latex)
+                }
+            })
+            .catch((err) => {
+                console.error("Error converting speech to LaTeX", err);
+            });
+    };
+
+    /* Constant effect */
+    useEffect(() => {
+        /* If there is a transcript present, translate it on backend */
+        if (!isListening && transcript) {
+            speechToLatex(transcript)
+            /* Empty transcript */
+            setTranscript("")
+        }
+    }, [isListening])
 
     return (
         <div className={styles.searchContainer}>
@@ -172,7 +205,7 @@ export default function SearchPanel({
                             aria-label={isListening ? "Stop voice input" : "Start voice input"}
                             onClick={toggleSpeechRecognition}
                         >
-                            {isListening ? <Square size={20} strokeWidth={2.5} /> : <Mic size={20} />}
+                            {isListening ? <Square size={18} strokeWidth={2.5} /> : <Mic size={20} />}
                         </button>
                         <button
                             className={`${styles.controlButton} ${filtersActive ? styles.active : ""}`}

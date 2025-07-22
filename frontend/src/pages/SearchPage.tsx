@@ -19,12 +19,6 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
     const searchParam = new URLSearchParams(window.location.search).get("q") || "";
     const initialLatex = searchParam ? decodeURIComponent(searchParam) : "";
 
-    // Microphone status, Speech-to-LaTeX
-    const [isListening, setIsListening] = useState(false)
-
-    // Text/math mode
-    const [mode, setMode] = useState<"math" | "text">("text")
-
     // Search filter modal
     const [isFilterVisible, setIsFilterVisible] = useState(false)
     const [filters, setFilters] = useState<SearchFilters>({ sources: [], mediaTypes: [] })
@@ -89,16 +83,11 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
             <div className={styles.contentWrapper}>
                 <div className={styles.topSection}>
                     <SearchPanel
-                        isListening={isListening}
-                        setIsListening={setIsListening}
-                        mode={mode}
-                        setMode={setMode}
                         filtersActive={filters.sources.length > 0 || filters.mediaTypes.length > 0}
                         activeFiltersCount={filters.sources.length + filters.mediaTypes.length}
                         mathFieldRef={mathFieldRef}
                         onSearch={() => performSearch()}
                         onToggleFilter={() => setIsFilterVisible(!isFilterVisible)}
-                        onOpenHistorySidebar={() => setIsHistoryOpen(true)}
                         initialLatex={initialLatex}
                     />
                 </div>

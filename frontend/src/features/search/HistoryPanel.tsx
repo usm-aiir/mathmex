@@ -79,18 +79,18 @@ const HistoryPanel: FC<SearchHistoryDisplayProps> = ({
                     : styles.historyContainer
             }
         >
+            {/* Close button for mobile sidebar */}
+            {isMobile && onCloseSidebar && (
+                <button className={styles.closeButton} onClick={onCloseSidebar} aria-label="Close history sidebar">
+                    <X size={24} />
+                </button>
+            )}
             <div ref={historyHeaderRef} className={`${styles.historyHeader} ${isGlass ? styles.glass : ''}`}>
                 <h4 className={styles.historyTitle}>Search History</h4>
                 {/* Button to clear history */}
                 <button className={styles.clearHistoryBtn} onClick={onClearHistory}>
                     Clear
                 </button>
-                {/* Close button for mobile sidebar */}
-                {isMobile && onCloseSidebar && (
-                    <button className={styles.closeButton} onClick={onCloseSidebar} aria-label="Close history sidebar">
-                        <X size={24} />
-                    </button>
-                )}
             </div>
             <div ref={historyListRef} className={styles.historyList}>
                 {history.length === 0 ? (
