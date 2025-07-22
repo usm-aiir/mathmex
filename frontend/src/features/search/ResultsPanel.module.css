@@ -81,6 +81,10 @@
     animation: fadeInUp 0.3s ease-out;
 }
 
+:root[data-theme="dark"] .resultItem {
+    color: var(--primary-dark);
+}
+
 .resultItem:hover {
     transform: translate(-3px, -3px);
     box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.15);
