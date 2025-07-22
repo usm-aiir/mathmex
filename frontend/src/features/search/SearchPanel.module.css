@@ -1,36 +1,32 @@
-.searchSection {
-    margin-bottom: 2rem;
-    font-family: var(--font-eb-garamond);
-}
-
 .searchContainer {
-    margin-bottom: 1.5rem;
+    width: 100%;
     background-color: var(--container-color);
     padding: 25px;
-    border-radius: 8px;
-    border: 1px solid var(--gold-accent);
+    border-radius: 25px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
 }
 
 .inputContainer {
     display: flex;
-    margin-bottom: 1rem;
     width: 100%;
     max-width: 100%;
     position: relative;
+    align-items: center;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    background: var(--container-color);
 }
 
 /* MathLive styling */
 .inputContainer math-field {
     width: 100%;
+    color: var(--primary-text);
+    background-color: transparent;
     min-height: 40px;
     border-radius: var(--border-radius);
-}
-
-.inputContainer math-field:focus-within {
-    outline: 2px solid var(--primary-dark);
-    outline-offset: -3px;
+    padding: 0 42px 0 10px;
+    border: none;
 }
 
 .inputContainer math-field::part(placeholder) {
@@ -42,53 +38,42 @@
     color: var(--primary-dark);
 }
 
+:root[data-theme="dark"] .inputContainer math-field {
+	color: var(--primary-light);
+}
+
+:root[data-theme="dark"] .inputContainer math-field::part(placeholder) {
+	color: var(--primary-alt);
+}
+
+:root[data-theme="dark"] .inputContainer math-field::part(virtual-keyboard-toggle), :root[data-theme="dark"] .inputContainer math-field::part(menu-toggle) {
+       color: var(--primary-light);
+
+}
+
+
 .searchButton {
-    min-width: 100px;
-    padding: 0 1.5rem;
-    background-color: var(--button-color);
-    color: var(--container-color);
-    border: 1px solid var(--gold-accent);
-    border-left: none;
-    border-radius: 0 var(--border-radius) var(--border-radius) 0;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: all 0.3s;
-    font-family: inherit;
-    position: relative;
-    overflow: hidden;
-    flex-shrink: 0;
+    margin-left: -48px;
+    width: 48px;
+    height: 42px;
+    background: var(--button-color);
+    border: transparent;
+    border-radius: var(--border-radius);
+    color: var(--primary-light);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    box-shadow: none;
+    transition: background 0.2s;
+    cursor: pointer;
+    z-index: 2;
+    padding: 0;
 }
 
-.searchButton::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: 0.5s;
-}
-
-.searchButton:hover {
-    color: var(--primary-light);
-    background-color: var(--button-active-color);
-    transform: translate(-2px, -4px);
-    box-shadow: 2px 4px 3px rgba(0, 0, 0, 0.5);
+.searchButton:hover, .searchButton:focus {
+    background: var(--button-active-color);
     border-radius: var(--border-radius);
-}
-
-.searchButton:hover::before {
-    left: 100%;
-}
-
-.searchButtonText {
-    display: inline;
+    outline: none;
 }
 
 .searchControls {
@@ -114,9 +99,9 @@
 }
 
 .controlButton {
-    background-color: var(--button-color);
-    color: var(--container-color);
-    border: 2px solid var(--gold-accent);
+    background: var(--button-color);
+    color: var(--primary-light);
+    border: transparent;
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -130,12 +115,12 @@
 }
 
 .controlButton.listening {
-    background-color: var(--button-active-color);
+    background: var(--button-color);
+    color: var(--primary-light);
 }
 
 .controlButton:hover {
-    background-color: var(--button-active-color);
-    color: var(--primary-light);
+    background: var(--button-active-color);
     transform: translate(-2px, -4px);
     box-shadow: 2px 4px 3px rgba(0, 0, 0, 0.5);
 }
@@ -144,7 +129,7 @@
     position: absolute;
     top: -5px;
     right: -5px;
-    background-color: var(--gold-accent);
+    background: var(--primary-accent);
     color: var(--container-color);
     border-radius: 50%;
     width: 18px;
@@ -176,59 +161,95 @@
     letter-spacing: 0.01em;
 }
 
-.modeButtonRow {
+.modeSliderRow {
+    position: relative;
+    width: 72px;
+    height: 36px;
     display: flex;
-    flex-direction: row;
-    gap: 0.5rem;
-    justify-content: flex-start;
+    align-items: center;
+    justify-content: center;
+}
+
+.modeSliderTrack {
+    position: absolute;
+    left: 0;
+    top: 0;
     width: 100%;
-}
-
-.modeButton {
-    background: #f3f3f3;
-    color: #555;
-    border: 2px solid #ccc;
+    height: 36px;
+    background: var(--primary-alt);
     border-radius: 18px;
-    padding: 6px 18px;
-    font-size: 1rem;
-    font-family: inherit;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    font-weight: 500;
-    outline: none;
-    box-shadow: none;
+    z-index: 0;
+    transition: background 0.2s;
 }
 
-.modeButton.active {
+.modeSliderThumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 36px;
+    height: 36px;
     background: var(--button-color);
-    color: var(--container-color);
-    border: 2px solid var(--gold-accent);
-    box-shadow: 0 3px 8px var(--glow-accent);
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+    transition: left 0.25s cubic-bezier(.4,0,.2,1);
     z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-light);
+    font-size: 1.3rem;
 }
 
-.modeButton:not(.active) {
-    background: #fff;
-    color: #bbb;
-    border: 2px solid #eee;
-    opacity: 0.85;
+.modeSliderIcon {
+    position: absolute;
+    top: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-light);
+    z-index: 2;
+    pointer-events: none;
+    font-size: 1.3rem;
 }
 
-.modeButton:not(.active):hover {
-    background: #e9e9e9;
-    color: #222;
-    border: 2px solid #ccc;
+.modeSliderIcon.text {
+    left: 0;
+}
+.modeSliderIcon.math {
+    right: 0;
+}
+
+.modeSliderButton {
+    position: absolute;
+    top: 0;
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 3;
+    padding: 0;
+    outline: none;
+}
+.modeSliderButton.text {
+    left: 0;
+}
+.modeSliderButton.math {
+    right: 0;
+}
+.modeSliderButton:focus {
+    outline: 2px solid var(--primary-accent);
 }
 
 .resultsPlaceholderMessage {
     text-align: center;
     color: var(--primary-alt);
     padding: 2rem 0;
-    background-color: var(--container-color);
-    margin: 2rem 0 2rem 0;
-    border: 2px solid var(--gold-accent);
+    margin: auto;
     box-shadow: var(--box-shadow);
-    border-radius: 8px;
 }
 
 /* Tablet and smaller desktop */
@@ -241,21 +262,17 @@
     .searchContainer {
         padding: 20px;
     }
-    
+
     .searchControls {
         flex-direction: column;
         align-items: stretch;
         gap: 1rem;
     }
-    
+
     .controlsRow {
         justify-content: space-between;
     }
-    
-    .searchButtonText {
-        display: none;
-    }
-    
+
     .searchButton {
         min-width: 60px;
         padding: 0 1rem;
@@ -265,14 +282,32 @@
 /* Mobile phones */
 @media (max-width: 480px) {
     .searchContainer {
-        padding: 15px;
-        margin-bottom: 1rem;
+        padding: 10px;
+        margin: 0 6px 1rem 6px;
     }
-    
+    .inputContainer {
+        margin: 0;
+    }
+
+    .inputContainer math-field::part(menu-toggle) {
+        margin-right: 1.2em;
+    }
+    .searchButton {
+        width: 32px;
+        height: 6em;
+        padding: 0;
+        margin-left: -61px;
+    }
+    .controlButton {
+        width: 28px;
+        height: 28px;
+        font-size: 1rem;
+    }
+
     .searchControls {
         margin-top: 1.5rem;
     }
-    
+
     .controlsRow {
         display: flex;
         flex-direction: row;
@@ -280,40 +315,63 @@
         align-items: center;
         gap: 1rem;
     }
-    
+
     .modeSwitchGroup {
         align-items: flex-start;
         flex: 0 1 auto;
         gap: 0.2rem;
     }
-    
+
     .modeSwitchLabel {
         text-align: left;
         margin-left: 0.3rem;
         font-size: 0.85rem;
         margin-bottom: 0.1rem;
     }
-    
+
     .modeButtonRow {
         justify-content: flex-start;
         gap: 0.3rem;
     }
-    
+
     .modeButton {
         padding: 4px 12px;
         font-size: 0.85rem;
         border-radius: 14px;
     }
-    
+
     .actionButtons {
         justify-content: flex-end;
         gap: 0.8rem;
         flex: 0 1 auto;
     }
-    
+
     .controlButton {
         width: 36px;
         height: 36px;
+    }
+
+    .historySidebarButton {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 5;
+        width: 40px;
+        height: 40px;
+        background: var(--button-color);
+        color: var(--container-color);
+        border: none;
+        border-radius: 50%;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s;
+    }
+    .historySidebarButton:hover {
+        background: var(--button-active-color);
+        color: var(--primary-light);
     }
 }
 
@@ -322,37 +380,36 @@
     .searchContainer {
         padding: 12px;
     }
-    
+
     .controlsRow {
         gap: 0.8rem;
     }
-    
+
     .modeSwitchGroup {
         gap: 0.15rem;
     }
-    
+
     .modeSwitchLabel {
         font-size: 0.8rem;
         margin-left: 0.2rem;
     }
-    
+
     .modeButtonRow {
         gap: 0.25rem;
     }
-    
+
     .modeButton {
         padding: 3px 10px;
         font-size: 0.8rem;
         border-radius: 12px;
     }
-    
+
     .actionButtons {
         gap: 0.4rem;
     }
-    
+
     .controlButton {
-        width: 40px;
-        height: 40px;
+        width: 32px;
+        height: 32px;
     }
 }
-
