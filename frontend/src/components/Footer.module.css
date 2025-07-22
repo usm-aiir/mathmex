@@ -1,10 +1,10 @@
 .footer {
     background-color: var(--container-color);
     color: var(--button-color);
+    box-shadow: var(--box-shadow);
     padding: 1.5rem 0;
     text-align: center;
-    margin-top: 3rem;
-    border-top: 2px solid var(--gold-accent);
+    margin-top: auto;
 }
 
 .link {

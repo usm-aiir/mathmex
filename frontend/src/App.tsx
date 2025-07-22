@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-import SearchPage from "./components/SearchPage"
-import AboutPage from "./components/AboutPage"
+import SearchPage from "./pages/SearchPage"
+import AboutPage from "./pages/AboutPage"
 import Header from "./components/Header"
 import Footer from "./components/Footer"
 import HelpModal, { shouldShowFirstTimePopup } from "./components/HelpModal"
-import React from "react"
+import React, { useState } from "react"
 
 /**
  * App.tsx
@@ -28,6 +28,9 @@ function App() {
     // State to control visibility of the Help modal (shows on first visit)
     const [showHelp, setShowHelp] = React.useState(shouldShowFirstTimePopup());
 
+    // State to control search history sidebar
+    const [isHistoryOpen, setIsHistoryOpen] = useState(false)
+
     /**
      * Opens the Help modal.
      */
@@ -40,19 +43,19 @@ function App() {
     return (
         <Router>
             {/* Main application background and layout */}
-            <div className="parchment-background">
-                <Header />
+            <div className="primary-content">
+                <Header onOpenHistorySidebar={() => setIsHistoryOpen(true)} />
                 <Routes>
                     {/* Main search page route */}
-                    <Route path="/" element={<SearchPage />} />
+                    <Route path="/" element={<SearchPage isHistoryOpen={isHistoryOpen} setIsHistoryOpen={setIsHistoryOpen} />} />
                     {/* About page route */}
                     <Route path="/about" element={<AboutPage />} />
                 </Routes>
-                {/* Footer with Help button */}
-                <Footer onHelpClick={handleOpenHelp} />
-                {/* Global Help modal */}
-                <HelpModal open={showHelp} onClose={handleCloseHelp} />
             </div>
+            {/* Footer with Help button */}
+            <Footer onHelpClick={handleOpenHelp} />
+            {/* Global Help modal */}
+            <HelpModal open={showHelp} onClose={handleCloseHelp} />
         </Router>
     )
 }

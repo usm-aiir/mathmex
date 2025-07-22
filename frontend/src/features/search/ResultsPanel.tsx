@@ -1,7 +1,6 @@
 import styles from "./ResultsPanel.module.css"
-import { FC, ReactNode, useEffect } from "react"
-import { ArrowLeft, ArrowRight } from "lucide-react"
-import type { SearchResult } from "../types/search"
+import { FC, ReactNode, useEffect, useRef, useState } from "react"
+import type { SearchResult } from "../../types/search.ts"
 
 /**
  * ResultsPanel.tsx
@@ -25,11 +24,6 @@ interface ResultsPanelProps {
     results: SearchResult[]
     isLoading: boolean
     placeholderMessage: ReactNode
-    currentPage: number
-    totalResults: number
-    pageSize: number
-    onNextPage: () => void
-    onPrevPage: () => void
 }
 
 const IS_DEV = process.env.NODE_ENV === "development";
@@ -40,7 +34,11 @@ const IS_DEV = process.env.NODE_ENV === "development";
  * @param {ResultsPanelProps} props - The props for the component.
  * @returns {JSX.Element} The rendered results panel.
  */
-const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMessage, currentPage, totalResults, pageSize, onNextPage, onPrevPage }) => {
+const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMessage }) => {
+    const [isGlass, setIsGlass] = useState(false)
+    const resultsDisplayRef = useRef<HTMLDivElement>(null)
+    const resultsTitleRef = useRef<HTMLHeadingElement>(null)
+
     useEffect(() => {
         // Re-render math expressions in results when results change
         if (results.length > 0) {
@@ -50,13 +48,25 @@ const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMe
         }
     }, [results]);
 
-    // Calculate total number of pages
-    const totalPages = Math.max(1, Math.ceil(totalResults / pageSize));
+    useEffect(() => {
+        const handleScroll = () => {
+            if (resultsDisplayRef.current && resultsTitleRef.current) {
+                const scrollTop = resultsDisplayRef.current.scrollTop
+                setIsGlass(scrollTop > 0)
+            }
+        }
+
+        const resultsDisplay = resultsDisplayRef.current
+        if (resultsDisplay) {
+            resultsDisplay.addEventListener('scroll', handleScroll)
+            return () => resultsDisplay.removeEventListener('scroll', handleScroll)
+        }
+    }, [])
 
     return (
-        <section className={styles.resultsSection}>
-            <h2 className={styles.resultsSectionTitle}>Results</h2>
-            <div className={styles.resultsContainer}>
+        <section className={styles.resultsContainer}>
+            <h2 ref={resultsTitleRef} className={`${styles.resultsTitle} ${isGlass ? styles.glass : ''}`}>Results</h2>
+            <div ref={resultsDisplayRef} className={styles.resultsDisplay}>
                 {isLoading ? (
                     <div className="loading">Searching...</div>
                 ) : results.length > 0 ? (
@@ -95,34 +105,6 @@ const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMe
                     placeholderMessage
                 )}
             </div>
-            {/* Pagination Controls */}
-            {totalResults > pageSize && (
-                <div className={styles.pagination}>
-                    <button
-                        className={styles.pageArrow}
-                        onClick={onPrevPage}
-                        disabled={currentPage === 1}
-                        aria-label="Previous page"
-                    >
-                        <ArrowLeft size={20} />
-                    </button>
-                    <div className={styles.resultsRangeInfo}>
-                        {(() => {
-                            const start = (currentPage - 1) * pageSize + 1;
-                            const end = Math.min(currentPage * pageSize, totalResults);
-                            return `Showing results ${start}-${end}`;
-                        })()}
-                    </div>
-                    <button
-                        className={styles.pageArrow}
-                        onClick={onNextPage}
-                        disabled={currentPage === totalPages}
-                        aria-label="Next page"
-                    >
-                        <ArrowRight size={20} />
-                    </button>
-                </div>
-            )}
         </section>
     )
 }

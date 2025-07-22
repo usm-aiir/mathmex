@@ -35,7 +35,6 @@
 }
 
 .modalTitle {
-  font-family: var(--font-cormorant-garamond);
   font-size: 1.5rem;
   color: var(--primary-dark);
   margin: 0;
@@ -54,7 +53,6 @@
 }
 
 .pageDescription {
-  font-family: var(--font-eb-garamond);
   font-size: 0.95rem;
   line-height: 1.5;
   color: var(--primary-dark);
@@ -78,7 +76,6 @@
   background: var(--glow-accent);
   border-radius: 8px;
   border-left: 3px solid var(--gold-accent);
-  font-family: var(--font-eb-garamond);
   font-size: 0.9rem;
   color: var(--primary-dark);
 }
@@ -118,7 +115,6 @@
 }
 
 .mediaCaption {
-  font-family: var(--font-eb-garamond);
   font-size: 0.8rem;
   color: var(--primary-alt);
   font-style: italic;
@@ -151,14 +147,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-eb-garamond);
   font-size: 0.85rem;
   font-weight: 600;
   flex-shrink: 0;
 }
 
 .stepContent {
-  font-family: var(--font-eb-garamond);
   font-size: 0.9rem;
   color: var(--primary-dark);
   line-height: 1.4;
@@ -179,7 +173,6 @@
   background: none;
   border: none;
   color: var(--primary-alt);
-  font-family: var(--font-eb-garamond);
   font-size: 0.85rem;
   cursor: pointer;
   padding: 6px 10px;
@@ -229,7 +222,6 @@
 }
 
 .navButton {
-  font-family: var(--font-eb-garamond);
   font-size: 0.9rem;
   padding: 8px 18px;
   border-radius: 8px;

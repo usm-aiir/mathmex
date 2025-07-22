@@ -1,0 +1,140 @@
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 320px;
+    max-width: 90vw;
+    background: var(--container-color);
+    box-shadow: 2px 0 16px rgba(0,0,0,0.18);
+    z-index: 2000;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    border-radius: 0 18px 18px 0;
+}
+
+.sidebar.open {
+    transform: translateX(0);
+}
+
+.closeButton {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.2rem;
+
+    height: 28px;
+    width: 28px;
+
+    background: none;
+    border: none;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--primary-text);
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 10;
+    padding: 0.2rem;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.closeButton:hover {
+    background: var(--primary-alt);
+    color: var(--container-color);
+}
+
+.title {
+    font-size: 1.5rem;
+    color: var(--primary-text);
+    margin-bottom: 2rem;
+    margin-top: 0.5rem;
+    letter-spacing: 0.03em;
+}
+
+.section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    padding: 0.5rem 0;
+}
+
+.label {
+    font-size: 1.1rem;
+    margin-left: 1rem;
+    color: var(--primary-text);
+    font-weight: 500;
+}
+
+.pillSwitch {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    padding: 0.25rem 0.5rem;
+    transition: background 0.2s;
+}
+
+.track {
+    width: 44px;
+    height: 24px;
+    background: var(--primary-alt, #c7c1e6);
+    border-radius: 999px;
+    position: relative;
+    transition: background 0.3s;
+    display: flex;
+    align-items: center;
+}
+
+.on {
+    background: var(--primary-accent, #6c4fc1);
+}
+
+.thumb {
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+    transition: left 0.25s cubic-bezier(.4,0,.2,1), background 0.2s;
+}
+
+.thumbOn {
+    left: 22px;
+    background: var(--primary-light, #ececf0);
+}
+
+.switchLabel {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--primary-text, #23223a);
+    min-width: 2.5em;
+    text-align: left;
+    user-select: none;
+}
+
+.pillSwitch:focus .track {
+    box-shadow: 0 0 0 2px var(--primary-accent, #6c4fc1);
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 90vw;
+        padding: 1.2rem 0.7rem 1rem 0.7rem;
+    }
+    .title {
+        font-size: 1.15rem;
+        margin-bottom: 1.2rem;
+    }
+} 

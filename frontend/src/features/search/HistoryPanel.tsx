@@ -1,6 +1,7 @@
 import styles from "./HistoryPanel.module.css"
-import {FC, useEffect} from "react"
-import type { SearchHistoryItem } from "../types/search"
+import {FC, useEffect, useRef, useState} from "react"
+import type { SearchHistoryItem } from "../../types/search.ts"
+import { X } from "lucide-react"
 
 /**
  * HistoryPanel.tsx
@@ -21,6 +22,8 @@ interface SearchHistoryDisplayProps {
     onClearHistory: () => void
     onHistoryItemClick: (latex: string) => void
     formatDate: (date: Date) => string
+    isSidebarOpen?: boolean
+    onCloseSidebar?: () => void
 }
 
 /**
@@ -34,7 +37,13 @@ const HistoryPanel: FC<SearchHistoryDisplayProps> = ({
     onClearHistory,
     onHistoryItemClick,
     formatDate,
+    isSidebarOpen = false,
+    onCloseSidebar,
 }) => {
+    const [isGlass, setIsGlass] = useState(false)
+    const historyListRef = useRef<HTMLDivElement>(null)
+    const historyHeaderRef = useRef<HTMLDivElement>(null)
+
     useEffect(() => {
         // Re-render math expressions in history when history changes
         if (history.length > 0) {
@@ -44,16 +53,46 @@ const HistoryPanel: FC<SearchHistoryDisplayProps> = ({
         }
     }, [history]);
 
+    useEffect(() => {
+        const handleScroll = () => {
+            if (historyListRef.current && historyHeaderRef.current) {
+                const scrollTop = historyListRef.current.scrollTop
+                setIsGlass(scrollTop > 0)
+            }
+        }
+
+        const historyList = historyListRef.current
+        if (historyList) {
+            historyList.addEventListener('scroll', handleScroll)
+            return () => historyList.removeEventListener('scroll', handleScroll)
+        }
+    }, [])
+
+    // Determine if mobile (window width <= 480px)
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 480;
+
     return (
-        <div className={styles.searchHistory}>
-            <div className={styles.historyHeader}>
-                <h4>Search History</h4>
+        <div
+            className={
+                isMobile
+                    ? `${styles.historySidebar} ${isSidebarOpen ? styles.open : ''}`
+                    : styles.historyContainer
+            }
+        >
+            {/* Close button for mobile sidebar */}
+            {isMobile && onCloseSidebar && (
+                <button className={styles.closeButton} onClick={onCloseSidebar} aria-label="Close history sidebar">
+                    <X size={24} />
+                </button>
+            )}
+            <div ref={historyHeaderRef} className={`${styles.historyHeader} ${isGlass ? styles.glass : ''}`}>
+                <h4 className={styles.historyTitle}>Search History</h4>
                 {/* Button to clear history */}
                 <button className={styles.clearHistoryBtn} onClick={onClearHistory}>
                     Clear
                 </button>
             </div>
-            <div className={styles.historyList}>
+            <div ref={historyListRef} className={styles.historyList}>
                 {history.length === 0 ? (
                     <p className={styles.emptyHistory}>No searches in this session</p>
                 ) : (
@@ -68,7 +107,7 @@ const HistoryPanel: FC<SearchHistoryDisplayProps> = ({
                                 {/* Render math expression as LaTeX */}
                                 <p>{`\$$${item.latex}\$$`}</p>
                             </div>
-                            <div className="history-time">{formatDate(new Date(item.timestamp))}</div>
+                            <div className={styles.historyTime}>{formatDate(new Date(item.timestamp))}</div>
                         </div>
                     ))
                 )}

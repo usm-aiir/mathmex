@@ -15,7 +15,7 @@
     max-width: 1200px;
     width: 100%;
     margin: 0 auto;
-    padding: 2rem 0 0 0;
+    padding: 2rem 0;
 }
 
 .topSection {
@@ -30,9 +30,6 @@
     display: flex;
     gap: 2rem;
     justify-content: center;
-    min-height: 0;
-    overflow: visible;
-    margin-bottom: 2rem;
 }
 
 .resultsPlaceholderMessage {
@@ -58,12 +55,10 @@
 
 @media (max-width: 768px) {
     .contentWrapper {
-        padding: 1rem 0 0 0;
+        padding: 1rem 0;
     }
     .bottomSection {
         gap: 1rem;
-        margin-bottom: 1.5rem;
-        max-height: calc(100vh - 350px);
     }
 }
 
@@ -71,8 +66,6 @@
     .bottomSection {
         flex-direction: column;
         gap: 0;
-        margin-bottom: 1rem;
-        max-height: calc(100vh - 300px);
     }
     /* Hide HistoryPanel in column unless sidebar is open (handled in component) */
 }

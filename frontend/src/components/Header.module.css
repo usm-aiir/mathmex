@@ -1,18 +1,51 @@
 .header {
     padding: 1.5rem 0;
     text-align: center;
-    border-bottom: 2px solid var(--gold-accent);
     background-color: var(--container-color);
-    margin-bottom: 1.5rem;
+    box-shadow: var(--box-shadow);
+    position: relative;
+    font-family: Inter;
+}
+
+:root[data-theme="dark"] .header {
+    box-shadow: none;
 }
 
 .header h1 {
-    font-family: var(--font-cormorant-garamond);
-    font-size: 2.8rem;
+    font-size: 2.6rem;
     margin-bottom: 0.3rem;
     color: var(--button-color);
-    font-weight: 600;
+    font-weight: 200;
     letter-spacing: 1.5px;
+}
+
+.historyButton {
+    display: none;
+}
+
+.settingsButton {
+    width: 45px;
+    height: 45px;
+    position: absolute;
+    top: 50%;
+    right: 5%;
+    transform: translateY(-50%);
+    background: var(--button-color);
+    border: none;
+    color: var(--primary-light);
+    font-size: 1.8rem;
+    cursor: pointer;
+    padding: 0.2rem;
+    border-radius: 50%;
+    transition: background 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+.settingsButton:hover {
+    background: var(--primary-alt);
+    color: var(--container-color);
 }
 
 .headerContent {
@@ -37,72 +70,14 @@
 }
 
 .highlight {
-    color: var(--gold-accent);
+    color: var(--primary-accent);
 }
 
 .tagline {
-    font-family: var(--font-eb-garamond);
+    font-family: var(--font-cormorant-garamond);
     font-size: 1rem;
     color: var(--primary-alt);
     margin: 0;
-}
-
-.ornament {
-    width: 80px;
-    height: 80px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.ornament.left {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23c19a49'%3E%3Cpath d='M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0zm0 90c-22.1 0-40-17.9-40-40s17.9-40 40-40 40 17.9 40 40-17.9 40-40 40z'/%3E%3Cpath d='M50 20c-16.5 0-30 13.5-30 30s13.5 30 30 30 30-13.5 30-30-13.5-30-30-30zm0 50c-11 0-20-9-20-20s9-20 20-20 20 9 20 20-9 20-20 20z'/%3E%3Ccircle cx='50' cy='50' r='10'/%3E%3C/svg%3E");
-}
-
-.ornament.right {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23c19a49'%3E%3Cpath d='M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0zm0 90c-22.1 0-40-17.9-40-40s17.9-40 40-40 40 17.9 40 40-17.9 40-40 40z'/%3E%3Cpath d='M50 20c-16.5 0-30 13.5-30 30s13.5 30 30 30 30-13.5 30-30-13.5-30-30-30zm0 50c-11 0-20-9-20-20s9-20 20-20 20 9 20 20-9 20-20 20z'/%3E%3Ccircle cx='50' cy='50' r='10'/%3E%3C/svg%3E");
-}
-
-.ornamentContainer {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.toggleOverlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 10;
-}
-
-.themeButton {
-    color: var(--background-color);
-    background-color: var(--button-color);
-    border: 2px solid var(--gold-accent);
-    border-radius: 50%;
-    width: 45px;
-    height: 45px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    backdrop-filter: blur(2px);
-}
-
-.themeButton:hover {
-    transform: rotate(45deg);
-}
-
-.themeIcon {
-    width: 20px;
-    height: 20px;
 }
 
 /* Tablet and smaller desktop */
@@ -152,8 +127,28 @@
 /* Mobile phones */
 @media (max-width: 480px) {
     .header {
-        padding: 1rem 0;
+        padding: 1rem 0.5rem;
         margin-bottom: 1rem;
+    }
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    .historyButton, .settingsButton {
+        width: 28px;
+        height: 28px;
+        font-size: 1rem;
+    }
+    .historyButton {
+        left: 2%;
+    }
+    .settingsButton {
+        right: 2%;
+    }
+    .historyButton svg,
+    .settingsButton svg {
+        width: 18px;
+        height: 18px;
     }
     
     .headerContent {
@@ -196,6 +191,41 @@
     .titleContainer {
         margin: 0 8px;
     }
+
+    .historyButton {
+        display: flex;
+        width: 36px;
+        height: 36px;
+        font-size: 1.3rem;
+        position: absolute;
+        top: 50%;
+        left: 3%;
+        transform: translateY(-50%);
+        background: var(--button-color);
+        color: var(--primary-light);
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        transition: background 0.2s, color 0.2s;
+        padding: 0.2rem;
+    }
+
+    .historyButton:hover {
+        background: var(--primary-alt);
+        color: var(--container-color);
+    }
+
+    .settingsButton {
+        width: 36px;
+        height: 36px;
+        font-size: 1.3rem;
+    }
+    .settingsButton {
+        right: 3%;
+    }
 }
 
 /* Very small screens */
@@ -210,21 +240,6 @@
     
     .tagline {
         font-size: 0.75rem;
-    }
-    
-    .ornament {
-        width: 35px;
-        height: 35px;
-    }
-    
-    .themeButton {
-        width: 24px;
-        height: 24px;
-    }
-    
-    .themeIcon {
-        width: 14px;
-        height: 14px;
     }
     
     .headerContent {

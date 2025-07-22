@@ -1,6 +1,6 @@
 import styles from './FilterModal.module.css';
 import { X, Check } from 'lucide-react';
-import type { SearchFilters } from '../types/search';
+import type { SearchFilters } from '../../types/search.ts';
 
 /**
  * FilterModal.tsx
