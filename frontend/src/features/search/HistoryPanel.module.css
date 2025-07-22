@@ -26,18 +26,23 @@
     padding: 1rem 2rem;
     border-radius: var(--border-radius);
     color: var(--primary-text);
+    background: transparent;
+    transition: all 0.3s ease;
+}
 
+.historyHeader.glass {
     /* Glassmorphism */
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
-    border-bottom: 2px solid rgba(255, 255, 255, 0.15);
-    box-shadow: inset 0 1px 4px rgba(255, 255, 255, 0.2);
+    box-shadow:
+        inset 0 1px 4px rgba(255, 255, 255, 0.2),
+        inset 0 -1px 4px rgba(0, 0, 0, 0.1),
+        0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 :root[data-theme="dark"] .historyHeader {
     background: rgba(0, 0, 0, 0.01);
-    backdrop-filter: blur(8px);
-    border-bottom: 2px solid rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(8px);;
 }
 
 .historyTitle {

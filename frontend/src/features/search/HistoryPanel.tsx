@@ -1,5 +1,5 @@
 import styles from "./HistoryPanel.module.css"
-import {FC, useEffect} from "react"
+import {FC, useEffect, useRef, useState} from "react"
 import type { SearchHistoryItem } from "../../types/search.ts"
 import { X } from "lucide-react"
 
@@ -40,6 +40,10 @@ const HistoryPanel: FC<SearchHistoryDisplayProps> = ({
     isSidebarOpen = false,
     onCloseSidebar,
 }) => {
+    const [isGlass, setIsGlass] = useState(false)
+    const historyListRef = useRef<HTMLDivElement>(null)
+    const historyHeaderRef = useRef<HTMLDivElement>(null)
+
     useEffect(() => {
         // Re-render math expressions in history when history changes
         if (history.length > 0) {
@@ -48,6 +52,21 @@ const HistoryPanel: FC<SearchHistoryDisplayProps> = ({
             });
         }
     }, [history]);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (historyListRef.current && historyHeaderRef.current) {
+                const scrollTop = historyListRef.current.scrollTop
+                setIsGlass(scrollTop > 0)
+            }
+        }
+
+        const historyList = historyListRef.current
+        if (historyList) {
+            historyList.addEventListener('scroll', handleScroll)
+            return () => historyList.removeEventListener('scroll', handleScroll)
+        }
+    }, [])
 
     // Determine if mobile (window width <= 480px)
     const isMobile = typeof window !== 'undefined' && window.innerWidth <= 480;
@@ -60,20 +79,20 @@ const HistoryPanel: FC<SearchHistoryDisplayProps> = ({
                     : styles.historyContainer
             }
         >
-            {/* Close button for mobile sidebar */}
-            {isMobile && onCloseSidebar && (
-                    <button className={styles.closeButton} onClick={onCloseSidebar} aria-label="Close history sidebar">
-                        <X size={24} />
-                    </button>
-                )}
-            <div className={styles.historyHeader}>
+            <div ref={historyHeaderRef} className={`${styles.historyHeader} ${isGlass ? styles.glass : ''}`}>
                 <h4 className={styles.historyTitle}>Search History</h4>
                 {/* Button to clear history */}
                 <button className={styles.clearHistoryBtn} onClick={onClearHistory}>
                     Clear
                 </button>
+                {/* Close button for mobile sidebar */}
+                {isMobile && onCloseSidebar && (
+                    <button className={styles.closeButton} onClick={onCloseSidebar} aria-label="Close history sidebar">
+                        <X size={24} />
+                    </button>
+                )}
             </div>
-            <div className={styles.historyList}>
+            <div ref={historyListRef} className={styles.historyList}>
                 {history.length === 0 ? (
                     <p className={styles.emptyHistory}>No searches in this session</p>
                 ) : (

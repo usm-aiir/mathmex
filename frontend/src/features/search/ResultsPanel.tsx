@@ -1,5 +1,5 @@
 import styles from "./ResultsPanel.module.css"
-import { FC, ReactNode, useEffect } from "react"
+import { FC, ReactNode, useEffect, useRef, useState } from "react"
 import type { SearchResult } from "../../types/search.ts"
 
 /**
@@ -35,6 +35,10 @@ const IS_DEV = process.env.NODE_ENV === "development";
  * @returns {JSX.Element} The rendered results panel.
  */
 const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMessage }) => {
+    const [isGlass, setIsGlass] = useState(false)
+    const resultsDisplayRef = useRef<HTMLDivElement>(null)
+    const resultsTitleRef = useRef<HTMLHeadingElement>(null)
+
     useEffect(() => {
         // Re-render math expressions in results when results change
         if (results.length > 0) {
@@ -44,10 +48,25 @@ const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMe
         }
     }, [results]);
 
+    useEffect(() => {
+        const handleScroll = () => {
+            if (resultsDisplayRef.current && resultsTitleRef.current) {
+                const scrollTop = resultsDisplayRef.current.scrollTop
+                setIsGlass(scrollTop > 0)
+            }
+        }
+
+        const resultsDisplay = resultsDisplayRef.current
+        if (resultsDisplay) {
+            resultsDisplay.addEventListener('scroll', handleScroll)
+            return () => resultsDisplay.removeEventListener('scroll', handleScroll)
+        }
+    }, [])
+
     return (
         <section className={styles.resultsContainer}>
-            <h2 className={styles.resultsTitle}>Results</h2>
-            <div className={styles.resultsDisplay}>
+            <h2 ref={resultsTitleRef} className={`${styles.resultsTitle} ${isGlass ? styles.glass : ''}`}>Results</h2>
+            <div ref={resultsDisplayRef} className={styles.resultsDisplay}>
                 {isLoading ? (
                     <div className="loading">Searching...</div>
                 ) : results.length > 0 ? (
