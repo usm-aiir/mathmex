@@ -1,5 +1,6 @@
 import styles from './FilterModal.module.css';
 import { X, Check } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import type { SearchFilters } from '../../types/search.ts';
 
 /**
@@ -51,6 +52,34 @@ const AVAILABLE_MEDIA_TYPES = [
  * @returns {JSX.Element|null} The rendered modal, or null if not open.
  */
 export default function FilterModal({ isOpen, onClose, filters, onFiltersChange }: FilterModalProps) {
+    const [isGlass, setIsGlass] = useState(false);
+    const [isFooterGlass, setIsFooterGlass] = useState(true);
+    const modalBodyRef = useRef<HTMLDivElement>(null);
+    const modalHeaderRef = useRef<HTMLDivElement>(null);
+    const modalFooterRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (modalBodyRef.current && modalHeaderRef.current && modalFooterRef.current) {
+                const scrollTop = modalBodyRef.current.scrollTop;
+                const scrollHeight = modalBodyRef.current.scrollHeight;
+                const clientHeight = modalBodyRef.current.clientHeight;
+                const maxScrollTop = scrollHeight - clientHeight;
+                
+                setIsGlass(scrollTop > 0);
+                setIsFooterGlass(scrollTop < maxScrollTop);
+            }
+        };
+
+        const modalBody = modalBodyRef.current;
+        if (modalBody) {
+            modalBody.addEventListener('scroll', handleScroll);
+            // Initial check
+            handleScroll();
+            return () => modalBody.removeEventListener('scroll', handleScroll);
+        }
+    }, []);
+
     if (!isOpen) return null;
 
     // Toggle a source in the filter list
@@ -92,14 +121,14 @@ export default function FilterModal({ isOpen, onClose, filters, onFiltersChange 
     return (
         <div className={styles.modalOverlay} onClick={onClose}>
             <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-                <div className={styles.modalHeader}>
+                <div ref={modalHeaderRef} className={`${styles.modalHeader} ${isGlass ? styles.glass : ''}`}>
                     <h2>Search Filters</h2>
                     <button className={styles.closeButton} onClick={onClose}>
                         <X size={20} />
                     </button>
                 </div>
 
-                <div className={styles.modalBody}>
+                <div ref={modalBodyRef} className={styles.modalBody}>
                     {/* Sources Section */}
                     <div className={styles.filterSection}>
                         <div className={styles.sectionHeader}>
@@ -181,7 +210,7 @@ export default function FilterModal({ isOpen, onClose, filters, onFiltersChange 
                     </div>
                 </div>
 
-                <div className={styles.modalFooter}>
+                <div ref={modalFooterRef} className={`${styles.modalFooter} ${isFooterGlass ? styles.glass : ''}`}>
                     <button className={styles.applyButton} onClick={onClose}>
                         Apply Filters
                     </button>
