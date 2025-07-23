@@ -27,6 +27,7 @@ import random
 import pickle
 from tqdm import tqdm
 import os
+from ARQMathDatasetTools.readers.PostReader import PostReader
 
 # Path to your ARQMath Posts XML file
 POSTS_PATH = os.path.join("ARQMathData", "Posts.V1.3.xml")
@@ -34,19 +35,10 @@ OUTPUT_PATH = os.path.join("ARQMathData", "arqmath_triplets.pkl")
 
 # Parse posts.xml to extract questions and answers
 print("Parsing posts...")
-questions = {}
-answers = {}
-
-for event, elem in tqdm(etree.iterparse(POSTS_PATH, tag="row")):
-    post_id = elem.get("Id")
-    post_type = elem.get("PostTypeId")
-    body = elem.get("Body")
-    parent_id = elem.get("ParentId")
-    if post_type == "1":  # Question
-        questions[post_id] = body
-    elif post_type == "2":  # Answer
-        answers[post_id] = (body, parent_id)
-    elem.clear()
+# Fast loading of posts
+reader = PostReader("ARQMathData/Posts.V1.3.xml")
+questions = {str(q.Id): q.Body for q in reader.questions}
+answers = {str(a.Id): (a.Body, str(a.ParentId)) for a in reader.answers}
 
 # Build mapping: question_id -> list of answer_ids
 q_to_a = {}
