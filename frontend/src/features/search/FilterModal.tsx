@@ -59,26 +59,56 @@ export default function FilterModal({ isOpen, onClose, filters, onFiltersChange 
     const modalFooterRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        // Only set up scroll detection when modal is open
+        if (!isOpen) return;
+
         const handleScroll = () => {
-            if (modalBodyRef.current && modalHeaderRef.current && modalFooterRef.current) {
+            console.log('Scroll event fired!');
+            
+            if (modalBodyRef.current) {
                 const scrollTop = modalBodyRef.current.scrollTop;
-                const scrollHeight = modalBodyRef.current.scrollHeight;
-                const clientHeight = modalBodyRef.current.clientHeight;
-                const maxScrollTop = scrollHeight - clientHeight;
+                console.log('Current scrollTop:', scrollTop);
                 
-                setIsGlass(scrollTop > 0);
-                setIsFooterGlass(scrollTop < maxScrollTop);
+                // Simple condition: if scrolled at all, apply glass effect
+                const headerIsGlass = scrollTop > 0;
+                console.log('Setting header glass to:', headerIsGlass);
+                
+                setIsGlass(headerIsGlass);
+                
+                // Footer logic
+                if (modalFooterRef.current) {
+                    const scrollHeight = modalBodyRef.current.scrollHeight;
+                    const clientHeight = modalBodyRef.current.clientHeight;
+                    const maxScrollTop = scrollHeight - clientHeight;
+                    const footerIsGlass = scrollTop < maxScrollTop;
+                    console.log('Setting footer glass to:', footerIsGlass);
+                    setIsFooterGlass(footerIsGlass);
+                }
             }
         };
 
-        const modalBody = modalBodyRef.current;
-        if (modalBody) {
-            modalBody.addEventListener('scroll', handleScroll);
-            // Initial check
-            handleScroll();
-            return () => modalBody.removeEventListener('scroll', handleScroll);
-        }
-    }, []);
+        // Wait a bit for the modal to render, then set up scroll listener
+        const timer = setTimeout(() => {
+            const modalBody = modalBodyRef.current;
+            if (modalBody) {
+                console.log('Setting up scroll listener on modal body');
+                modalBody.addEventListener('scroll', handleScroll);
+                
+                // Initial check
+                console.log('Running initial scroll check');
+                handleScroll();
+                
+                return () => {
+                    console.log('Removing scroll listener');
+                    modalBody.removeEventListener('scroll', handleScroll);
+                };
+            } else {
+                console.log('Modal body ref is still null after timeout');
+            }
+        }, 100);
+
+        return () => clearTimeout(timer);
+    }, [isOpen]); // Add isOpen as dependency
 
     if (!isOpen) return null;
 

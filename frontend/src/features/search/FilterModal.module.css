@@ -8,11 +8,11 @@
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
 }
 
 .modalContent {
-    padding: 1rem 0 2rem 0;
     border-radius: var(--border-radius);
     max-width: 600px;
     width: 90%;
@@ -23,6 +23,7 @@
     position: relative;
     background-color: var(--background-color);
 
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     box-shadow:
         inset 0 1px 4px rgba(255, 255, 255, 0.2),
@@ -41,12 +42,13 @@
     left: 0;
     right: 0;
     z-index: 10;
-    transition: all 0.3s ease;
+    transition: all 0.3s ease;;
 }
 
 .modalHeader.glass {
     /* Glassmorphism */
     background: rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     box-shadow:
         inset 0 1px 4px rgba(255, 255, 255, 0.2),
@@ -56,6 +58,7 @@
 
 :root[data-theme="dark"] .modalHeader {
     background: rgba(0, 0, 0, 0.01);
+    -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
 }
 
@@ -92,8 +95,8 @@
     flex: 1;
     overflow-y: auto;
     padding: 1.5rem;
-    padding-top: 5rem;
-    padding-bottom: 5rem;
+    padding-top: 6rem;
+    padding-bottom: 7rem;
     -webkit-scrollbar: none;
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -219,6 +222,7 @@
 .modalFooter.glass {
     /* Glassmorphism */
     background: rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     box-shadow:
         inset 0 1px 4px rgba(255, 255, 255, 0.2),
@@ -228,6 +232,7 @@
 
 :root[data-theme="dark"] .modalFooter {
     background: rgba(0, 0, 0, 0.01);
+    -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
 }
 
