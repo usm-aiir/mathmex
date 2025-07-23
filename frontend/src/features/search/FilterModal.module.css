@@ -131,9 +131,9 @@
 
 .actionButton {
     background-color: var(--button-color);
-    color: var(--container-color);
-    border: 1px solid var(--primary-accent);
-    border-radius: 6px;
+    color: var(--primary-light);
+    border: none;
+    border-radius: var(--border-radius);
     padding: 0.4rem 0.8rem;
     font-size: 0.85rem;
     cursor: pointer;
@@ -156,6 +156,7 @@
     display: flex;
     align-items: center;
     padding: 1rem;
+    color: var(--primary-text);
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
     cursor: pointer;
@@ -238,9 +239,9 @@
 
 .applyButton {
     background-color: var(--button-color);
-    color: var(--container-color);
-    border: 2px solid var(--primary-accent);
-    border-radius: 8px;
+    color: var(--primary-light);
+    border-radius: var(--border-radius);
+    border: none;
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
     font-weight: 600;

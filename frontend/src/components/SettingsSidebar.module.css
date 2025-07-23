@@ -86,7 +86,7 @@
 .track {
     width: 44px;
     height: 24px;
-    background: var(--primary-alt, #c7c1e6);
+    background: var(--button-color);
     border-radius: 999px;
     position: relative;
     transition: background 0.3s;
