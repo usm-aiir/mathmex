@@ -19,21 +19,37 @@
     letter-spacing: 1.5px;
 }
 
-.historyButton {
+#historyButton {
     display: none;
 }
 
-.settingsButton {
+.buttonContainer {
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+
+    position: absolute;
+    top: 0;
+}
+
+.buttonContainer.right {
+    right: 5%;
+}
+
+.buttonContainer.left {
+    left: 5%;
+}
+
+.headerButton {
     width: 45px;
     height: 45px;
-    position: absolute;
-    top: 50%;
-    right: 5%;
-    transform: translateY(-50%);
+
     background: var(--button-color);
     border: none;
     color: var(--primary-light);
-    font-size: 1.8rem;
     cursor: pointer;
     padding: 0.2rem;
     border-radius: 50%;
@@ -43,10 +59,19 @@
     justify-content: center;
     z-index: 10;
 }
-.settingsButton:hover {
-    background: var(--primary-alt);
-    color: var(--container-color);
+
+.headerButton a {
+    color: inherit;
 }
+
+.headerButton a:visited {
+    color: inherit;
+}
+
+.headerButton:hover {
+     background: var(--primary-alt);
+}
+
 
 .headerContent {
     display: flex;
@@ -61,7 +86,6 @@
 }
 
 .title {
-    font-family: var(--font-cormorant-garamond);
     font-size: 2.8rem;
     margin-bottom: 0.3rem;
     color: var(--button-color);
@@ -74,7 +98,6 @@
 }
 
 .tagline {
-    font-family: var(--font-cormorant-garamond);
     font-size: 1rem;
     color: var(--primary-alt);
     margin: 0;
@@ -85,40 +108,25 @@
     .header {
         padding: 1.25rem 0;
     }
-    
+
     .header h1 {
         font-size: 2.2rem;
         letter-spacing: 1px;
     }
-    
+
     .title {
         font-size: 2.2rem;
         letter-spacing: 1px;
     }
-    
+
     .tagline {
         font-size: 0.9rem;
     }
-    
-    .ornament {
-        width: 50px;
-        height: 50px;
-    }
-    
-    .themeButton {
-        width: 32px;
-        height: 32px;
-    }
-    
-    .themeIcon {
-        width: 18px;
-        height: 18px;
-    }
-    
+
     .headerContent {
         gap: 0.75rem;
     }
-    
+
     .titleContainer {
         margin: 0 10px;
     }
@@ -130,101 +138,64 @@
         padding: 1rem 0.5rem;
         margin-bottom: 1rem;
     }
+
     .container {
         padding-left: 10px;
         padding-right: 10px;
     }
-    .historyButton, .settingsButton {
-        width: 28px;
-        height: 28px;
-        font-size: 1rem;
+
+    .buttonContainer {
+        gap: 1rem;
     }
-    .historyButton {
-        left: 2%;
+
+    .buttonContainer.left {
+        left: 3%;
     }
-    .settingsButton {
-        right: 2%;
+
+    .buttonContainer.right  {
+        right: 3%;
     }
-    .historyButton svg,
-    .settingsButton svg {
+
+    .headerButton {
+        width: 36px;
+        height: 36px;
+        font-size: 1.3rem;
+    }
+
+    .headerButton svg {
         width: 18px;
         height: 18px;
     }
-    
+
+    #historyButton {
+        display: flex;
+    }
+
     .headerContent {
         flex-direction: row;
         gap: 0.5rem;
         align-items: center;
     }
-    
+
     .header h1 {
         font-size: 1.8rem;
         margin-bottom: 0.2rem;
         letter-spacing: 0.5px;
     }
-    
+
     .title {
         font-size: 1.8rem;
         margin-bottom: 0.2rem;
         letter-spacing: 0.5px;
     }
-    
+
     .tagline {
         font-size: 0.8rem;
     }
-    
-    .ornament {
-        width: 40px;
-        height: 40px;
-    }
-    
-    .themeButton {
-        width: 28px;
-        height: 28px;
-    }
-    
-    .themeIcon {
-        width: 16px;
-        height: 16px;
-    }
-    
+
+
     .titleContainer {
         margin: 0 8px;
-    }
-
-    .historyButton {
-        display: flex;
-        width: 36px;
-        height: 36px;
-        font-size: 1.3rem;
-        position: absolute;
-        top: 50%;
-        left: 3%;
-        transform: translateY(-50%);
-        background: var(--button-color);
-        color: var(--primary-light);
-        border: none;
-        border-radius: 50%;
-        cursor: pointer;
-        align-items: center;
-        justify-content: center;
-        z-index: 10;
-        transition: background 0.2s, color 0.2s;
-        padding: 0.2rem;
-    }
-
-    .historyButton:hover {
-        background: var(--primary-alt);
-        color: var(--container-color);
-    }
-
-    .settingsButton {
-        width: 36px;
-        height: 36px;
-        font-size: 1.3rem;
-    }
-    .settingsButton {
-        right: 3%;
     }
 }
 

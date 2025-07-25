@@ -114,6 +114,10 @@
     position: relative;
 }
 
+.controlButton a {
+    color: inherit;
+}
+
 .controlButton.listening {
     background: var(--button-color);
     color: var(--primary-light);
@@ -123,6 +127,10 @@
     background: var(--button-active-color);
     transform: translate(-2px, -4px);
     box-shadow: 2px 4px 3px rgba(0, 0, 0, 0.5);
+}
+
+#pdfButton {
+    transform: translate(1px, 1px);
 }
 
 .filterBadge {

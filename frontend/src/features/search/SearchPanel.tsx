@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react"
-import { Mic, Send, Square, Filter, Type, FunctionSquare } from "lucide-react"
+import {Mic, Send, Square, Filter, Type, FunctionSquare, FileUp} from "lucide-react"
 import styles from "./SearchPanel.module.css"
 
 interface Props {
@@ -216,6 +216,16 @@ export default function SearchPanel({
                             {filtersActive && (
                                 <span className={styles.filterBadge}>{activeFiltersCount}</span>
                             )}
+                        </button>
+                        <button
+                            className={styles.controlButton}
+                            aria-label="Upload PDF"
+                            title="PDF Reader"
+                        >
+                            <a href="/pdf_reader" >
+                                <FileUp size={24} id={styles.pdfButton}  />
+                            </a>
+
                         </button>
                     </div>
                 </div>

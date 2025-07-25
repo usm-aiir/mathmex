@@ -22,14 +22,17 @@ const Header: FC<{ onOpenHistorySidebar?: () => void }> = ({ onOpenHistorySideba
     return (
         <header className={styles.header}>
             {/* Search history button on the left */}
-            <button
-                className={styles.historyButton}
-                onClick={onOpenHistorySidebar}
-                aria-label="Open search history"
-                title="Search History"
-            >
-                <History size={28} />
-            </button>
+            <div className={`${styles.buttonContainer} ${styles.left}`}>
+                <button
+                    id={styles.historyButton}
+                    className={styles.headerButton}
+                    onClick={onOpenHistorySidebar}
+                    aria-label="Open search history"
+                    title="Search History"
+                >
+                    <History size={28} />
+                </button>
+            </div>
             <div className="container">
                 <div className={styles.headerContent}>
                     <div className={styles.titleContainer}>
@@ -41,14 +44,16 @@ const Header: FC<{ onOpenHistorySidebar?: () => void }> = ({ onOpenHistorySideba
                 </div>
             </div>
             {/* Settings button on the right */}
-            <button
-                className={styles.settingsButton}
-                onClick={() => setSidebarOpen(true)}
-                aria-label="Open settings"
-                title="Settings"
-            >
-                <Settings size={28} />
-            </button>
+            <div className={`${styles.buttonContainer} ${styles.right}`}>
+                <button
+                    className={styles.headerButton}
+                    onClick={() => setSidebarOpen(true)}
+                    aria-label="Open settings"
+                    title="Settings"
+                >
+                    <Settings size={26} />
+                </button>
+            </div>
             <SettingsSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         </header>
     )
