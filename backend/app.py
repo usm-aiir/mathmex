@@ -275,7 +275,7 @@ def format_for_mathmex(latex):
 
 # Load a model from Hugging Face (e.g., Llama-2, Mistral, or any summarization/QA model)
 # Example: using a text-generation pipeline
-llm = pipeline("text-generation", model="meta-llama/Llama-3-8b-hf")  # Replace with your chosen model
+llm = pipeline("text-generation", model="mistralai/Mistral-7B-v0.1")
 
 # Run the Flask development server if this script is executed directly
 if __name__ == "__main__":
