@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from flask_cors import CORS
 from opensearchpy import OpenSearch
 from sentence_transformers import SentenceTransformer
+from transformers import pipeline
 import configparser
 import saytex
 import re
@@ -120,9 +121,7 @@ def search():
                     }
                 ]
             }
-        }
-
-    # Add media type filter if specified
+        }  
     if media_types:
         query_body["query"]["bool"]["filter"] = [
             {"terms": {"media_type": media_types}}
@@ -147,8 +146,14 @@ def search():
     results = delete_dups(results, unique_key="body_text")
     total = 1000
 
-    # Get LLM answer from Ollama
-    llm_answer = generate_llm_answer(results, query, n=5)
+    # Prepare context for LLM
+    context = "\n\n".join([
+        f"Title: {r['title']}\nBody: {r['body_text']}" for r in results[:5]
+    ])
+    prompt = f"Given the following search results, answer the user's query: \"{query}\"\n\nSearch Results:\n{context}\n\nAnswer:"
+
+    # Generate answer using Hugging Face model
+    llm_answer = llm(prompt, max_length=256)[0]['generated_text']
 
     return jsonify({'results': results, 'total': total, 'llm_answer': llm_answer})
 
@@ -266,6 +271,10 @@ def format_for_mathmex(latex):
 # latex = r"\text{The area is } a^2 \text{ and the perimeter is } 4a"
 # print(latex_to_storage_format(latex))
 # Output: The area is $a^2$ and the perimeter is $4a$
+
+# Load a model from Hugging Face (e.g., Llama-2, Mistral, or any summarization/QA model)
+# Example: using a text-generation pipeline
+llm = pipeline("text-generation", model="meta-llama/Llama-2-7b-hf")  # Replace with your chosen model
 
 # Run the Flask development server if this script is executed directly
 if __name__ == "__main__":
