@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react"
-import {Mic, Send, Square, Filter, Type, FunctionSquare, FileUp} from "lucide-react"
+import {Mic, Send, Square, Filter, Type, FunctionSquare, FileUp, Sparkles} from "lucide-react"
 import styles from "./SearchPanel.module.css"
 
 interface Props {
@@ -33,6 +33,9 @@ export default function SearchPanel({
     // speech-to-latex hooks
     const [isListening, setIsListening] = useState(false)
     const [transcript, setTranscript] = useState<string>("");
+
+    // NEW: LLM answer state
+    const [llmAnswer, setLlmAnswer] = useState<string>("");
 
     // Make sure UI mode is sync'd with current math-field mode
     useEffect(() => {
@@ -132,6 +135,27 @@ export default function SearchPanel({
         }
     }, [isListening])
 
+    // Handler for LLM answer generation
+    const handleGenerateAnswer = async () => {
+        const query = mathFieldRef.current?.value || "";
+        if (!query) {
+            alert("Please enter a query first.");
+            return;
+        }
+        try {
+            const res = await fetch("/api/search", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ query }),
+            });
+            const data = await res.json();
+            setLlmAnswer(data.llm_answer || "No answer generated.");
+            alert(data.llm_answer || "No answer generated."); // Show in alert for now
+        } catch (err) {
+            alert("Backend not reachable!");
+        }
+    };
+
     return (
         <div className={styles.searchContainer}>
             {/* Remove mobile history sidebar button from here */}
@@ -200,6 +224,7 @@ export default function SearchPanel({
                     </div>
 
                     <div className={styles.actionButtons}>
+                        {/* Speech-to-text button */}
                         <button
                             className={`${styles.controlButton} ${isListening ? styles.listening : ""}`}
                             aria-label={isListening ? "Stop voice input" : "Start voice input"}
@@ -207,6 +232,7 @@ export default function SearchPanel({
                         >
                             {isListening ? <Square size={18} strokeWidth={2.5} /> : <Mic size={20} />}
                         </button>
+                        {/* Filter button */}
                         <button
                             className={`${styles.controlButton} ${filtersActive ? styles.active : ""}`}
                             aria-label="Search filters"
@@ -217,6 +243,7 @@ export default function SearchPanel({
                                 <span className={styles.filterBadge}>{activeFiltersCount}</span>
                             )}
                         </button>
+                        {/* PDF upload button */}
                         <button
                             className={styles.controlButton}
                             aria-label="Upload PDF"
@@ -225,11 +252,26 @@ export default function SearchPanel({
                             <a href="/pdf_reader" >
                                 <FileUp size={24} id={styles.pdfButton}  />
                             </a>
-
+                        </button>
+                        {/* NEW: Generate LLM Answer button */}
+                        <button
+                            className={styles.controlButton}
+                            aria-label="Generate LLM Answer"
+                            title="Generate Answer"
+                            onClick={handleGenerateAnswer}
+                        >
+                            <Sparkles size={22} />
                         </button>
                     </div>
                 </div>
             </div>
+            {/* Optionally show the answer below the controls */}
+            {llmAnswer && (
+                <div className={styles.llmAnswerBox}>
+                    <strong>LLM Answer:</strong>
+                    <div>{llmAnswer}</div>
+                </div>
+            )}
         </div>
     );
 }
