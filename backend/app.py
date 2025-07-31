@@ -15,6 +15,7 @@ import configparser
 import saytex
 import re
 import os
+from llm_answer import generate_llm_answer
 
 
 # Create the Flask application instance
@@ -120,7 +121,6 @@ def search():
                 ]
             }
         }
-    }
 
     # Add media type filter if specified
     if media_types:
@@ -145,9 +145,12 @@ def search():
         })
 
     results = delete_dups(results, unique_key="body_text")
-    # For KNN, total is capped at k (1000)
     total = 1000
-    return jsonify({'results': results, 'total': total})
+
+    # Get LLM answer from Ollama
+    llm_answer = generate_llm_answer(results, query, n=5)
+
+    return jsonify({'results': results, 'total': total, 'llm_answer': llm_answer})
 
 @app.route('/api/speech-to-latex', methods=['POST'])
 def speech_to_latex():
