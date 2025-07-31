@@ -152,9 +152,14 @@ def search():
         f"Title: {r['title']}\nBody: {r['body_text']}" for r in results[:5]
     ])
     prompt = f"Given the following search results, answer the user's query: \"{query}\"\n\nSearch Results:\n{context}\n\nAnswer:"
-
+    print("Prompt sent to LLM:", prompt)
+    print("Results for context:", results)
     # Generate answer using Hugging Face model
-    llm_answer = llm(prompt, max_length=256)[0]['generated_text']
+    try:
+        llm_answer = llm(prompt, max_length=256)[0]['generated_text']
+    except Exception as e:
+        print("LLM generation error:", e)
+        llm_answer = ""
 
     return jsonify({'results': results, 'total': total, 'llm_answer': llm_answer})
 

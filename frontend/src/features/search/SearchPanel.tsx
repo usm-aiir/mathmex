@@ -268,7 +268,7 @@ export default function SearchPanel({
             {/* Optionally show the answer below the controls */}
             {llmAnswer && (
                 <div className={styles.llmAnswerBox}>
-                    <strong>LLM Answer:</strong>
+                    <strong>AI Generated Answer:</strong>
                     <div>{llmAnswer}</div>
                 </div>
             )}
