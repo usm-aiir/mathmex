@@ -2,4 +2,8 @@ Flask==2.3.2
 Flask-Cors==3.0.10
 saytex==0.1.6
 gunicorn==23.0.0
-dotenv==0.9.9
+python-dotenv==1.0.1
+opensearch-py
+sentence-transformers
+transformers
+torch

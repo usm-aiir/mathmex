@@ -68,7 +68,7 @@ const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMe
             <h2 ref={resultsTitleRef} className={`${styles.resultsTitle} ${isGlass ? styles.glass : ''}`}>Results</h2>
             <div ref={resultsDisplayRef} className={styles.resultsDisplay}>
                 {isLoading ? (
-                    <div className="loading">Searching...</div>
+                    <div className="loading">Searching</div>
                 ) : results.length > 0 ? (
                     results.map((result, index) => (
                         <div key={index} className={styles.resultItem}>
