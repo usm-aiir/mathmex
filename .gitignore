@@ -20,6 +20,15 @@ backend/data/vectors
 # Vectorization/embedding model
 backend/models
 
+# Training and eval data
+machine-learning/data/
+
+# Models
+machine-learning/models/
+
+# Model training checkpoints
+machine-learning/checkpoints
+
 # Docker Compose
 *.yml
 
