@@ -14,10 +14,8 @@ from sentence_transformers import SentenceTransformer
 from transformers import pipeline
 import configparser
 import saytex
-import re
 import os
-from llm_answer import generate_llm_answer
-
+from utils.format import format_for_mathmex, format_for_mathlive
 
 # Create the Flask application instance
 app = Flask(__name__)
@@ -64,13 +62,12 @@ def get_model():
     if _model is None:
         _model = SentenceTransformer(MODEL)
     return _model
+
+# Model for results summary
+summarization_model = pipeline("text-generation", model="mistralai/Mistral-7B-v0.1")
+
 @app.route("/api/search", methods=["POST"])
 def search():
-    """
-    Search endpoint. Accepts a query and optional filters, performs semantic search using OpenSearch and SentenceTransformer.
-    Returns:
-        JSON: Search results and total count.
-    """
     data = request.get_json()
     query = data.get('query', '')
     sources = data.get('sources', [])
@@ -79,89 +76,50 @@ def search():
     if not query:
         return jsonify({'error': 'No query provided'}), 400
 
-    # Define available sources and their corresponding indices
-    source_to_index = {
-        'arxiv': 'mathmex_arxiv',
-        'math-overflow': 'mathmex_math-overflow',
-        'math-stack-exchange': 'mathmex_math-stack-exchange',
-        'mathematica': 'mathmex_mathematica',
-        'wikipedia': 'mathmex_wikipedia',
-        'youtube': 'mathmex_youtube'
-    }
+    try:
+        results = perform_search(query, sources, media_types)
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
 
-    # Filter indices based on selected sources
-    if sources:
-        indices = [source_to_index[source] for source in sources if source in source_to_index]
-    else:
-        indices = list(source_to_index.values())
+    return jsonify({'results': results, 'total': len(results)})
 
+@app.route('/api/summarize', methods=['POST'])
+def summarize():
+    data = request.get_json()
+    query = data.get('query', '')
+    sources = data.get('sources', [])
+    media_types = data.get('mediaTypes', [])
 
-    model = get_model()
+    if not query:
+        return jsonify({'error': 'No query provided'}), 400
 
-    # Convert MathLive query to MathMex data format
-    query = format_for_mathmex(query)
-
-    # Vectorize query
-    query_vec = model.encode(query).tolist()
-
-    # Build query with filters
-    query_body = {
-        "from": 0,
-        "size": 100,
-        "query": {
-            "bool": {
-                "must": [
-                    {
-                        "knn": {
-                            "body_vector": {
-                                "vector": query_vec,
-                                "k": 1000  # Fixed upper limit for KNN
-                            }
-                        }
-                    }
-                ]
-            }
-        }  
-    }
-    if media_types:
-        query_body["query"]["bool"]["filter"] = [
-            {"terms": {"media_type": media_types}}
-        ]
-
-    response = client.search(
-        index=indices,
-        body=query_body
-    )
-
-    results = []
-    for hit in response['hits']['hits']:
-        source = hit['_source']
-        results.append({
-            'title': source.get('title'),
-            'media_type': source.get('media_type'),
-            'body_text': format_for_mathlive(source.get("body_text")),
-            'link': source.get('link'),
-            'score': hit.get('_score')
-        })
-
-    results = delete_dups(results, unique_key="body_text")
-    total = 1000
+    try:
+        results = perform_search(query, sources, media_types)
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
 
     # Prepare context for LLM
     context = "\n\n".join([
         f"Title: {r['title']}\nBody: {r['body_text']}" for r in results[:5]
     ])
-    prompt = f"Given the following search results, answer the user's query: \"{query}\"\n\nSearch Results:\n{context}\n\nAnswer:"
-    print("Prompt sent to LLM:", prompt)
-    print("Results for context:", results)
-    # Generate answer using Hugging Face model
+
+    prompt = (
+        f"Generate a clear, concise, and accurate response to the user's query."
+        f"Only use information found in the search results.\n\n"
+        f"User Query:\n\"{query}\"\n\n"
+        f"Search Results:\n{context}\n\n"
+        f"Answer:"
+    )
+
     try:
-        llm_answer = llm(prompt, max_length=256)[0]['generated_text']
+        summary = summarization_model(prompt, max_length=None)[0]['generated_text'].replace(prompt, "")
+
     except Exception as e:
         print("LLM generation error:", e)
-        llm_answer = ""
+        summary = "Unable to get generated results at this time..."
 
-    return jsonify({'results': results, 'total': total, 'llm_answer': llm_answer})
+    return jsonify({'summary': format_for_mathlive(summary)})
+
 
 @app.route('/api/speech-to-latex', methods=['POST'])
 def speech_to_latex():
@@ -204,21 +162,61 @@ def speech_to_latex():
         print(f"Error during LaTeX conversion: {e}")
         return jsonify({'error': str(e)}), 500
 
-def format_for_mathlive(text: str) -> str:
-    """
-    Replaces single $...$ wrappers with $$...$$ for MathLive consistency,
-    while leaving existing $$...$$ untouched.
 
-    Args:
-        text (str): The input string containing LaTeX math.
-    Returns:
-        str: The string with single $...$ replaced by $$...$$
-    """
-    # Use a regex to find single $...$ not already part of $$...$$
-    # Matches a single $...$ with no extra $ next to it
-    pattern = re.compile(r'(?<!\$)\$(?!\$)(.+?)(?<!\$)\$(?!\$)')
+# # # UTIL FUNCTIONS # # #
+def perform_search(query, sources, media_types):
+    if not query:
+        raise ValueError("No query provided")
 
-    return pattern.sub(r'$$\1$$', text)
+    source_to_index = {
+        'arxiv': 'mathmex_arxiv',
+        'math-overflow': 'mathmex_math-overflow',
+        'math-stack-exchange': 'mathmex_math-stack-exchange',
+        'mathematica': 'mathmex_mathematica',
+        'wikipedia': 'mathmex_wikipedia',
+        'youtube': 'mathmex_youtube'
+    }
+
+    indices = [source_to_index[source] for source in sources if source in source_to_index] if sources else list(source_to_index.values())
+
+    model = get_model()
+    query_formatted = format_for_mathmex(query)
+    query_vec = model.encode(query_formatted).tolist()
+
+    query_body = {
+        "from": 0,
+        "size": 100,
+        "query": {
+            "bool": {
+                "must": [
+                    {
+                        "knn": {
+                            "body_vector": {
+                                "vector": query_vec,
+                                "k": 1000
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+
+    if media_types:
+        query_body["query"]["bool"]["filter"] = [{"terms": {"media_type": media_types}}]
+
+    response = client.search(index=indices, body=query_body)
+
+    results = [{
+        'title': hit['_source'].get('title'),
+        'media_type': hit['_source'].get('media_type'),
+        'body_text': format_for_mathlive(hit['_source'].get("body_text")),
+        'link': hit['_source'].get('link'),
+        'score': hit.get('_score')
+    } for hit in response['hits']['hits']]
+
+    results = delete_dups(results, unique_key="body_text")
+    return results
 
 def delete_dups(list, unique_key="body_text"):
     """
@@ -239,48 +237,6 @@ def delete_dups(list, unique_key="body_text"):
             unique_dicts.append(d)
 
     return unique_dicts
-
-def format_for_mathmex(latex):
-    """
-    Converts LaTeX like '\\text{abc} x^2 \\text{def} y' to
-    'abc $x^2$ def $y$'.
-
-    Args:
-        latex (str): The LaTeX string to convert.
-    Returns:
-        str: The formatted string for storage.
-    """
-    # Pattern: \text{...}
-    text_pattern = re.compile(r'\\text\{([^}]*)\}')
-    parts = []
-    last_end = 0
-
-    # Find all \text{...} and split
-    for m in text_pattern.finditer(latex):
-        # Add math before this text, if any
-        if m.start() > last_end:
-            math_part = latex[last_end:m.start()].strip()
-            if math_part:
-                parts.append(f"$${math_part}$$")
-        # Add the plain text
-        parts.append(m.group(1))
-        last_end = m.end()
-    # Add any trailing math
-    if last_end < len(latex):
-        math_part = latex[last_end:].strip()
-        if math_part:
-            parts.append(f"${math_part}$")
-    # Join with spaces, remove empty $...$
-    return " ".join([p for p in parts if p and p != "$$"])
-
-# Example:
-# latex = r"\text{The area is } a^2 \text{ and the perimeter is } 4a"
-# print(latex_to_storage_format(latex))
-# Output: The area is $a^2$ and the perimeter is $4a$
-
-# Load a model from Hugging Face (e.g., Llama-2, Mistral, or any summarization/QA model)
-# Example: using a text-generation pipeline
-llm = pipeline("text-generation", model="mistralai/Mistral-7B-v0.1")
 
 # Run the Flask development server if this script is executed directly
 if __name__ == "__main__":

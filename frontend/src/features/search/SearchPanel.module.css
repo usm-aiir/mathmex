@@ -260,6 +260,8 @@
     box-shadow: var(--box-shadow);
 }
 
+
+
 /* Tablet and smaller desktop */
 @media (max-width: 768px) {
     .placeholderOverlay {
