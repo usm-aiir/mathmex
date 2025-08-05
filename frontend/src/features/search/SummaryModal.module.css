@@ -1,0 +1,426 @@
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.6);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.3s ease-out;
+}
+
+.modalContent {
+    border-radius: var(--border-radius);
+    max-width: 700px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background-color: var(--background-color);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--box-shadow);
+    animation: slideIn 0.3s ease-out;
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.modalHeader.glass {
+    /* Glassmorphism */
+    background: rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    box-shadow:
+        inset 0 1px 4px rgba(255, 255, 255, 0.2),
+        inset 0 -1px 4px rgba(0, 0, 0, 0.1),
+        0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="dark"] .modalHeader {
+    background: rgba(0, 0, 0, 0.01);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+}
+
+.modalHeader h2 {
+    margin: 0;
+    color: var(--button-color);
+    font-size: 1.5rem;
+    font-weight: 600;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    color: var(--primary-alt);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+.closeButton:hover {
+    background-color: var(--button-active-color);
+    color: var(--primary-light);
+    transform: scale(1.05);
+}
+
+.modalBody {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    padding-top: 6rem;
+    padding-bottom: 3rem;
+    -webkit-scrollbar: none;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.modalBody::-webkit-scrollbar {
+    display: none;
+}
+
+.querySection {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    background-color: var(--container-color);
+    box-shadow: var(--box-shadow);
+}
+
+.querySection h3 {
+    margin: 0 0 1rem 0;
+    color: var(--button-color);
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.queryText {
+    color: var(--primary-text);
+    font-size: 1rem;
+    line-height: 1.6;
+    border-radius: var(--border-radius);
+
+    /* Ensure MathLive renders properly */
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+/* MathLive styling within query text */
+.queryText .ML__latex {
+    color: var(--primary-text);
+}
+
+.queryText math-field {
+    background: transparent;
+    border: none;
+    color: var(--primary-text);
+}
+
+.answerSection {
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    background-color: var(--container-color);
+    box-shadow: var(--box-shadow);
+}
+
+.answerSection h3 {
+    margin: 0 0 1.5rem 0;
+    color: var(--button-color);
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    text-align: center;
+}
+
+.loadingText {
+    font-size: 1.1rem;
+    font-weight: 100;
+    color: var(--primary-text) !important;
+    opacity: 0.5;
+    margin-bottom: 0.5rem;
+}
+
+.summaryContent {
+    color: var(--primary-text);
+    font-size: 1rem;
+    line-height: 1.7;
+    
+    /* Glassmorphism */
+    background: rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow:
+        inset 0 1px 4px rgba(255, 255, 255, 0.2),
+        inset 0 -1px 4px rgba(0, 0, 0, 0.1),
+        0 4px 20px rgba(0, 0, 0, 0.1);
+    
+    /* Ensure MathLive renders properly */
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+/* MathLive styling within summary content */
+.summaryContent .ML__latex {
+    color: var(--primary-text);
+}
+
+.summaryContent math-field {
+    background: transparent;
+    border: none;
+    color: var(--primary-text);
+}
+
+.summaryContent .ML__text {
+    color: var(--primary-text);
+}
+
+/* Ensure math expressions are properly spaced */
+.summaryContent .ML__base {
+    display: inline-block;
+    margin: 0.2em 0;
+}
+
+:root[data-theme="dark"] .summaryContent {
+    background: rgba(0, 0, 0, 0.1);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+}
+
+/* Dark theme support for MathLive */
+:root[data-theme="dark"] .queryText .ML__latex,
+:root[data-theme="dark"] .queryText math-field,
+:root[data-theme="dark"] .summaryContent .ML__latex, 
+:root[data-theme="dark"] .summaryContent math-field,
+:root[data-theme="dark"] .summaryContent .ML__text {
+    color: var(--primary-light);
+}
+
+:root[data-theme="dark"] .queryText,
+:root[data-theme="dark"] .summaryContent {
+    color: var(--primary-light);
+}
+
+.noSummary {
+    text-align: center;
+    color: var(--primary-alt);
+    font-style: italic;
+    padding: 2rem;
+}
+
+.modalFooter {
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    display: flex;
+    justify-content: flex-end;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.modalFooter.glass {
+    /* Glassmorphism */
+    background: rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    box-shadow:
+        inset 0 1px 4px rgba(255, 255, 255, 0.2),
+        inset 0 -1px 4px rgba(0, 0, 0, 0.1),
+        0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="dark"] .modalFooter {
+    background: rgba(0, 0, 0, 0.01);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+}
+
+.closeFooterButton {
+    background-color: var(--button-color);
+    color: var(--primary-light);
+    border-radius: var(--border-radius);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+}
+
+.closeFooterButton:hover {
+    background-color: var(--button-active-color);
+    color: var(--primary-light);
+    transform: translate(-2px, -2px);
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Tablet and smaller desktop */
+@media (max-width: 768px) {
+    .modalContent {
+        width: 95%;
+    }
+
+    .modalHeader {
+        padding: 1rem;
+    }
+
+    .modalHeader h2 {
+        font-size: 1.3rem;
+    }
+
+    .closeButton {
+        width: 2.2rem;
+        height: 2.2rem;
+    }
+
+    .modalBody {
+        padding: 1rem;
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+    }
+
+    .querySection, .answerSection {
+        padding: 1rem;
+    }
+
+    .querySection h3, .answerSection h3 {
+        font-size: 1.1rem;
+    }
+
+    .summaryContent {
+        padding: 1.5rem;
+    }
+
+    .loadingContainer {
+        padding: 2rem 1rem;
+    }
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+    .modalContent {
+        width: 98%;
+        max-height: 90vh;
+    }
+    
+    .modalHeader {
+        padding: 0.75rem;
+    }
+    
+    .modalHeader h2 {
+        font-size: 1.2rem;
+    }
+    
+    .closeButton {
+        width: 2rem;
+        height: 2rem;
+        padding: 0.3rem;
+    }
+    
+    .modalBody {
+        padding: 0.75rem;
+        padding-top: 3.5rem;
+        padding-bottom: 3.5rem;
+    }
+    
+    .querySection, .answerSection {
+        padding: 0.75rem;
+    }
+
+    .queryText {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .summaryContent {
+        padding: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .loadingContainer {
+        padding: 1.5rem 0.75rem;
+    }
+
+    .loadingText {
+        font-size: 1rem;
+    }
+
+    .loadingSubtext {
+        font-size: 0.8rem;
+    }
+    
+    .closeFooterButton {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.95rem;
+    }
+} 
