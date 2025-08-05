@@ -11,6 +11,14 @@
     position: relative;
 }
 
+.resultHeader {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
+    max-width: 90%;
+}
+
 .resultsTitle {
     position: absolute;
     top: 0;
@@ -216,13 +224,6 @@
     font-size: 1.05rem;
     margin: 1.2rem 0 0.5rem 0;
     font-weight: 500;
-}
-
-.resultHeader {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 0.25rem;
 }
 
 .resultScore {
