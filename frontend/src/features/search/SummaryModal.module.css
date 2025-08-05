@@ -370,7 +370,7 @@
 @media (max-width: 480px) {
     .modalContent {
         width: 98%;
-        max-height: 90vh;
+        max-height: 80vh;
     }
     
     .modalHeader {
