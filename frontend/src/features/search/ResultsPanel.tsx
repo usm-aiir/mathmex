@@ -36,6 +36,7 @@ const IS_DEV = process.env.NODE_ENV === "development";
  */
 const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMessage }) => {
     const [isGlass, setIsGlass] = useState(false)
+    const [selectedResults, setSelectedResults] = useState<number[]>([]);
     const resultsDisplayRef = useRef<HTMLDivElement>(null)
     const resultsTitleRef = useRef<HTMLHeadingElement>(null)
 
@@ -72,6 +73,15 @@ const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMe
                 ) : results.length > 0 ? (
                     results.map((result, index) => (
                         <div key={index} className={styles.resultItem}>
+                            <input
+                                type="checkbox"
+                                checked={selectedResults.includes(index)}
+                                onChange={() => {
+                                    setSelectedResults(selectedResults.includes(index)
+                                        ? selectedResults.filter(i => i !== index)
+                                        : [...selectedResults, index]);
+                                }}
+                            />
                             <div className={styles.resultHeader}>
                                 <h3 className={styles.resultTitle}>{result.title}</h3>
                                 {/* Add visual relevance scores if in dev */}

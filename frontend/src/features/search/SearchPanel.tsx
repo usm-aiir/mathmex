@@ -150,6 +150,11 @@ export default function SearchPanel({
     //     }
     // }, [isListening])
 
+    // Add these states at the top of your component (after other useState hooks)
+    const [selectedResults] = useState<number[]>([]);
+    const [results] = useState<any[]>([]);
+    const N = 10; // Or set this as a prop or state if needed
+
     // Handler for LLM answer generation
     const handleGenerateAnswer = async () => {
         const query = mathFieldRef.current?.value || "";
@@ -157,6 +162,20 @@ export default function SearchPanel({
             alert("Please enter a query first.");
             return;
         }
+        let contextResults = selectedResults.length > 0
+            ? selectedResults.map(i => results[i])
+            : results.slice(0, N); // N = 10 or whatever you want
+
+        const res = await fetch("/api/generate-llm-answer", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                query,
+                results: contextResults
+            }),
+        });
+        const data = await res.json();
+        setLlmAnswer(data.llm_answer || "No answer generated.");
         
         // Open modal and start loading
         setCurrentQuery(query);
