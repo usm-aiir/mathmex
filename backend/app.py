@@ -105,7 +105,7 @@ def summarize():
 
     prompt = (
         f"Generate a clear, concise, and accurate response to the user's query."
-        f"Only use information found in the search results.\n\n"
+        f"The response should be relevant to the given search results.\n\n"
         f"User Query:\n\"{query}\"\n\n"
         f"Search Results:\n{context}\n\n"
         f"Answer:"

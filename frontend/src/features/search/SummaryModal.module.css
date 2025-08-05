@@ -167,27 +167,12 @@
     text-align: center;
 }
 
-.loadingSpinner {
-    margin-bottom: 1.5rem;
-    color: var(--button-color);
-}
-
-.spinningIcon {
-    animation: spin 1s linear infinite;
-}
-
 .loadingText {
     font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--primary-text);
+    font-weight: 100;
+    color: var(--primary-text) !important;
+    opacity: 0.5;
     margin-bottom: 0.5rem;
-}
-
-.loadingSubtext {
-    font-size: 0.9rem;
-    color: var(--primary-alt);
-    line-height: 1.4;
-    max-width: 400px;
 }
 
 .summaryContent {

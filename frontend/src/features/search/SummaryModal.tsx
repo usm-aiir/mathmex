@@ -1,5 +1,5 @@
 import styles from './SummaryModal.module.css';
-import { X, Sparkles, Loader2 } from 'lucide-react';
+import { X, Sparkles } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 /**
@@ -138,11 +138,8 @@ export default function SummaryModal({ isOpen, onClose, summary, isLoading, quer
                         
                         {isLoading ? (
                             <div className={styles.loadingContainer}>
-                                <div className={styles.loadingSpinner}>
-                                    <Loader2 size={32} className={styles.spinningIcon} />
-                                </div>
-                                <div className={styles.loadingText}>
-                                    Thinking...
+                                <div className={`${styles.loadingText} loading`}>
+                                    <i>Thinking</i>
                                 </div>
                             </div>
                         ) : (
