@@ -20,6 +20,8 @@
     --button-active-color: #4b2e83;
     --primary-text: #23223a;
 
+    --check-green: #4ade80;
+
     /* MathLive color styles */
     --keyboard-toolbar-text: var(--primary-dark);
     --keyboard-border: var(--primary-accent);

@@ -13,6 +13,10 @@ interface Props {
     onSearch: () => void
     mathFieldRef: React.RefObject<any>
     initialLatex?: string
+    
+    // search results and selection
+    searchResults: any[]
+    selectedResults: number[]
 }
 
 export default function SearchPanel({
@@ -24,7 +28,11 @@ export default function SearchPanel({
     // math-field
     mathFieldRef,
     onSearch,
-    initialLatex
+    initialLatex,
+    
+    // search results and selection
+    searchResults,
+    selectedResults
 }: Props) {
     /* Temporarily commented out for conference purposes */
     // const recognitionRef = useRef<SpeechRecognition | null>(null);
@@ -150,44 +158,39 @@ export default function SearchPanel({
     //     }
     // }, [isListening])
 
-    // Add these states at the top of your component (after other useState hooks)
-    const [selectedResults] = useState<number[]>([]);
-    const [results] = useState<any[]>([]);
-    const N = 10; // Or set this as a prop or state if needed
-
     // Handler for LLM answer generation
-    const handleGenerateAnswer = async () => {
+    const handleSummarization = async () => {
         const query = mathFieldRef.current?.value || "";
+
         if (!query) {
             alert("Please enter a query first.");
             return;
         }
-        let contextResults = selectedResults.length > 0
-            ? selectedResults.map(i => results[i])
-            : results.slice(0, N); // N = 10 or whatever you want
 
-        const res = await fetch("/api/generate-llm-answer", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                query,
-                results: contextResults
-            }),
-        });
-        const data = await res.json();
-        setLlmAnswer(data.llm_answer || "No answer generated.");
-        
-        // Open modal and start loading
+        if (!searchResults || searchResults.length === 0) {
+            alert("Please perform a search first to get results for summarization.");
+            return;
+        }
+
+        // Use selected results if any are selected, otherwise use top 10 results
+        let contextResults = selectedResults.length > 0
+            ? selectedResults.map(i => searchResults[i])
+            : searchResults.slice(0, 10);
+
+         // Open modal and start loading
         setCurrentQuery(query);
         setIsModalOpen(true);
         setIsGenerating(true);
         setSummary("");
-        
+
         try {
             const res = await fetch("/api/summarize", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ query }),
+                body: JSON.stringify({
+                    query,
+                    results: contextResults
+                }),
             });
             const data = await res.json();
             setSummary(data.summary || "No answer generated.");
@@ -300,10 +303,16 @@ export default function SearchPanel({
                         <button
                             className={styles.controlButton}
                             aria-label="Generate LLM Answer"
-                            title="Generate Answer"
-                            onClick={handleGenerateAnswer}
+                            title={selectedResults.length > 0 
+                                ? `Generate Answer from ${selectedResults.length} selected result${selectedResults.length > 1 ? 's' : ''}` 
+                                : "Generate Answer from top 10 results"}
+                            onClick={handleSummarization}
+                            disabled={!searchResults || searchResults.length === 0}
                         >
                             <Sparkles size={22} />
+                            {selectedResults.length > 0 && (
+                                <span className={styles.selectionBadge}>{selectedResults.length}</span>
+                            )}
                         </button>
                     </div>
                 </div>

@@ -87,36 +87,63 @@ def search():
 def summarize():
     data = request.get_json()
     query = data.get('query', '')
-    sources = data.get('sources', [])
-    media_types = data.get('mediaTypes', [])
+    sources = data.get('results', [])
 
     if not query:
         return jsonify({'error': 'No query provided'}), 400
 
+    # Prepare context for LLM with better structure
+    context_sources = []
+    for i, r in enumerate(sources, 1):
+        source_text = f"[Source {i}] {r['title']}\n{r['body_text']}\n"
+        context_sources.append(source_text)
+    
+    context = "\n".join(context_sources)
+
+    prompt = f"""
+    You are an expert mathematics AI assistant. 
+    Your task is to provide a comprehensive, accurate, and well-structured answer based on the provided search results.
+
+INSTRUCTIONS:
+- Provide a direct, authoritative answer to the user's question
+- Structure your response with clear sections when appropriate
+- Include relevant mathematical formulas, definitions, and examples
+- Synthesize information from multiple sources when available
+- Be precise with mathematical terminology and notation
+- Keep the response comprehensive yet concise (aim for 200-400 words)
+- Use LaTeX notation for mathematical expressions (e.g., $x^2 + y^2 = z^2$)
+- Do not mention "according to the sources" or reference source numbers directly
+
+USER QUERY: "{query}"
+
+SEARCH RESULTS:
+{context}
+
+COMPREHENSIVE ANSWER:"""
+
     try:
-        results = perform_search(query, sources, media_types)
-    except ValueError as e:
-        return jsonify({'error': str(e)}), 400
-
-    # Prepare context for LLM
-    context = "\n\n".join([
-        f"Title: {r['title']}\nBody: {r['body_text']}" for r in results[:5]
-    ])
-
-    prompt = (
-        f"Generate a clear, concise, and accurate response to the user's query."
-        f"The response should be relevant to the given search results.\n\n"
-        f"User Query:\n\"{query}\"\n\n"
-        f"Search Results:\n{context}\n\n"
-        f"Answer:"
-    )
-
-    try:
-        summary = summarization_model(prompt, max_length=None)[0]['generated_text'].replace(prompt, "")
+        # Generate with appropriate parameters
+        response = summarization_model(
+            prompt, 
+            max_length=800,      # Allow more tokens for comprehensive answers
+            temperature=0.7,     # Balanced creativity and accuracy
+            do_sample=True
+        )[0]['generated_text']
+        
+        # Extract only the answer part (after the prompt)
+        summary = response.replace(prompt, '').strip()
+        
+        # Clean up any artifacts
+        if summary.startswith('COMPREHENSIVE ANSWER:'):
+            summary = summary.replace('COMPREHENSIVE ANSWER:', '').strip()
+        
+        # Ensure we have a meaningful response
+        if not summary or len(summary.strip()) < 20:
+            summary = "I need more specific information to provide a comprehensive answer. Please try refining your search query or selecting more relevant sources."
 
     except Exception as e:
         print("LLM generation error:", e)
-        summary = "Unable to get generated results at this time..."
+        summary = "I'm currently unable to generate a summary. Please check that the backend model is properly loaded and try again."
 
     return jsonify({'summary': format_for_mathlive(summary)})
 
@@ -161,25 +188,6 @@ def speech_to_latex():
     except Exception as e:
         print(f"Error during LaTeX conversion: {e}")
         return jsonify({'error': str(e)}), 500
-
-@app.route("/api/generate-llm-answer", methods=["POST"])
-def generate_llm_answer():
-    """
-    Generate answer using LLM based on search results and query.
-    Expects JSON payload with 'results' and 'query'.
-    Returns:
-        JSON: Generated answer from the LLM.
-    """
-    data = request.get_json()
-    results = data.get("results", [])
-    query = data.get("query", "")
-    # Use results for context
-    context = "\n\n".join([
-        f"Title: {r['title']}\nBody: {r['body_text']}" for r in results
-    ])
-    prompt = f"Given the following search results, answer the user's query: \"{query}\"\n\nSearch Results:\n{context}\n\nAnswer:"
-    llm_answer = llm(prompt, max_length=256)[0]['generated_text']
-    return jsonify({"llm_answer": llm_answer})
 
 # # # UTIL FUNCTIONS # # #
 def perform_search(query, sources, media_types):

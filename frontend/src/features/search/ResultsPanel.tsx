@@ -24,6 +24,8 @@ interface ResultsPanelProps {
     results: SearchResult[]
     isLoading: boolean
     placeholderMessage: ReactNode
+    selectedResults: number[]
+    onSelectionChange: (selectedResults: number[]) => void
 }
 
 const IS_DEV = process.env.NODE_ENV === "development";
@@ -34,9 +36,8 @@ const IS_DEV = process.env.NODE_ENV === "development";
  * @param {ResultsPanelProps} props - The props for the component.
  * @returns {JSX.Element} The rendered results panel.
  */
-const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMessage }) => {
+const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMessage, selectedResults, onSelectionChange }) => {
     const [isGlass, setIsGlass] = useState(false)
-    const [selectedResults, setSelectedResults] = useState<number[]>([]);
     const resultsDisplayRef = useRef<HTMLDivElement>(null)
     const resultsTitleRef = useRef<HTMLHeadingElement>(null)
 
@@ -65,23 +66,27 @@ const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMe
     }, [])
 
     return (
-        <section className={styles.resultsContainer}>
+                        <section className={styles.resultsContainer}>
             <h2 ref={resultsTitleRef} className={`${styles.resultsTitle} ${isGlass ? styles.glass : ''}`}>Results</h2>
             <div ref={resultsDisplayRef} className={styles.resultsDisplay}>
                 {isLoading ? (
                     <div className="loading">Searching</div>
                 ) : results.length > 0 ? (
                     results.map((result, index) => (
-                        <div key={index} className={styles.resultItem}>
-                            <input
-                                type="checkbox"
-                                checked={selectedResults.includes(index)}
-                                onChange={() => {
-                                    setSelectedResults(selectedResults.includes(index)
-                                        ? selectedResults.filter(i => i !== index)
-                                        : [...selectedResults, index]);
-                                }}
-                            />
+                        <div key={index} className={`${styles.resultItem} ${selectedResults.includes(index) ? styles.selected : ''}`}>
+                            <div className={styles.selectionControl}>
+                                <input
+                                    type="checkbox"
+                                    className={styles.resultCheckbox}
+                                    checked={selectedResults.includes(index)}
+                                    onChange={() => {
+                                        onSelectionChange(selectedResults.includes(index)
+                                            ? selectedResults.filter(i => i !== index)
+                                            : [...selectedResults, index]);
+                                    }}
+                                    title="Include in AI summary"
+                                />
+                            </div>
                             <div className={styles.resultHeader}>
                                 <h3 className={styles.resultTitle}>{result.title}</h3>
                                 {/* Add visual relevance scores if in dev */}

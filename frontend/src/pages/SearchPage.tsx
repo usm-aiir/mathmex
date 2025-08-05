@@ -26,6 +26,12 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
     // Search results
     const [searchResults, setSearchResults] = useState<SearchResult[]>([])
     const [isLoading, setIsLoading] = useState(false)
+    const [selectedResults, setSelectedResults] = useState<number[]>([])
+
+    // Clear selection when new search is performed
+    useEffect(() => {
+        setSelectedResults([])
+    }, [searchResults])
 
     // History
     const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([])
@@ -101,6 +107,8 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
                         onSearch={() => performSearch()}
                         onToggleFilter={() => setIsFilterVisible(!isFilterVisible)}
                         initialLatex={initialLatex}
+                        searchResults={searchResults}
+                        selectedResults={selectedResults}
                     />
                 </div>
                 <div className={styles.bottomSection}>
@@ -124,6 +132,8 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
                         results={searchResults}
                         isLoading={isLoading}
                         placeholderMessage={placeholderMessage}
+                        selectedResults={selectedResults}
+                        onSelectionChange={setSelectedResults}
                     />
                 </div>
             </div>
