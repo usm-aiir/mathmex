@@ -135,6 +135,11 @@ export default function SearchPanel({
         }
     }, [isListening])
 
+    // Add these states at the top of your component (after other useState hooks)
+    const [selectedResults] = useState<number[]>([]);
+    const [results] = useState<any[]>([]);
+    const N = 10; // Or set this as a prop or state if needed
+
     // Handler for LLM answer generation
     const handleGenerateAnswer = async () => {
         const query = mathFieldRef.current?.value || "";
