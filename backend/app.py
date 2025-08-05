@@ -204,6 +204,33 @@ def speech_to_latex():
         print(f"Error during LaTeX conversion: {e}")
         return jsonify({'error': str(e)}), 500
 
+@app.route("/api/generate-llm-answer", methods=["POST"])
+def generate_llm_answer():
+    """
+    Generate an answer to a query based on search results using the LLM.
+
+    Expects a JSON payload with the following structure:
+    {
+        "results": [ ... ],  # List of search result objects
+        "query": "The user's query"
+    }
+
+    Returns a JSON response with the generated LLM answer:
+    {
+        "llm_answer": "The generated answer text"
+    }
+    """
+    data = request.get_json()
+    results = data.get("results", [])
+    query = data.get("query", "")
+    # Use results for context
+    context = "\n\n".join([
+        f"Title: {r['title']}\nBody: {r['body_text']}" for r in results
+    ])
+    prompt = f"Given the following search results, answer the user's query: \"{query}\"\n\nSearch Results:\n{context}\n\nAnswer:"
+    llm_answer = llm(prompt, max_length=256)[0]['generated_text']
+    return jsonify({"llm_answer": llm_answer})
+
 def format_for_mathlive(text: str) -> str:
     """
     Replaces single $...$ wrappers with $$...$$ for MathLive consistency,

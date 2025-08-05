@@ -142,18 +142,20 @@ export default function SearchPanel({
             alert("Please enter a query first.");
             return;
         }
-        try {
-            const res = await fetch("/api/search", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ query }),
-            });
-            const data = await res.json();
-            setLlmAnswer(data.llm_answer || "No answer generated.");
-            alert(data.llm_answer || "No answer generated."); // Show in alert for now
-        } catch (err) {
-            alert("Backend not reachable!");
-        }
+        let contextResults = selectedResults.length > 0
+            ? selectedResults.map(i => results[i])
+            : results.slice(0, N); // N = 10 or whatever you want
+
+        const res = await fetch("/api/generate-llm-answer", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                query,
+                results: contextResults
+            }),
+        });
+        const data = await res.json();
+        setLlmAnswer(data.llm_answer || "No answer generated.");
     };
 
     return (
