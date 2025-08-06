@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { Send, Filter, Type, FunctionSquare, FileUp, Sparkles } from "lucide-react"
 import styles from "./SearchPanel.module.css"
-import SummaryModal from "./SummaryModal"
 
 interface Props {
     // filters
@@ -17,6 +16,9 @@ interface Props {
     // search results and selection
     searchResults: any[]
     selectedResults: number[]
+    
+    // AI summarization
+    onSummarize: () => void
 }
 
 export default function SearchPanel({
@@ -32,7 +34,10 @@ export default function SearchPanel({
     
     // search results and selection
     searchResults,
-    selectedResults
+    selectedResults,
+    
+    // AI summarization
+    onSummarize
 }: Props) {
     /* Temporarily commented out for conference purposes */
     // const recognitionRef = useRef<SpeechRecognition | null>(null);
@@ -45,17 +50,7 @@ export default function SearchPanel({
     // const [isListening, setIsListening] = useState(false)
     // const [transcript, setTranscript] = useState<string>("");
 
-    // NEW: AI Summary Modal state
-    const [summary, setSummary] = useState<string>("");
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isGenerating, setIsGenerating] = useState(false);
-    const [currentQuery, setCurrentQuery] = useState<string>("");
 
-    const closeSummaryModal = () => {
-        setIsModalOpen(false);
-        setSummary("");
-        setCurrentQuery("");
-    };
 
     // Make sure UI mode is sync'd with current math-field mode
     useEffect(() => {
@@ -158,48 +153,7 @@ export default function SearchPanel({
     //     }
     // }, [isListening])
 
-    // Handler for LLM answer generation
-    const handleSummarization = async () => {
-        const query = mathFieldRef.current?.value || "";
 
-        if (!query) {
-            alert("Please enter a query first.");
-            return;
-        }
-
-        if (!searchResults || searchResults.length === 0) {
-            alert("Please perform a search first to get results for summarization.");
-            return;
-        }
-
-        // Use selected results if any are selected, otherwise use top 10 results
-        let contextResults = selectedResults.length > 0
-            ? selectedResults.map(i => searchResults[i])
-            : searchResults.slice(0, 10);
-
-         // Open modal and start loading
-        setCurrentQuery(query);
-        setIsModalOpen(true);
-        setIsGenerating(true);
-        setSummary("");
-
-        try {
-            const res = await fetch("/api/summarize", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    query,
-                    results: contextResults
-                }),
-            });
-            const data = await res.json();
-            setSummary(data.summary || "No answer generated.");
-        } catch (err) {
-            setSummary("Backend not reachable! Please try again later.");
-        } finally {
-            setIsGenerating(false);
-        }
-    };
 
     return (
         <div className={styles.searchContainer}>
@@ -306,7 +260,7 @@ export default function SearchPanel({
                             title={selectedResults.length > 0 
                                 ? `Generate Answer from ${selectedResults.length} selected result${selectedResults.length > 1 ? 's' : ''}` 
                                 : "Generate Answer from top 10 results"}
-                            onClick={handleSummarization}
+                            onClick={onSummarize}
                             disabled={!searchResults || searchResults.length === 0}
                         >
                             <Sparkles size={22} />
@@ -317,15 +271,7 @@ export default function SearchPanel({
                     </div>
                 </div>
             </div>
-            
-            {/* AI Summary Modal */}
-            <SummaryModal
-                isOpen={isModalOpen}
-                onClose={closeSummaryModal}
-                summary={summary}
-                isLoading={isGenerating}
-                query={currentQuery}
-            />
+
         </div>
     );
 }

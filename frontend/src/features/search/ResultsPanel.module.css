@@ -1,14 +1,9 @@
 .resultsContainer {
     display: flex;
     flex-direction: column;
-    flex: 1 1 0;
-    min-height: 0;
-    height: 100%;
-    border-radius: 25px;
-    overflow: hidden;
-    background: var(--container-color); 
-    box-shadow: var(--box-shadow);
+    background: transparent;
     position: relative;
+    width: 100%;
 }
 
 .resultHeader {
@@ -35,17 +30,6 @@
     transition: all 0.3s ease;
 }
 
-.resultsTitle.glass {
-    /* Glassmorphism */
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    
-    box-shadow:
-        inset 0 1px 4px rgba(255, 255, 255, 0.2),
-        inset 0 -1px 4px rgba(0, 0, 0, 0.1),
-        0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
 :root[data-theme="dark"] .resultsTitle {
     background: rgba(0, 0, 0, 0.01);
     backdrop-filter: blur(8px);
@@ -61,19 +45,11 @@
 }
 
 .resultsDisplay {
-    flex-grow: 1;
-    flex: 1 1 0;
-    min-height: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    scrollbar-width: none;
     word-break: break-word;
-    padding-top: 4rem;
+    padding-top: 5rem;
+    width: 100%;
 }
 
-.resultsDisplay::-webkit-scrollbar {
-    display: none;
-}
 
 @keyframes fadeInUp {
     from {
@@ -88,18 +64,21 @@
 }
 
 .resultItem {
-    margin: 1rem;
-    padding: 1rem;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
+    margin: 1.5rem auto;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
     position: relative;
-    background-color: var(--container-color);
+    background: var(--container-color);
     color: var(--primary-text);
     animation: fadeInUp 0.3s ease-out;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    transition: all 0.2s ease;
+    gap: 0.75rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-width: 48vw;
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .selectionControl {
@@ -158,12 +137,19 @@
 
 :root[data-theme="dark"] .resultItem {
     color: var(--primary-dark);
-    box-shadow: 0 4px 16px rgba(108, 79, 193, 0.2)
+    box-shadow: 0 8px 32px rgba(108, 79, 193, 0.15);
+    border-color: rgba(108, 79, 193, 0.2);
+}
+
+:root[data-theme="dark"] .resultItem:hover {
+    box-shadow: 0 16px 48px rgba(108, 79, 193, 0.25);
+    border-color: rgba(108, 79, 193, 0.4);
 }
 
 .resultItem:hover {
-    transform: translate(-3px, -3px);
-    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.15);
+    transform: translateY(-8px);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 .resultTitle {
@@ -215,9 +201,45 @@
     justify-content: center;
     align-items: center;
     gap: 1.5rem;
-    margin: 2rem 0 1rem 0;
+    margin: 3rem 0 2rem 0;
+    padding: 1.5rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
+.paginationButton {
+    background: var(--button-color);
+    color: var(--primary-light);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    min-width: 80px;
+}
+
+.paginationButton:hover:not(:disabled) {
+    background: var(--button-active-color);
+    transform: translateY(-1px);
+}
+
+.paginationButton:disabled {
+    background: var(--primary-alt);
+    color: var(--primary-text);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.pageInfo {
+    color: var(--primary-text);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+    min-width: 200px;
+}
 
 .resultsRangeInfo {
     text-align: center;
@@ -259,13 +281,12 @@
         right: 0;
         z-index: 10;
         background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
     }
     
     .resultItem {
         margin-bottom: 1.5rem;
         padding-bottom: 1.5rem;
+        max-width: 78vw;
     }
     
     .resultTitle {
@@ -286,7 +307,34 @@
 /* Mobile phones */
 @media (max-width: 480px) {
     .resultsContainer {
-        margin: 0 6px 1rem 6px;
+        margin: 0;
+        padding: 0 0.5rem;
+    }
+    
+    .resultItem {
+        margin: 1rem auto;
+        padding: 1rem;
+        max-width: 90vw;
+    }
+    
+    .pagination {
+        gap: 0.8rem;
+        margin: 2rem 0.5rem 1rem 0.5rem;
+        padding: 1rem;
+        border-radius: 12px;
+        max-width: none;
+    }
+    
+    .paginationButton {
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
+        min-width: 60px;
+    }
+    
+    .pageInfo {
+        font-size: 0.75rem;
+        min-width: auto;
+        text-align: center;
     }
     .resultsTitle {
         font-size: 1.2rem;
@@ -297,8 +345,6 @@
         right: 0;
         z-index: 10;
         background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
     }
     .resultsDisplay {
         padding: 0 2px;
@@ -361,8 +407,6 @@
         right: 0;
         z-index: 10;
         background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
     }
     
     .resultTitle {

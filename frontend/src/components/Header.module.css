@@ -20,7 +20,12 @@
 }
 
 #historyButton {
-    display: none;
+    display: flex;
+}
+
+#historyButton svg {
+    position: relative;
+    left: 0.05rem;
 }
 
 .buttonContainer {

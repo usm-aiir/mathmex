@@ -1,5 +1,6 @@
 .searchContainer {
     width: 100%;
+    max-width: 50vw;
     background-color: var(--container-color);
     padding: 25px;
     border-radius: 25px;
@@ -302,6 +303,7 @@
 
     .searchContainer {
         padding: 20px;
+        max-width: 80vw;
     }
 
     .searchControls {
@@ -324,7 +326,8 @@
 @media (max-width: 480px) {
     .searchContainer {
         padding: 10px;
-        margin: 0 6px 1rem 6px;
+        margin: 0 6px 0 6px;
+        max-width: 96vw;
     }
     .inputContainer {
         margin: 0;

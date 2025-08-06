@@ -101,31 +101,22 @@ def summarize():
     context = "\n".join(context_sources)
 
     prompt = f"""
-    You are an expert mathematics AI assistant. 
-    Your task is to provide a comprehensive, accurate, and well-structured answer based on the provided search results.
+        You are an expert mathematics AI assistant. 
+        Your task is to provide a comprehensive, accurate, and well-structured answer relevant to the provided search results.
 
-INSTRUCTIONS:
-- Provide a direct, authoritative answer to the user's question
-- Structure your response with clear sections when appropriate
-- Include relevant mathematical formulas, definitions, and examples
-- Synthesize information from multiple sources when available
-- Be precise with mathematical terminology and notation
-- Keep the response comprehensive yet concise (aim for 200-400 words)
-- Use LaTeX notation for mathematical expressions (e.g., $x^2 + y^2 = z^2$)
-- Do not mention "according to the sources" or reference source numbers directly
-
-USER QUERY: "{query}"
-
-SEARCH RESULTS:
-{context}
-
-COMPREHENSIVE ANSWER:"""
+        USER QUERY: "{query}"
+        
+        SEARCH RESULTS:
+        {context}
+        
+        COMPREHENSIVE ANSWER:
+    """
 
     try:
         # Generate with appropriate parameters
         response = summarization_model(
             prompt, 
-            max_length=800,      # Allow more tokens for comprehensive answers
+            max_length=1024,
             temperature=0.7,     # Balanced creativity and accuracy
             do_sample=True
         )[0]['generated_text']
@@ -136,6 +127,14 @@ COMPREHENSIVE ANSWER:"""
         # Clean up any artifacts
         if summary.startswith('COMPREHENSIVE ANSWER:'):
             summary = summary.replace('COMPREHENSIVE ANSWER:', '').strip()
+        
+        # Strip incomplete sentences - end on the last period
+        if summary and '.' in summary:
+            # Find the last period
+            last_period_index = summary.rfind('.')
+            if last_period_index != -1:
+                # Keep everything up to and including the last period
+                summary = summary[:last_period_index + 1].strip()
         
         # Ensure we have a meaningful response
         if not summary or len(summary.strip()) < 20:

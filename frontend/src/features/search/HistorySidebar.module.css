@@ -1,0 +1,192 @@
+.historySidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 86vw;
+    max-width: 320px;
+    background: var(--container-color);
+    box-shadow: 2px 0 16px rgba(0,0,0,0.18);
+    z-index: 9999;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    border-radius: 0 25px 25px 0;
+}
+
+.historySidebar.open {
+    transform: translateX(0);
+}
+
+.historyHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    padding: 1.5rem 2rem;
+    border-radius: 0 25px 25px 0;
+    color: var(--primary-text);
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.historyHeader.glass {
+    /* Glassmorphism */
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    box-shadow:
+        inset 0 1px 4px rgba(255, 255, 255, 0.2),
+        inset 0 -1px 4px rgba(0, 0, 0, 0.1),
+        0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="dark"] .historyHeader {
+    background: rgba(0, 0, 0, 0.01);
+    backdrop-filter: blur(8px);
+}
+
+.historyTitle {
+    margin: 0;
+    color: var(--primary-text);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.clearHistoryBtn {
+    background-color: transparent;
+    color: var(--button-color);
+    border: 1px solid var(--primary-accent);
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.clearHistoryBtn:hover {
+    color: var(--primary-light);
+    background-color: var(--button-color);
+}
+
+.historyList {
+    width: 100%;
+    padding: 4rem 0.5rem 0 0.5rem;
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    max-height: 100%;
+    border-radius: inherit;
+    scrollbar-width: none;
+    word-break: break-word;
+}
+
+.historyItem {
+    padding: 0.6rem 0.8rem;
+    border-radius: var(--border-radius);
+    min-height: 44px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.historyItem:hover {
+    background-color: rgba(1, 1, 1, 0.05);
+}
+
+.historyFormula {
+    flex: 1;
+    color: var(--primary-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 8px;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+}
+
+.historyFormula p {
+    width: 100%;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    line-height: 1.2;
+}
+
+.historyFormula span {
+    display: inline;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.historyTime {
+    font-size: 0.7rem;
+    color: var(--primary-alt) !important; 
+    white-space: nowrap;
+}
+
+.emptyHistory {
+    padding: 0.8rem;
+    text-align: center;
+    color: var(--primary-alt);
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+/* Desktop adjustments - slightly larger but keeping the mobile feel */
+@media (min-width: 481px) {
+    .historySidebar {
+        max-width: 350px;
+    }
+    
+    .historyTitle {
+        font-size: 1rem;
+    }
+    
+    .clearHistoryBtn {
+        font-size: 0.9rem;
+        padding: 0.3rem 0.8rem;
+    }
+    
+    .historyTime {
+        font-size: 0.75rem;
+    }
+    
+    .emptyHistory {
+        font-size: 1rem;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+    .historySidebar {
+        max-width: 90vw;
+    }
+    
+    .historyTitle {
+        font-size: 0.9rem;
+    }
+    
+    .clearHistoryBtn {
+        padding: 0.2rem 0.5rem;
+        font-size: 0.8rem;
+    }
+    
+    .historyItem {
+        padding: 0.5rem 0.6rem;
+        min-height: 40px;
+    }
+    
+    .historyTime {
+        font-size: 0.65rem;
+    }
+}

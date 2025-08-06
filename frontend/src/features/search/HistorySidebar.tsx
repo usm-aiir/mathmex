@@ -1,16 +1,15 @@
-import styles from "./HistoryPanel.module.css"
+import styles from "./HistorySidebar.module.css"
 import {FC, useEffect, useRef, useState} from "react"
 import type { SearchHistoryItem } from "../../types/search.ts"
-import { X } from "lucide-react"
 
 /**
- * HistoryPanel.tsx
+ * HistorySidebar.tsx
  *
  * Displays the user's search history for the current session, allowing re-search and clearing history.
  * Renders a list of previous queries and integrates with MathLive for math rendering.
  */
 /**
- * Props for the HistoryPanel component.
+ * Props for the HistorySidebar component.
  * @typedef {Object} SearchHistoryDisplayProps
  * @property {SearchHistoryItem[]} history - List of search history items.
  * @property {() => void} onClearHistory - Callback to clear the history.
@@ -23,22 +22,20 @@ interface SearchHistoryDisplayProps {
     onHistoryItemClick: (latex: string) => void
     formatDate: (date: Date) => string
     isSidebarOpen?: boolean
-    onCloseSidebar?: () => void
 }
 
 /**
- * HistoryPanel component for displaying and interacting with search history.
+ * HistorySidebar component for displaying and interacting with search history.
  *
  * @param {SearchHistoryDisplayProps} props - The props for the component.
  * @returns {JSX.Element} The rendered history panel.
  */
-const HistoryPanel: FC<SearchHistoryDisplayProps> = ({
+const HistorySidebar: FC<SearchHistoryDisplayProps> = ({
     history,
     onClearHistory,
     onHistoryItemClick,
     formatDate,
     isSidebarOpen = false,
-    onCloseSidebar,
 }) => {
     const [isGlass, setIsGlass] = useState(false)
     const historyListRef = useRef<HTMLDivElement>(null)
@@ -68,23 +65,11 @@ const HistoryPanel: FC<SearchHistoryDisplayProps> = ({
         }
     }, [])
 
-    // Determine if mobile (window width <= 480px)
-    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 480;
-
+    // Always use sidebar functionality (not just mobile)
     return (
         <div
-            className={
-                isMobile
-                    ? `${styles.historySidebar} ${isSidebarOpen ? styles.open : ''}`
-                    : styles.historyContainer
-            }
+            className={`${styles.historySidebar} ${isSidebarOpen ? styles.open : ''}`}
         >
-            {/* Close button for mobile sidebar */}
-            {isMobile && onCloseSidebar && (
-                <button className={styles.closeButton} onClick={onCloseSidebar} aria-label="Close history sidebar">
-                    <X size={24} />
-                </button>
-            )}
             <div ref={historyHeaderRef} className={`${styles.historyHeader} ${isGlass ? styles.glass : ''}`}>
                 <h4 className={styles.historyTitle}>Search History</h4>
                 {/* Button to clear history */}
@@ -116,4 +101,4 @@ const HistoryPanel: FC<SearchHistoryDisplayProps> = ({
     )
 }
 
-export default HistoryPanel
+export default HistorySidebar

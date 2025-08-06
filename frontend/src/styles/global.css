@@ -59,7 +59,7 @@
 body {
     line-height: 1.6;
     
-    background-color: #2c2416;
+    background-color: var(--primary-text);
     font-size: 18px;
 }
 

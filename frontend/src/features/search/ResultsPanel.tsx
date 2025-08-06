@@ -37,56 +37,73 @@ const IS_DEV = process.env.NODE_ENV === "development";
  * @returns {JSX.Element} The rendered results panel.
  */
 const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMessage, selectedResults, onSelectionChange }) => {
-    const [isGlass, setIsGlass] = useState(false)
+    const [currentPage, setCurrentPage] = useState(1)
     const resultsDisplayRef = useRef<HTMLDivElement>(null)
     const resultsTitleRef = useRef<HTMLHeadingElement>(null)
+    
+    const RESULTS_PER_PAGE = 7
+    const totalPages = Math.ceil(results.length / RESULTS_PER_PAGE)
+    const startIndex = (currentPage - 1) * RESULTS_PER_PAGE
+    const endIndex = startIndex + RESULTS_PER_PAGE
+    const currentResults = results.slice(startIndex, endIndex)
 
     useEffect(() => {
         // Re-render math expressions in results when results change
-        if (results.length > 0) {
+        if (currentResults) {
             import("mathlive").then(mathlive => {
                 mathlive.renderMathInDocument();
             });
         }
+    }, [currentResults]);
+
+    useEffect(() => {
+        // Reset to first page when results change
+        setCurrentPage(1);
     }, [results]);
 
     useEffect(() => {
-        const handleScroll = () => {
-            if (resultsDisplayRef.current && resultsTitleRef.current) {
-                const scrollTop = resultsDisplayRef.current.scrollTop
-                setIsGlass(scrollTop > 0)
-            }
+        // Scroll to results section when page changes (except initial load)
+        if (currentPage > 1 && resultsTitleRef.current) {
+            // Calculate offset to account for sticky header
+            // Find the sticky header element and get its actual height
+            const stickyHeader = document.querySelector('[class*="topSection"]') as HTMLElement;
+            const stickyHeaderHeight = stickyHeader ? stickyHeader.offsetHeight + 20 : 180; // 20px buffer
+            
+            const elementTop = resultsTitleRef.current.getBoundingClientRect().top + window.scrollY;
+            const offsetTop = elementTop - stickyHeaderHeight;
+            
+            window.scrollTo({
+                top: offsetTop,
+                behavior: 'smooth'
+            });
         }
-
-        const resultsDisplay = resultsDisplayRef.current
-        if (resultsDisplay) {
-            resultsDisplay.addEventListener('scroll', handleScroll)
-            return () => resultsDisplay.removeEventListener('scroll', handleScroll)
-        }
-    }, [])
+    }, [currentPage]);
 
     return (
                         <section className={styles.resultsContainer}>
-            <h2 ref={resultsTitleRef} className={`${styles.resultsTitle} ${isGlass ? styles.glass : ''}`}>Results</h2>
+            <h2 ref={resultsTitleRef} className={styles.resultsTitle}>Results</h2>
             <div ref={resultsDisplayRef} className={styles.resultsDisplay}>
                 {isLoading ? (
                     <div className="loading">Searching</div>
                 ) : results.length > 0 ? (
-                    results.map((result, index) => (
-                        <div key={index} className={`${styles.resultItem} ${selectedResults.includes(index) ? styles.selected : ''}`}>
-                            <div className={styles.selectionControl}>
-                                <input
-                                    type="checkbox"
-                                    className={styles.resultCheckbox}
-                                    checked={selectedResults.includes(index)}
-                                    onChange={() => {
-                                        onSelectionChange(selectedResults.includes(index)
-                                            ? selectedResults.filter(i => i !== index)
-                                            : [...selectedResults, index]);
-                                    }}
-                                    title="Include in AI summary"
-                                />
-                            </div>
+                    <>
+                        {currentResults.map((result, displayIndex) => {
+                            const actualIndex = startIndex + displayIndex;
+                            return (
+                                <div key={actualIndex} className={`${styles.resultItem} ${selectedResults.includes(actualIndex) ? styles.selected : ''}`}>
+                                    <div className={styles.selectionControl}>
+                                        <input
+                                            type="checkbox"
+                                            className={styles.resultCheckbox}
+                                            checked={selectedResults.includes(actualIndex)}
+                                            onChange={() => {
+                                                onSelectionChange(selectedResults.includes(actualIndex)
+                                                    ? selectedResults.filter(i => i !== actualIndex)
+                                                    : [...selectedResults, actualIndex]);
+                                            }}
+                                            title="Include in AI summary"
+                                        />
+                                    </div>
                             <div className={styles.resultHeader}>
                                 <h3 className={styles.resultTitle}>{result.title}</h3>
                                 {/* Add visual relevance scores if in dev */}
@@ -115,11 +132,35 @@ const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMe
                                 </p>
                             )}
                         </div>
-                    ))
+                            );
+                        })}
+                    </>
                 ) : (
                     placeholderMessage
                 )}
             </div>
+            {/* Pagination outside of results display */}
+            {results.length > 0 && totalPages > 1 && (
+                <div className={styles.pagination}>
+                    <button 
+                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                        disabled={currentPage === 1}
+                        className={styles.paginationButton}
+                    >
+                        Previous
+                    </button>
+                    <span className={styles.pageInfo}>
+                        Page {currentPage} of {totalPages}
+                    </span>
+                    <button 
+                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                        disabled={currentPage === totalPages}
+                        className={styles.paginationButton}
+                    >
+                        Next
+                    </button>
+                </div>
+            )}
         </section>
     )
 }

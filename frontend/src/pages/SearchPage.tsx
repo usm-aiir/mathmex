@@ -1,9 +1,10 @@
 import { ReactNode, useState, useRef, useEffect } from "react"
 import styles from "./SearchPage.module.css"
 import SearchPanel from "../features/search/SearchPanel"
-import HistoryPanel from "../features/search/HistoryPanel"
+import HistorySidebar from "../features/search/HistorySidebar.tsx"
 import ResultsPanel from "../features/search/ResultsPanel"
 import FilterModal from "../features/search/FilterModal.tsx"
+import SummaryModal from "../features/search/SummaryModal"
 import type { SearchFilters, SearchResult, SearchHistoryItem } from "../types/search"
 import { formatDate } from "../lib/utils"
 
@@ -32,6 +33,61 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
     useEffect(() => {
         setSelectedResults([])
     }, [searchResults])
+
+    // AI Summary Modal state
+    const [summary, setSummary] = useState<string>("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [currentQuery, setCurrentQuery] = useState<string>("");
+
+    const closeSummaryModal = () => {
+        setIsModalOpen(false);
+        setSummary("");
+        setCurrentQuery("");
+    };
+
+    // Handler for LLM answer generation
+    const handleSummarization = async () => {
+        const query = mathFieldRef.current?.value || "";
+
+        if (!query) {
+            alert("Please enter a query first.");
+            return;
+        }
+
+        if (!searchResults || searchResults.length === 0) {
+            alert("Please perform a search first to get results for summarization.");
+            return;
+        }
+
+        // Use selected results if any are selected, otherwise use top 10 results
+        let contextResults = selectedResults.length > 0
+            ? selectedResults.map(i => searchResults[i])
+            : searchResults.slice(0, 10);
+
+         // Open modal and start loading
+        setCurrentQuery(query);
+        setIsModalOpen(true);
+        setIsGenerating(true);
+        setSummary("");
+
+        try {
+            const res = await fetch("/api/summarize", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    query,
+                    results: contextResults
+                }),
+            });
+            const data = await res.json();
+            setSummary(data.summary || "No answer generated.");
+        } catch (err) {
+            setSummary("Backend not reachable! Please try again later.");
+        } finally {
+            setIsGenerating(false);
+        }
+    };
 
     // History
     const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([])
@@ -109,25 +165,10 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
                         initialLatex={initialLatex}
                         searchResults={searchResults}
                         selectedResults={selectedResults}
+                        onSummarize={handleSummarization}
                     />
                 </div>
                 <div className={styles.bottomSection}>
-                    <HistoryPanel
-                        history={searchHistory.slice().reverse()}
-                        onClearHistory={() => {
-                            setSearchHistory([])
-                            localStorage.removeItem("mathMexSearchHistory")
-                        }}
-                        onHistoryItemClick={(latex) => {
-                            if (mathFieldRef.current) {
-                                mathFieldRef.current.value = latex
-                            }
-                            setTimeout(() => performSearch(), 0)
-                        }}
-                        formatDate={formatDate}
-                        isSidebarOpen={isHistoryOpen}
-                        onCloseSidebar={() => setIsHistoryOpen(false)}
-                    />
                     <ResultsPanel
                         results={searchResults}
                         isLoading={isLoading}
@@ -137,13 +178,36 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
                     />
                 </div>
             </div>
+            <HistorySidebar
+                history={searchHistory.slice().reverse()}
+                onClearHistory={() => {
+                    setSearchHistory([])
+                    localStorage.removeItem("mathMexSearchHistory")
+                }}
+                onHistoryItemClick={(latex) => {
+                    if (mathFieldRef.current) {
+                        mathFieldRef.current.value = latex
+                    }
+                    setTimeout(() => performSearch(), 0)
+                }}
+                formatDate={formatDate}
+                isSidebarOpen={isHistoryOpen}
+            />
             <FilterModal
                 isOpen={isFilterVisible}
                 onClose={() => setIsFilterVisible(false)}
                 filters={filters}
                 onFiltersChange={setFilters}
             />
-            {/* Overlay for mobile sidebar */}
+            {/* AI Summary Modal */}
+            <SummaryModal
+                isOpen={isModalOpen}
+                onClose={closeSummaryModal}
+                summary={summary}
+                isLoading={isGenerating}
+                query={currentQuery}
+            />
+            {/* Overlay for sidebar */}
             {isHistoryOpen && (
                 <div className={styles.overlay} onClick={() => setIsHistoryOpen(false)}></div>
             )}
