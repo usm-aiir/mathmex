@@ -250,7 +250,7 @@ export default function SearchPanel({
                             title="PDF Reader"
                         >
                             <a href="/pdf_reader" >
-                                <FileUp size={24} id={styles.pdfButton}  />
+                                <FileUp size={24} />
                             </a>
                         </button>
                         {/* NEW: Generate LLM Answer button */}
