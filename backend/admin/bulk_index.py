@@ -25,7 +25,7 @@ MODEL = config.get('opensearch', 'model')
 # Name of the data source and index (change as needed)
 SOURCE_NAME = 'math-stack-exchange'
 INDEX_NAME = f'mathmex_{SOURCE_NAME}'
-JSONL_FILE_PATH = f'../data/jsonl/{SOURCE_NAME}-proofs.jsonl'
+JSONL_FILE_PATH = f'../data/jsonl/{SOURCE_NAME}.jsonl'
 
 # Suppress the security warning from using a self-signed cert
 warnings.filterwarnings('ignore', message='Unverified HTTPS request')

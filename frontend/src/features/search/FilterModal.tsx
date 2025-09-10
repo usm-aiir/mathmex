@@ -33,7 +33,8 @@ const AVAILABLE_SOURCES = [
     { id: 'math-stack-exchange', name: 'Math Stack Exchange', description: 'Mathematics Q&A' },
     { id: 'mathematica', name: 'Mathematica', description: 'Wolfram documentation' },
     { id: 'wikipedia', name: 'Wikipedia', description: 'Mathematical articles' },
-    { id: 'youtube', name: 'YouTube', description: 'Educational videos' }
+    { id: 'youtube', name: 'YouTube', description: 'Educational videos' },
+    { id: 'proof-wiki', name: 'ProofWiki', description: 'Formal Proofs'}
 ];
 
 /**

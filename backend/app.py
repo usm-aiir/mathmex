@@ -199,7 +199,8 @@ def perform_search(query, sources, media_types):
         'math-stack-exchange': 'mathmex_math-stack-exchange',
         'mathematica': 'mathmex_mathematica',
         'wikipedia': 'mathmex_wikipedia',
-        'youtube': 'mathmex_youtube'
+        'youtube': 'mathmex_youtube',
+        'proof-wiki': 'mathmex_proof-wiki'
     }
 
     indices = [source_to_index[source] for source in sources if source in source_to_index] if sources else list(source_to_index.values())
