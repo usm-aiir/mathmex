@@ -51,7 +51,14 @@ const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMe
         // Re-render math expressions in results when results change
         if (currentResults) {
             import("mathlive").then(mathlive => {
-                mathlive.renderMathInDocument();
+                mathlive.renderMathInDocument({
+			TeX: {
+				delimiters: {
+					display: [['$$', '$$']],
+					inline: [['$','$']]
+				}
+			}
+		});
             });
         }
     }, [currentResults]);

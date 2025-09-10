@@ -162,6 +162,7 @@ export default function SearchPanel({
                 <math-field
                     ref={mathFieldRef}
                     placeholder="\mathrm{Search\ mathematics...}"
+                    default-mode="text"
                     onKeyDown={(e: any) => {
                         if (e.key === 'Enter') {
                             e.preventDefault();

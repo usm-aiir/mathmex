@@ -47,4 +47,4 @@ def format_for_mathlive(text: str) -> str:
     # Matches a single $...$ with no extra $ next to it
     pattern = re.compile(r'(?<!\$)\$(?!\$)(.+?)(?<!\$)\$(?!\$)')
 
-    return pattern.sub(r'$$\1$$', text)
+    return pattern.sub(r'$\1$', text)
