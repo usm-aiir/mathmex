@@ -169,7 +169,7 @@
 
 .filterItem:has(input:checked) {
     background-color: var(--button-color);
-    color: var(--container-color);
+    color: var(--primary-light);
 }
 
 .checkbox {
