@@ -161,7 +161,7 @@ export default function SearchPanel({
             <div className={styles.inputContainer}>
                 <math-field
                     ref={mathFieldRef}
-                    placeholder="\mathrm{Search\ mathematics...}"
+                    placeholder="\text{Search mathematics}\ldots"
                     default-mode="text"
                     onKeyDown={(e: any) => {
                         if (e.key === 'Enter') {
