@@ -86,7 +86,7 @@
 .track {
     width: 44px;
     height: 24px;
-    background: var(--button-color);
+    background: var(--primary-alt);
     border-radius: 999px;
     position: relative;
     transition: background 0.3s;
@@ -95,7 +95,7 @@
 }
 
 .on {
-    background: var(--primary-accent, #6c4fc1);
+    background: var(--button-color);
 }
 
 .thumb {

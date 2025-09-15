@@ -10,6 +10,73 @@ import { formatDate } from "../lib/utils"
 
 const API_BASE = process.env.NODE_ENV === "development" ? "http://localhost:440/api" : "/api"
 
+// Settings management functions
+const getSettingFromStorage = (key: string, defaultValue: boolean): boolean => {
+    if (typeof window === 'undefined') return defaultValue
+    const stored = localStorage.getItem(key)
+    return stored !== null ? JSON.parse(stored) : defaultValue
+}
+
+const saveSettingToStorage = (key: string, value: boolean): void => {
+    if (typeof window !== 'undefined') {
+        localStorage.setItem(key, JSON.stringify(value))
+    }
+}
+
+// Get current settings values (called before every search)
+export const getCurrentSearchSettings = () => ({
+    enhancedSearch: getSettingFromStorage('enhancedSearch', false),
+    diversifyResults: getSettingFromStorage('diversifyResults', false)
+})
+
+// Settings hooks for UI components
+export const useEnhancedSearch = () => {
+    const [isEnabled, setIsEnabled] = useState(() => getSettingFromStorage('enhancedSearch', false))
+    
+    const toggle = () => {
+        const newValue = !isEnabled
+        setIsEnabled(newValue)
+        saveSettingToStorage('enhancedSearch', newValue)
+    }
+    
+    return { isEnhancedSearchEnabled: isEnabled, toggleEnhancedSearch: toggle }
+}
+
+export const useDiversifyResults = () => {
+    const [isEnabled, setIsEnabled] = useState(() => getSettingFromStorage('diversifyResults', false))
+    
+    const toggle = () => {
+        const newValue = !isEnabled
+        setIsEnabled(newValue)
+        saveSettingToStorage('diversifyResults', newValue)
+    }
+    
+    return { isDiversifyResultsEnabled: isEnabled, toggleDiversifyResults: toggle }
+}
+
+export const useDarkMode = () => {
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        const stored = getSettingFromStorage('darkMode', false)
+        const systemPreference = typeof window !== 'undefined' ? 
+            window.matchMedia("(prefers-color-scheme: dark)").matches : false
+        return stored !== null ? stored : systemPreference
+    })
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            document.documentElement.setAttribute("data-theme", isDarkMode ? "dark" : "light")
+        }
+    }, [isDarkMode])
+
+    const toggle = () => {
+        const newValue = !isDarkMode
+        setIsDarkMode(newValue)
+        saveSettingToStorage('darkMode', newValue)
+    }
+
+    return { isDarkMode, toggleDarkMode: toggle }
+}
+
 interface SearchPageProps {
     isHistoryOpen?: boolean
     setIsHistoryOpen?: (open: boolean) => void
@@ -132,13 +199,18 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
         setSearchHistory(updatedHistory)
         localStorage.setItem("mathMexSearchHistory", JSON.stringify(updatedHistory))
 
+        // Get fresh settings for each search
+        const searchSettings = getCurrentSearchSettings()
+        
         fetch(`${API_BASE}/search`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 query: currentLatex,
                 sources: filters.sources,
-                mediaTypes: filters.mediaTypes
+                mediaTypes: filters.mediaTypes,
+                do_enhance: searchSettings.enhancedSearch,
+                diversify: searchSettings.diversifyResults
             }),
         })
             .then(res => res.json())

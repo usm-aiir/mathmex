@@ -7,3 +7,4 @@ opensearch-py
 sentence-transformers
 transformers
 torch
+scikit-learn

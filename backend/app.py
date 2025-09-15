@@ -15,6 +15,8 @@ from transformers import pipeline
 import configparser
 import saytex
 import os
+import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
 from utils.format import format_for_mathmex, format_for_mathlive
 
 # Create the Flask application instance
@@ -72,12 +74,14 @@ def search():
     query = data.get('query', '')
     sources = data.get('sources', [])
     media_types = data.get('mediaTypes', [])
-
+    do_enhance = data.get('do_enhance', False)
+    diversify = data.get('diversify', False) 
+    
     if not query:
         return jsonify({'error': 'No query provided'}), 400
 
     try:
-        results = perform_search(query, sources, media_types)
+        results = perform_search(query, sources, media_types, do_enhance, diversify)
     except ValueError as e:
         return jsonify({'error': str(e)}), 400
 
@@ -112,37 +116,11 @@ def summarize():
         COMPREHENSIVE ANSWER:
     """
 
-    try:
-        # Generate with appropriate parameters
-        response = summarization_model(
-            prompt, 
-            max_length=1024,
-            temperature=0.7,     # Balanced creativity and accuracy
-            do_sample=True
-        )[0]['generated_text']
-        
-        # Extract only the answer part (after the prompt)
-        summary = response.replace(prompt, '').strip()
-        
-        # Clean up any artifacts
-        if summary.startswith('COMPREHENSIVE ANSWER:'):
-            summary = summary.replace('COMPREHENSIVE ANSWER:', '').strip()
-        
-        # Strip incomplete sentences - end on the last period
-        if summary and '.' in summary:
-            # Find the last period
-            last_period_index = summary.rfind('.')
-            if last_period_index != -1:
-                # Keep everything up to and including the last period
-                summary = summary[:last_period_index + 1].strip()
-        
-        # Ensure we have a meaningful response
-        if not summary or len(summary.strip()) < 20:
-            summary = "I need more specific information to provide a comprehensive answer. Please try refining your search query or selecting more relevant sources."
-
-    except Exception as e:
-        print("LLM generation error:", e)
-        summary = "I'm currently unable to generate a summary. Please check that the backend model is properly loaded and try again."
+    summary = llm_response(
+        prompt=prompt,
+        response_type="summary",
+        fallback=f"I need more specific information to provide a comprehensive answer. Please try refining your search query or selecting more relevant sources."
+    )
 
     return jsonify({'summary': format_for_mathlive(summary)})
 
@@ -189,9 +167,22 @@ def speech_to_latex():
         return jsonify({'error': str(e)}), 500
 
 # # # UTIL FUNCTIONS # # #
-def perform_search(query, sources, media_types):
+def perform_search(query, sources, media_types, do_enhance=False, diversify=False):
     if not query:
         raise ValueError("No query provided")
+
+    # If enhanced search is enabled, augment the query with AI response
+    if do_enhance:
+        prompt = f"""
+            You are a mathematics expert. Provide a brief, technical explanation (2-3 sentences) about the mathematical concept or topic: "{query}"
+        
+            Focus on key terminology, related concepts, and mathematical relationships that would help in finding relevant academic content.
+            
+            Response:
+        """
+
+        ai_response = llm_response(prompt, response_type="enhancement", fallback=f"Mathematical concepts related to {query} including definitions, theorems, and applications.")
+        query = f"{query} {ai_response}"
 
     source_to_index = {
         'arxiv': 'mathmex_arxiv',
@@ -212,6 +203,7 @@ def perform_search(query, sources, media_types):
     query_body = {
         "from": 0,
         "size": 100,
+        "_source": {"includes": ["title", "media_type", "body_text", "link", "body_vector"]},  # Include vectors
         "query": {
             "bool": {
                 "must": [
@@ -238,11 +230,124 @@ def perform_search(query, sources, media_types):
         'media_type': hit['_source'].get('media_type'),
         'body_text': format_for_mathlive(hit['_source'].get("body_text")),
         'link': hit['_source'].get('link'),
-        'score': hit.get('_score')
+        'score': hit.get('_score'),
+        'body_vector': hit['_source'].get('body_vector')  # Include vector for MMR
     } for hit in response['hits']['hits']]
 
     results = delete_dups(results, unique_key="body_text")
+    
+    # Apply MMR for result diversification (only if enabled)
+    if diversify and len(results) > 1:
+        results = mmr(results, query_vec, lambda_param=0.7, k=min(50, len(results)))
+    
+    # Clean up results (remove vectors from output)
+    for result in results:
+        result.pop('body_vector', None)
+    
     return results
+
+def mmr(results, query_vector, lambda_param=0.7, k=50):
+    if len(results) <= 1:
+        return results
+    
+    # Extract pre-computed document vectors from results
+    doc_vectors = np.array([result['body_vector'] for result in results if result.get('body_vector')])
+    
+    # Convert query vector to numpy array for calculations
+    query_vec = np.array(query_vector).reshape(1, -1)
+    
+    # Calculate relevance scores (similarity to query)
+    relevance_scores = cosine_similarity(query_vec, doc_vectors)[0]
+    
+    # MMR algorithm
+    selected_indices = []
+    remaining_indices = list(range(len(results)))
+    
+    # Select first document (highest relevance)
+    best_idx = np.argmax(relevance_scores)
+    selected_indices.append(best_idx)
+    remaining_indices.remove(best_idx)
+    
+    # Select remaining documents using MMR
+    while len(selected_indices) < k and remaining_indices:
+        mmr_scores = []
+        
+        for idx in remaining_indices:
+            # Relevance component
+            relevance = relevance_scores[idx]
+            
+            # Diversity component (maximum similarity to already selected docs)
+            if selected_indices:
+                selected_vectors = doc_vectors[selected_indices]
+                current_vector = doc_vectors[idx].reshape(1, -1)
+                similarities = cosine_similarity(current_vector, selected_vectors)[0]
+                max_similarity = np.max(similarities)
+            else:
+                max_similarity = 0
+            
+            # MMR score: λ * relevance - (1-λ) * max_similarity
+            mmr_score = lambda_param * relevance - (1 - lambda_param) * max_similarity
+            mmr_scores.append((idx, mmr_score))
+        
+        # Select document with highest MMR score
+        best_idx, _ = max(mmr_scores, key=lambda x: x[1])
+        selected_indices.append(best_idx)
+        remaining_indices.remove(best_idx)
+    
+    # Return reordered results
+    return [results[idx] for idx in selected_indices]
+
+def llm_response(prompt, response_type="summary", fallback="Unable to generate response"):
+    # Configure parameters based on response type
+    if response_type == "enhancement":
+        max_length = 64
+        temperature = 0.3
+        min_length = 10
+        max_output_length = 300
+        cleanup_markers = ["Response:"]
+
+    else:  # summary
+        max_length = 1024
+        temperature = 0.7
+        min_length = 20
+        max_output_length = None
+        cleanup_markers = ["COMPREHENSIVE ANSWER:"]
+    
+    try:
+        response = summarization_model(
+            prompt, 
+            max_length=max_length,
+            temperature=temperature,
+            do_sample=True
+        )[0]['generated_text']
+        
+        # Extract only the answer part (after the prompt)
+        generated_text = response.replace(prompt, '').strip()
+        
+        # Clean up any artifacts
+        for marker in cleanup_markers:
+            if generated_text.startswith(marker):
+                generated_text = generated_text.replace(marker, '').strip()
+        
+        # Summary-specific cleanup: strip incomplete sentences at the last period
+        if response_type == "summary" and generated_text and '.' in generated_text:
+            last_period_index = generated_text.rfind('.')
+            if last_period_index != -1:
+                generated_text = generated_text[:last_period_index + 1].strip()
+        
+        # Ensure we have a meaningful response
+        if not generated_text or len(generated_text.strip()) < min_length:
+            return fallback
+        
+        # Truncate if too long (for enhancement only)
+        if max_output_length and len(generated_text) > max_output_length:
+            generated_text = generated_text[:max_output_length] + "..."
+            
+        return generated_text
+
+    except Exception as e:
+        print(f"LLM generation error ({response_type}): {e}")
+        return fallback
 
 def delete_dups(list, unique_key="body_text"):
     """
