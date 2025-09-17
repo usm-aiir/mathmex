@@ -39,8 +39,7 @@
     --keycap-secondary-text-hover: var(--primary-dark);
 
     --caret-color: var(--primary-dark);
-
-    --text-font-family: 'Afacad', sans-serif;
+    --text-font-family: 'Afacad', 'sans-serif';
 
     overflow-y: scroll;
     scrollbar-width: none;
