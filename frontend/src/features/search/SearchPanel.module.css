@@ -25,9 +25,14 @@
     color: var(--primary-text);
     background-color: transparent;
     min-height: 40px;
+    border: 1px solid transparent;
     border-radius: var(--border-radius);
     padding: 0 42px 0 10px;
-    border: none;
+}
+
+.inputContainer math-field:focus-within {
+    outline: none !important;
+    border: 1px solid var(--primary-text) !important;
 }
 
 .inputContainer math-field::part(placeholder) {

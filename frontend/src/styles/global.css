@@ -41,6 +41,10 @@
     --caret-color: var(--primary-dark);
     --text-font-family: 'Afacad', 'sans-serif';
 
+    --contains-highlight-background-color: transparent; /* caret container */
+    --highlight-text: transparent;                      /* when caret is in text mode */
+
+
     overflow-y: scroll;
     scrollbar-width: none;
     -ms-overflow-style: none;
