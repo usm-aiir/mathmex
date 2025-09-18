@@ -113,19 +113,18 @@
     align-items: center;
 }
 
-.historyFormula p {
+.historyFormula math-field {
     width: 100%;
     overflow: hidden;
-    margin: 0;
-    padding: 0;
-    line-height: 1.2;
-}
-
-.historyFormula span {
-    display: inline;
-    overflow: hidden;
-    text-overflow: ellipsis;
     white-space: nowrap;
+    background: transparent;
+    border: none;
+    color: var(--primary-text);
+    user-select: none;
+    pointer-events: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
 }
 
 .historyTime {

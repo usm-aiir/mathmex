@@ -8,6 +8,44 @@ import SummaryModal from "../features/search/SummaryModal"
 import type { SearchFilters, SearchResult, SearchHistoryItem } from "../types/search"
 import { formatDate } from "../lib/utils"
 
+// Format conversion utility functions
+const formatRaw = (mathFieldValue: string): string => {
+    /**
+     * Converts from MathField format (equations wrapped with $, text unwrapped)
+     * to Search bar format (text wrapped with \text{}, equations unwrapped)
+     * 
+     * Example: "abc $x^2$ def $y$" -> "\text{abc} x^2 \text{def} y"
+     */
+    if (!mathFieldValue) return "";
+    
+    // Check if already in search bar format (contains \text{})
+    if (mathFieldValue.includes('\\text{')) {
+        return mathFieldValue;
+    }
+    
+    // Split by $ delimiters to separate text and math parts
+    const parts = mathFieldValue.split(/\$([^$]*)\$/);
+    let result = "";
+    
+    for (let i = 0; i < parts.length; i++) {
+        if (i % 2 === 0) {
+            // Even indices are text parts (outside $...$)
+            const textPart = parts[i].trim();
+            if (textPart) {
+                result += `\\text{${textPart}}`;
+            }
+        } else {
+            // Odd indices are math parts (inside $...$)
+            const mathPart = parts[i].trim();
+            if (mathPart) {
+                result += ` ${mathPart} `;
+            }
+        }
+    }
+    
+    return result.trim();
+}
+
 const API_BASE = process.env.NODE_ENV === "development" ? "http://localhost:440/api" : "/api"
 
 // Settings management functions
@@ -193,9 +231,23 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
         setIsLoading(true)
         setSearchResults([])
 
-        const newItem: SearchHistoryItem = { latex: currentLatex, timestamp: Date.now() }
-        let updatedHistory = searchHistory.filter(item => item.latex !== currentLatex)
+        // Raw LaTeX accessed from math-field is in 'text $ equation $' format
+        // We need to store this in '\text{ text } equation' format instead
+        // for insertion from history into input field
+       
+        // Convert here
+        let formattedLatex = formatRaw(currentLatex)
+
+        // Create new item
+        const newItem: SearchHistoryItem = { latex: formattedLatex, timestamp: Date.now() }
+
+        // Check if item already exists
+        let updatedHistory = searchHistory.filter(item => item.latex !== formattedLatex)
+
+        // Add new item
         updatedHistory.push(newItem)
+
+        // Store in localStorage
         setSearchHistory(updatedHistory)
         localStorage.setItem("mathMexSearchHistory", JSON.stringify(updatedHistory))
 

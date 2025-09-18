@@ -42,11 +42,24 @@ const HistorySidebar: FC<SearchHistoryDisplayProps> = ({
     const historyHeaderRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-        // Re-render math expressions in history when history changes
+        // Handle overflow for math-field elements
         if (history.length > 0) {
-            import("mathlive").then(mathlive => {
-                mathlive.renderMathInDocument();
-            });
+            const timer = setTimeout(() => {
+                const mathFields = historyListRef.current?.querySelectorAll('math-field');
+                mathFields?.forEach((mathField: any) => {
+                    const container = mathField.parentElement;
+                    if (container) {
+                        // Calculate approximate character capacity based on container width and font size
+                        const maxChars = Math.floor( container.offsetWidth / ( parseFloat(window.getComputedStyle(mathField).fontSize) * 0.37 ) ) - 3 ;
+                        const originalValue = mathField.value;
+                        if (originalValue.length > maxChars) {
+                            mathField.value = originalValue.slice(0, maxChars) + '\\ldots';
+                        }
+                    }
+                });
+            }, 200);
+            
+            return () => clearTimeout(timer);
         }
     }, [history]);
 
@@ -89,8 +102,11 @@ const HistorySidebar: FC<SearchHistoryDisplayProps> = ({
                             title={`Search for: ${item.latex}\nSearched: ${formatDate(new Date(item.timestamp))}`}
                         >
                             <div className={styles.historyFormula}>
-                                {/* Render math expression as LaTeX */}
-                                <p>{`\$$${item.latex}\$$`}</p>
+                                <math-field
+                                    read-only
+                                    virtual-keyboard-mode="off"
+                                    contenteditable="false"
+                                >{item.latex}</math-field>
                             </div>
                             <div className={styles.historyTime}>{formatDate(new Date(item.timestamp))}</div>
                         </div>
