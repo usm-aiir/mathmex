@@ -39,7 +39,7 @@ const Header: FC<{ onOpenHistorySidebar?: () => void }> = ({ onOpenHistorySideba
                         <h1>
                             Math<span className={styles.highlight}>Mex</span>
                         </h1>
-                        <p className={styles.tagline}>Mathematical Theorem Search Engine</p>
+                        <p className={styles.tagline}>LLM-Enabled Math Search Engine</p>
                     </div>
                 </div>
             </div>

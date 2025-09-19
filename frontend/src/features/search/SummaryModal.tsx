@@ -90,18 +90,6 @@ export default function SummaryModal({ isOpen, onClose, summary, isLoading, quer
         return () => document.removeEventListener('keydown', handleEscape);
     }, [isOpen]);
 
-    // Format query for MathLive rendering
-    const formatForMathLive = (queryText: string) => {
-        if (!queryText) return '';
-        
-        // If the query contains LaTeX commands, wrap in inline math mode
-        if (queryText.includes('\\')) {
-            return `\\(${queryText}\\)`;
-        }
-        
-        return queryText;
-    };
-
     if (!isOpen) return null;
 
     return (
@@ -127,10 +115,11 @@ export default function SummaryModal({ isOpen, onClose, summary, isLoading, quer
                 <div ref={modalBodyRef} className={styles.modalBody}>
                     <div className={styles.querySection}>
                         <h3>Your Query:</h3>
-                        <div 
-                            className={styles.queryText}
-                            dangerouslySetInnerHTML={{ __html: formatForMathLive(query) }}
-                        />
+                        <math-field
+                            read-only
+                            virtual-keyboard-mode="off"
+                            contenteditable="false"
+                        >{query}</math-field>
                     </div>
 
                     <div className={styles.answerSection}>

@@ -329,7 +329,7 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
                 onClose={closeSummaryModal}
                 summary={summary}
                 isLoading={isGenerating}
-                query={currentQuery}
+                query={formatRaw(currentQuery)}
             />
             {/* Overlay for sidebar */}
             {isHistoryOpen && (

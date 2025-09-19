@@ -66,7 +66,7 @@ def get_model():
     return _model
 
 # Model for results summary
-summarization_model = pipeline("text-generation", model="mistralai/Mistral-7B-v0.1")
+generation_model = pipeline("text-generation", model="meta-llama/Llama-3.1-8B")
 
 @app.route("/api/search", methods=["POST"])
 def search():
@@ -315,7 +315,7 @@ def llm_response(prompt, response_type="summary", fallback="Unable to generate r
         cleanup_markers = ["COMPREHENSIVE ANSWER:"]
     
     try:
-        response = summarization_model(
+        response = generation_model(
             prompt, 
             max_length=max_length,
             temperature=temperature,
