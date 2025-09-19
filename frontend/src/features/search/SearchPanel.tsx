@@ -157,9 +157,10 @@ export default function SearchPanel({
             {/* Remove mobile history sidebar button from here */}
             <div className={styles.inputContainer}>
                 <math-field
+                    smart-mode
                     ref={mathFieldRef}
                     placeholder="\text{Search mathematics}\ldots"
-                    default-mode="text"
+                    default-mode="math"
                     onKeyDown={(e: any) => {
                         if (e.key === 'Enter') {
                             e.preventDefault();
@@ -180,27 +181,12 @@ export default function SearchPanel({
 
                     <div className={styles.modeSwitchGroup}>
                         <div className={styles.modeSliderRow}>
-                            <span className={`${styles.modeSliderIcon} ${styles.text}`}> <Type size={16} /> </span>
                             <span className={`${styles.modeSliderIcon} ${styles.math}`}> <FunctionSquare size={22} /> </span>
+                            <span className={`${styles.modeSliderIcon} ${styles.text}`}> <Type size={14} /> </span>
                             <div className={styles.modeSliderTrack}></div>
                             <div
                                 className={styles.modeSliderThumb}
-                                style={{ left: mode === "math" ? "36px" : "0" }}
-                            />
-                            <button
-                                type="button"
-                                className={`${styles.modeSliderButton} ${styles.text}`}
-                                onClick={() => {
-                                    const el = mathFieldRef.current;
-                                    if (el && el.executeCommand) {
-                                        el.executeCommand("switchMode", "text");
-                                        el.focus();
-                                        setMode("text");
-                                    }
-                                }}
-                                aria-pressed={mode === "text"}
-                                aria-label="Text input mode"
-                                tabIndex={0}
+                                style={{ left: mode === "text" ? "36px" : "0" }}
                             />
                             <button
                                 type="button"
@@ -217,6 +203,21 @@ export default function SearchPanel({
                                 aria-label="Math input mode"
                                 tabIndex={0}
                             />
+                            <button
+                                type="button"
+                                className={`${styles.modeSliderButton} ${styles.text}`}
+                                onClick={() => {
+                                    const el = mathFieldRef.current;
+                                    if (el && el.executeCommand) {
+                                        el.executeCommand("switchMode", "text");
+                                        el.focus();
+                                        setMode("text");
+                                    }
+                                }}
+                                aria-pressed={mode === "text"}
+                                aria-label="Text input mode"
+                                tabIndex={0}
+                            />
                         </div>
                     </div>
 
@@ -226,6 +227,7 @@ export default function SearchPanel({
                             className={`${styles.controlButton} ${filtersActive ? styles.active : ""}`}
                             aria-label="Search filters"
                             onClick={onToggleFilter}
+                            title="Set search filters"
                         >
                             <Filter size={20} />
                             {filtersActive && (
@@ -237,6 +239,7 @@ export default function SearchPanel({
                          className={`${styles.controlButton} ${isListening ? styles.listening : ""}`}
                          aria-label={isListening ? "Stop voice input" : "Start voice input"}
                          onClick={toggleSpeechRecognition}
+                         title="Transcribe spoken language or mathematics"
                          >
                          {isListening ? <Square size={22} strokeWidth={2.5} /> : <Mic size={24} />}
                         </button>
@@ -244,7 +247,7 @@ export default function SearchPanel({
                         <button
                             className={styles.controlButton}
                             aria-label="Upload PDF"
-                            title="PDF Reader"
+                            title="Go to PDF reader"
                         >
                             <a href="/pdf_reader" >
                                 <FileUp size={24} />

@@ -8,43 +8,6 @@ import SummaryModal from "../features/search/SummaryModal"
 import type { SearchFilters, SearchResult, SearchHistoryItem } from "../types/search"
 import { formatDate } from "../lib/utils"
 
-// Format conversion utility functions
-const formatRaw = (mathFieldValue: string): string => {
-    /**
-     * Converts from MathField format (equations wrapped with $, text unwrapped)
-     * to Search bar format (text wrapped with \text{}, equations unwrapped)
-     * 
-     * Example: "abc $x^2$ def $y$" -> "\text{abc} x^2 \text{def} y"
-     */
-    if (!mathFieldValue) return "";
-    
-    // Check if already in search bar format (contains \text{})
-    if (mathFieldValue.includes('\\text{')) {
-        return mathFieldValue;
-    }
-    
-    // Split by $ delimiters to separate text and math parts
-    const parts = mathFieldValue.split(/\$([^$]*)\$/);
-    let result = "";
-    
-    for (let i = 0; i < parts.length; i++) {
-        if (i % 2 === 0) {
-            // Even indices are text parts (outside $...$)
-            const textPart = parts[i].trim();
-            if (textPart) {
-                result += `\\text{${textPart}}`;
-            }
-        } else {
-            // Odd indices are math parts (inside $...$)
-            const mathPart = parts[i].trim();
-            if (mathPart) {
-                result += ` ${mathPart} `;
-            }
-        }
-    }
-    
-    return result.trim();
-}
 
 const API_BASE = process.env.NODE_ENV === "development" ? "http://localhost:440/api" : "/api"
 
@@ -225,24 +188,18 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
     }, [])
 
     const performSearch = () => {
-        const currentLatex = mathFieldRef.current?.value?.trim() ?? ""
+        const currentLatex = mathFieldRef.current?.getValue('latex').trim() ?? ""
+        console.log(currentLatex)
         if (!currentLatex) return
 
         setIsLoading(true)
         setSearchResults([])
 
-        // Raw LaTeX accessed from math-field is in 'text $ equation $' format
-        // We need to store this in '\text{ text } equation' format instead
-        // for insertion from history into input field
-       
-        // Convert here
-        let formattedLatex = formatRaw(currentLatex)
-
-        // Create new item
-        const newItem: SearchHistoryItem = { latex: formattedLatex, timestamp: Date.now() }
+        // Create new item - getValue('latex') already gives us the correct format
+        const newItem: SearchHistoryItem = { latex: currentLatex, timestamp: Date.now() }
 
         // Check if item already exists
-        let updatedHistory = searchHistory.filter(item => item.latex !== formattedLatex)
+        let updatedHistory = searchHistory.filter(item => item.latex !== currentLatex)
 
         // Add new item
         updatedHistory.push(newItem)
@@ -329,7 +286,7 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
                 onClose={closeSummaryModal}
                 summary={summary}
                 isLoading={isGenerating}
-                query={formatRaw(currentQuery)}
+                query={currentQuery}
             />
             {/* Overlay for sidebar */}
             {isHistoryOpen && (

@@ -66,7 +66,7 @@ def get_model():
     return _model
 
 # Model for results summary
-generation_model = pipeline("text-generation", model="meta-llama/Llama-3.1-8B")
+generation_model = pipeline("text-generation", model="mistralai/Mistral-7B-v0.3")
 
 @app.route("/api/search", methods=["POST"])
 def search():
@@ -181,8 +181,7 @@ def perform_search(query, sources, media_types, do_enhance=False, diversify=Fals
             Response:
         """
 
-        ai_response = llm_response(prompt, response_type="enhancement", fallback=f"Mathematical concepts related to {query} including definitions, theorems, and applications.")
-        query = f"{query} {ai_response}"
+        query = llm_response(prompt, response_type="enhancement", fallback=f"Mathematical concepts related to {query} including definitions, theorems, and applications.")
 
     source_to_index = {
         'arxiv': 'mathmex_arxiv',
@@ -301,14 +300,14 @@ def mmr(results, query_vector, lambda_param=0.7, k=50):
 def llm_response(prompt, response_type="summary", fallback="Unable to generate response"):
     # Configure parameters based on response type
     if response_type == "enhancement":
-        max_length = 64
+        max_new_tokens = 64
         temperature = 0.3
         min_length = 10
         max_output_length = 300
         cleanup_markers = ["Response:"]
 
     else:  # summary
-        max_length = 1024
+        max_new_tokens = 1024
         temperature = 0.7
         min_length = 20
         max_output_length = None
@@ -317,7 +316,7 @@ def llm_response(prompt, response_type="summary", fallback="Unable to generate r
     try:
         response = generation_model(
             prompt, 
-            max_length=max_length,
+            max_new_tokens=max_new_tokens,
             temperature=temperature,
             do_sample=True
         )[0]['generated_text']

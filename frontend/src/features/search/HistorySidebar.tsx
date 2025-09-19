@@ -104,6 +104,7 @@ const HistorySidebar: FC<SearchHistoryDisplayProps> = ({
                             <div className={styles.historyFormula}>
                                 <math-field
                                     read-only
+                                    default-mode="inline-math"
                                     virtual-keyboard-mode="off"
                                     contenteditable="false"
                                 >{item.latex}</math-field>

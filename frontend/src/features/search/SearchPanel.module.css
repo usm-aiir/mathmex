@@ -259,10 +259,10 @@
 }
 
 .modeSliderIcon.text {
-    left: 0;
+    right: 0;
 }
 .modeSliderIcon.math {
-    right: 0;
+    left: 0;
 }
 
 .modeSliderButton {

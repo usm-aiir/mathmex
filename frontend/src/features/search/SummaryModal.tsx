@@ -117,6 +117,7 @@ export default function SummaryModal({ isOpen, onClose, summary, isLoading, quer
                         <h3>Your Query:</h3>
                         <math-field
                             read-only
+                            default-mode="inline-math"
                             virtual-keyboard-mode="off"
                             contenteditable="false"
                         >{query}</math-field>
