@@ -78,7 +78,6 @@
     max-width: 48vw;
     width: 100%;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    justify-content: center;
 }
 
 .selectionControl {
@@ -192,12 +191,6 @@
     aspect-ratio: 16 / 9;
     width: 100%;
     border: none;
-}
-
-.resultItem img {
-    aspect-ratio: auto;
-    height: auto;
-    max-width: 50%;
 }
 
 .pagination {

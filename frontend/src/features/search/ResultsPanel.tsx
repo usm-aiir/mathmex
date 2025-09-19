@@ -134,7 +134,9 @@ const ResultsPanel: FC<ResultsPanelProps> = ({ results, isLoading, placeholderMe
                                     ></iframe>
                                 </div>
                             ) : result.media_type === "image" ? (
-                                <img src={result.link} alt={result.body_text}/>
+                                <div className={styles.resultDescription}>
+                                    <img src={result.link} alt={result.body_text}/>
+                                </div>
                             ) : (
                                 <p className={styles.resultDescription}>
                                     {result.body_text}
