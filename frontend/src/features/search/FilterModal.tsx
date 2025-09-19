@@ -34,7 +34,8 @@ const AVAILABLE_SOURCES = [
     { id: 'mathematica', name: 'Mathematica', description: 'Wolfram documentation' },
     { id: 'wikipedia', name: 'Wikipedia', description: 'Mathematical articles' },
     { id: 'youtube', name: 'YouTube', description: 'Educational videos' },
-    { id: 'proof-wiki', name: 'ProofWiki', description: 'Formal Proofs'}
+    { id: 'proof-wiki', name: 'ProofWiki', description: 'Formal Proofs'},
+    { id: 'wikimedia', name: 'Wikimedia', description: 'Mathematical Images'}
 ];
 
 /**
@@ -43,7 +44,8 @@ const AVAILABLE_SOURCES = [
 const AVAILABLE_MEDIA_TYPES = [
     { id: 'article', name: 'Articles', description: 'Text-based content' },
     { id: 'pdf', name: 'PDFs', description: 'Research papers and documents' },
-    { id: 'video', name: 'Videos', description: 'Educational videos and lectures' }
+    { id: 'video', name: 'Videos', description: 'Educational videos and lectures' },
+    { id: 'image', name: 'Images', description: 'Visual Mathematics' }
 ];
 
 /**

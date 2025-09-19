@@ -78,6 +78,7 @@
     max-width: 48vw;
     width: 100%;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    justify-content: center;
 }
 
 .selectionControl {
@@ -180,7 +181,7 @@
     padding: 1.2rem;
 }
 
-.resultItem p, .resultItem iframe {
+.resultItem p, .resultItem iframe, .resultItem img {
     margin: 1.5rem 0;
     background-color: #f7f7fa;
     border-radius: var(--border-radius);
@@ -191,6 +192,12 @@
     aspect-ratio: 16 / 9;
     width: 100%;
     border: none;
+}
+
+.resultItem img {
+    aspect-ratio: auto;
+    height: auto;
+    max-width: 50%;
 }
 
 .pagination {
