@@ -190,21 +190,6 @@ export default function SearchPanel({
                             />
                             <button
                                 type="button"
-                                className={`${styles.modeSliderButton} ${styles.math}`}
-                                onClick={() => {
-                                    const el = mathFieldRef.current;
-                                    if (el && el.executeCommand) {
-                                        el.executeCommand("switchMode", "math");
-                                        el.focus();
-                                        setMode("math");
-                                    }
-                                }}
-                                aria-pressed={mode === "math"}
-                                aria-label="Math input mode"
-                                tabIndex={0}
-                            />
-                            <button
-                                type="button"
                                 className={`${styles.modeSliderButton} ${styles.text}`}
                                 onClick={() => {
                                     const el = mathFieldRef.current;
@@ -216,6 +201,21 @@ export default function SearchPanel({
                                 }}
                                 aria-pressed={mode === "text"}
                                 aria-label="Text input mode"
+                                tabIndex={0}
+                            />
+                            <button
+                                type="button"
+                                className={`${styles.modeSliderButton} ${styles.math}`}
+                                onClick={() => {
+                                    const el = mathFieldRef.current;
+                                    if (el && el.executeCommand) {
+                                        el.executeCommand("switchMode", "math");
+                                        el.focus();
+                                        setMode("math");
+                                    }
+                                }}
+                                aria-pressed={mode === "math"}
+                                aria-label="Math input mode"
                                 tabIndex={0}
                             />
                         </div>

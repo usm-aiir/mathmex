@@ -279,10 +279,10 @@
     outline: none;
 }
 .modeSliderButton.text {
-    left: 0;
+    right: 0;
 }
 .modeSliderButton.math {
-    right: 0;
+    left: 0;
 }
 .modeSliderButton:focus {
     outline: 2px solid var(--primary-accent);
