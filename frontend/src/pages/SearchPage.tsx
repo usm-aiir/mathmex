@@ -7,6 +7,7 @@ import FilterModal from "../features/search/FilterModal.tsx"
 import SummaryModal from "../features/search/SummaryModal"
 import type { SearchFilters, SearchResult, SearchHistoryItem } from "../types/search"
 import { formatDate } from "../lib/utils"
+import { useSearchParams } from "react-router-dom"
 
 
 const API_BASE = process.env.NODE_ENV === "development" ? "http://localhost:440/api" : "/api"
@@ -84,9 +85,15 @@ interface SearchPageProps {
 }
 
 export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHistoryOpen: setExternalHistoryOpen }: SearchPageProps) {
-    const mathFieldRef = useRef<any>(null)
-    const searchParam = new URLSearchParams(window.location.search).get("q") || "";
-    const initialLatex = searchParam ? decodeURIComponent(searchParam) : "";
+    const mathFieldRef = useRef<any>(null);
+
+    // search param
+    const [params] = useSearchParams();
+    const searchParam = params.get("q") || "";
+    const initialLatex = searchParam || "";
+    useEffect(() => {
+      if (searchParam) performSearch();
+    }, [searchParam]);
 
     // Search filter modal
     const [isFilterVisible, setIsFilterVisible] = useState(false)

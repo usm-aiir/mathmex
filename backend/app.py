@@ -34,11 +34,11 @@ config.read( os.getenv("BACKEND_CONFIG") )
 
 # OpenSearch Client Configuration from file
 OPENSEARCH_HOST = config.get('opensearch', 'host')
-OPENSEARCH_PORT = config.getint('opensearch', 'port') # Use getint for numbers
-OPENSEARCH_USER = config.get('opensearch', 'admin_user')
-OPENSEARCH_PASSWORD = config.get('opensearch', 'admin_password')
-INDEX_NAME = config.get('opensearch', 'index_name')
-MODEL = config.get('opensearch', 'model')
+
+OPENSEARCH_USER = config.get('admin', 'user')
+OPENSEARCH_PASSWORD = config.get('admin', 'password')
+
+MODEL = config.get('general', 'model')
 
 # Flask App Configuration from file
 FLASK_PORT = config.getint('flask_app', 'port')
@@ -46,7 +46,7 @@ FLASK_DEBUG = config.getboolean('flask_app', 'debug')
 
 # OpenSearch client
 client = OpenSearch(
-    hosts=[{'host': OPENSEARCH_HOST, 'port': OPENSEARCH_PORT}],
+    hosts=[{'host': OPENSEARCH_HOST, 'port': 443}],
     http_auth=(OPENSEARCH_USER, OPENSEARCH_PASSWORD),
     use_ssl=True,
     verify_certs=False,

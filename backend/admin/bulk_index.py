@@ -14,16 +14,18 @@ import configparser
 config = configparser.ConfigParser()
 config.read('../config.ini')
 
-# OpenSearch Client Configuration from file
+# OpenSearch
 OPENSEARCH_HOST = config.get('opensearch', 'host')
-OPENSEARCH_PORT = config.getint('opensearch', 'port') # Use getint for numbers
-OPENSEARCH_USER = config.get('opensearch', 'admin_user')
-OPENSEARCH_PASSWORD = config.get('opensearch', 'admin_password')
-INDEX_NAME = config.get('opensearch', 'index_name')
-MODEL = config.get('opensearch', 'model')
+
+# Credentials
+USER = config.get('admin', 'user')
+PASSWORD = config.get('admin', 'password')
+
+# Model Path
+MODEL = config.get('general', 'model')
 
 # Name of the data source and index (change as needed)
-SOURCE_NAME = 'math-stack-exchange'
+SOURCE_NAME = ''
 INDEX_NAME = f'mathmex_{SOURCE_NAME}'
 JSONL_FILE_PATH = f'../data/jsonl/{SOURCE_NAME}.jsonl'
 
@@ -34,8 +36,8 @@ def get_opensearch_client():
     """Initializes and returns the OpenSearch client."""
     # Create and return the OpenSearch client instance
     client = OpenSearch(
-        hosts=[{'host': OPENSEARCH_HOST, 'port': OPENSEARCH_PORT}],
-        http_auth=(OPENSEARCH_USER, OPENSEARCH_PASSWORD),
+        hosts=[{'host': OPENSEARCH_HOST, 'port': 443}],
+        http_auth=(USER, PASSWORD),
         use_ssl=True,
         verify_certs=False,
         ssl_show_warn=False,

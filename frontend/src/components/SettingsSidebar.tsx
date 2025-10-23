@@ -21,7 +21,7 @@ const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ open, onClose }) => {
             </button>
             <h2 className={styles.title}>Settings</h2>
             <div className={styles.section}>
-                <span className={styles.label}>Dark Mode</span>
+                <span className={styles.label}>Dark mode</span>
                 <button
                     className={styles.pillSwitch}
                     onClick={toggleDarkMode}
@@ -36,7 +36,7 @@ const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ open, onClose }) => {
             </div>
             
             <div className={styles.section}>
-                <span className={styles.label}>Enhanced results</span>
+                <span className={styles.label}>Query enhancement</span>
                 <button
                     className={styles.pillSwitch}
                     onClick={toggleEnhancedSearch}

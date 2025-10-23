@@ -20,7 +20,7 @@ OUT_NPY_FILE = ''
 load_dotenv()
 config = configparser.ConfigParser()
 config.read( os.getenv("BACKEND_CONFIG") )
-model = SentenceTransformer( config.get('opensearch', 'model') )
+model = SentenceTransformer( config.get('general', 'model') )
 
 # Global array
 vector_arr = []

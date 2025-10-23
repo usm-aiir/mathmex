@@ -11,11 +11,12 @@ import configparser
 config = configparser.ConfigParser()
 config.read('../config.ini')
 
-# OpenSearch Client Configuration from file
-HOST = config.get('opensearch', 'host')
-PORT = config.getint('opensearch', 'port') # Use getint for numbers
-USER = config.get('opensearch', 'admin_user')
-PASSWORD = config.get('opensearch', 'admin_password')
+# OpenSearch
+OPENSEARCH_HOST = config.get('opensearch', 'host')
+
+# Credentials
+USER = config.get('admin', 'user')
+PASSWORD = config.get('admin', 'password')
 
 # Name or pattern of the index to clear (wildcards allowed)
 INDEX_NAME = ''
@@ -23,7 +24,7 @@ INDEX_NAME = ''
 # --- Connect ---
 # Initialize the OpenSearch client
 client = OpenSearch(
-    hosts=[{'host': HOST, 'port': PORT}],
+    hosts=[{'host': OPENSEARCH_HOST, 'port': 443}],
     http_auth=(USER, PASSWORD),
     use_ssl=True,
     verify_certs=False,

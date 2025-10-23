@@ -46,8 +46,9 @@ function App() {
             <div className="primary-content">
                 <Header onOpenHistorySidebar={() => setIsHistoryOpen(true)} />
                 <Routes>
-                    {/* Main search page route */}
+                    {/* Home & Search page route */}
                     <Route path="/" element={<SearchPage isHistoryOpen={isHistoryOpen} setIsHistoryOpen={setIsHistoryOpen} />} />
+                    <Route path="/search" element={<SearchPage isHistoryOpen={isHistoryOpen} setIsHistoryOpen={setIsHistoryOpen} />} />
                     {/* About page route */}
                     <Route path="/about" element={<AboutPage />} />
                 </Routes>
