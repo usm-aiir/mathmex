@@ -96,8 +96,8 @@ ENCODED_FILE_PATH = "data/jsonl/TangentCFT/encoded.jsonl"
 INDEX_PATH = "data/jsonl/TangentCFT/encoded_index.json"
 FAISS_INDEX_PATH = "data/jsonl/TangentCFT/slt_index.faiss"
 
-print("Loading FAISS index...")
-faiss_index = faiss.read_index(FAISS_INDEX_PATH)
+# print("Loading FAISS index...")
+# faiss_index = faiss.read_index(FAISS_INDEX_PATH)
 
 _model = None
 def get_model():
@@ -153,7 +153,7 @@ def formula_search():
         tokenize_number=True,
         streaming=True,
         faiss=True,
-        faiss_index=faiss_index,
+        # faiss_index=faiss_index,
         single_query=True,
         do_retrieval=False
     )
@@ -313,11 +313,21 @@ def speech_to_latex():
         return jsonify({'error': str(e)}), 500
 
 # # # UTIL FUNCTIONS # # #
-def perform_search(query, sources, media_types, do_enhance=False, diversify=False, custom_vec=False, custom_query_vec=None):
+def perform_search(
+    query,
+    sources=None,
+    media_types=None,
+    do_enhance=False,
+    diversify=False,
+    custom_vec=False,
+    custom_query_vec=None
+):
     if not query:
         raise ValueError("No query provided")
 
-    # If enhanced search is enabled, augment the query with AI response
+    # --------------------
+    # Optional query enhancement
+    # --------------------
     if do_enhance:
         prompt = f"""
             You are a mathematics expert. Provide a brief, technical explanation (2-3 sentences) about the mathematical concept or topic: "{query}"
@@ -329,39 +339,58 @@ def perform_search(query, sources, media_types, do_enhance=False, diversify=Fals
 
         query = llm_response(prompt, response_type="enhancement", fallback=f"Mathematical concepts related to {query} including definitions, theorems, and applications.")
 
+    # --------------------
+    # Index selection
+    # --------------------
     source_to_index = {
-        'arxiv': 'mathmex_arxiv',
-        'math-overflow': 'mathmex_math-overflow',
-        'math-stack-exchange': 'mathmex_math-stack-exchange',
-        'mathematica': 'mathmex_mathematica',
-        'wikipedia': 'mathmex_wikipedia',
-        'youtube': 'mathmex_youtube',
-        'proof-wiki': 'mathmex_proof-wiki',
-        'wikimedia': 'mathmex_wikimedia'
+        "arxiv": "mathmex_arxiv",
+        "math-overflow": "mathmex_math-overflow",
+        "math-stack-exchange": "mathmex_math-stack-exchange",
+        "mathematica": "mathmex_mathematica",
+        "wikipedia": "mathmex_wikipedia",
+        "youtube": "mathmex_youtube",
+        "proof-wiki": "mathmex_proof-wiki",
+        "wikimedia": "mathmex_wikimedia",
     }
 
-    indices = [source_to_index[source] for source in sources if source in source_to_index] if sources else list(source_to_index.values())
+    indices = (
+        [source_to_index[s] for s in sources if s in source_to_index]
+        if sources
+        else list(source_to_index.values())
+    )
 
-    model = get_model()
-    query_formatted = format_for_mathmex(query)
+    # --------------------
+    # Formula Query vector (300-dim formula space)
+    # --------------------
     if custom_vec:
         query_vec = custom_query_vec
     else:
-        query_vec = model.encode(query_formatted).tolist()
+        model = get_model()  # <-- must be 300-dim
+        query_vec = model.encode(format_for_mathmex(query)).tolist()
 
+    # --------------------
+    # Query body (NESTED KNN)
+    # --------------------
     query_body = {
-        "from": 0,
         "size": 100,
-        "_source": {"includes": ["title", "media_type", "body_text", "link", "body_vector"]},  # Include vectors
+        "_source": {
+            "includes": ["title", "media_type", "body_text", "link"]
+        },
         "query": {
             "bool": {
                 "must": [
                     {
-                        "knn": {
-                            "body_vector": {
-                                "vector": query_vec,
-                                "k": 1000
-                            }
+                        "nested": {
+                            "path": "formulas",
+                            "query": {
+                                "knn": {
+                                    "formulas.formula_vector": {
+                                        "vector": query_vec,
+                                        "k": 1000
+                                    }
+                                }
+                            },
+                            "score_mode": "max"
                         }
                     }
                 ]
@@ -370,21 +399,28 @@ def perform_search(query, sources, media_types, do_enhance=False, diversify=Fals
     }
 
     if media_types:
-        query_body["query"]["bool"]["filter"] = [{"terms": {"media_type": media_types}}]
+        query_body["query"]["bool"]["filter"] = [
+            {"terms": {"media_type": media_types}}
+        ]
 
+    # --------------------
+    # Execute search
+    # --------------------
     response = client.search(index=indices, body=query_body)
 
-    results = [{
-        'title': hit['_source'].get('title'),
-        'media_type': hit['_source'].get('media_type'),
-        'body_text': format_for_mathlive(hit['_source'].get("body_text")),
-        'link': hit['_source'].get('link'),
-        'score': hit.get('_score'),
-        'body_vector': hit['_source'].get('body_vector')  # Include vector for MMR
-    } for hit in response['hits']['hits']]
+    results = [
+        {
+            "title": hit["_source"].get("title"),
+            "media_type": hit["_source"].get("media_type"),
+            "body_text": format_for_mathlive(hit["_source"].get("body_text")),
+            "link": hit["_source"].get("link"),
+            "score": hit["_score"],
+        }
+        for hit in response["hits"]["hits"]
+    ]
 
     results = delete_dups(results, unique_key="body_text")
-    
+
     # Apply MMR for result diversification (only if enabled)
     if diversify and len(results) > 1:
         results = mmr(results, query_vec, lambda_param=0.7, k=min(50, len(results)))

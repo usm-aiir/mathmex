@@ -10,7 +10,7 @@ import { formatDate } from "../lib/utils"
 import { useSearchParams } from "react-router-dom"
 
 
-const API_BASE = process.env.NODE_ENV === "development" ? "http://localhost:440/api" : "/api"
+const API_BASE = process.env.NODE_ENV === "development" ? "http://localhost:5001/api" : "/api"      // For testing: make sure localhost port is correct
 
 // Settings management functions
 const getSettingFromStorage = (key: string, defaultValue: boolean): boolean => {
