@@ -141,30 +141,50 @@ def formula_search():
     backend.data_reader.queries_dir_path = query_file
 
     text_trap = io.StringIO()
+    old_stdout = sys.stdout
 
-    # Suppress print statements while retrieval is performed.
-    sys.stdout = text_trap
-
-    query_vector = backend.retrieval(
-        encoded_file_path=ENCODED_FILE_PATH,
-        embedding_type=TupleTokenizationMode(3),
-        ignore_full_relative_path=True,
-        tokenize_all=False,
-        tokenize_number=True,
-        streaming=True,
-        faiss=True,
-        # faiss_index=faiss_index,
-        single_query=True,
-        do_retrieval=False
-    )
     try:
-        results = perform_search(raw_query, sources, media_types, do_enhance, diversify, custom_vec=True, custom_query_vec=query_vector)
+        # Suppress prints during retrieval
+        sys.stdout = text_trap
+
+        query_vector = backend.retrieval(
+            encoded_file_path=ENCODED_FILE_PATH,
+            embedding_type=TupleTokenizationMode(3),
+            ignore_full_relative_path=True,
+            tokenize_all=False,
+            tokenize_number=True,
+            streaming=True,
+            faiss=True,
+            single_query=True,
+            do_retrieval=False
+        )
+
+        results = perform_search(
+            raw_query,
+            sources,
+            media_types,
+            do_enhance,
+            diversify,
+            custom_vec=True,
+            custom_query_vec=query_vector
+        )
+
+        return jsonify({'results': results, 'total': len(results)})
+
     except ValueError as e:
         return jsonify({'error': str(e)}), 400
-    
-    sys.stdout = sys.__stdout__
 
-    return jsonify({'results': results, 'total': len(results)})
+    finally:
+        # Restore stdout
+        sys.stdout = old_stdout
+
+        # Delete temp query file
+        try:
+            if query_file and os.path.exists(query_file):
+                os.remove(query_file)
+        except Exception as cleanup_err:
+            # Don't crash request on cleanup failure
+            print(f"Warning: failed to delete temp file {query_file}: {cleanup_err}")
 
 def write_temp_query_tsv(mathml_string: str):
     """
