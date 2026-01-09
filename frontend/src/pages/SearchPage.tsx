@@ -10,7 +10,7 @@ import { formatDate } from "../lib/utils"
 import { useSearchParams } from "react-router-dom"
 
 
-const API_BASE = process.env.NODE_ENV === "development" ? "http://localhost:5001/api" : "/api"      // For testing: make sure localhost port is correct
+const API_BASE = "http://localhost:5003/api"  
 
 // Settings management functions
 const getSettingFromStorage = (key: string, defaultValue: boolean): boolean => {
@@ -28,7 +28,8 @@ const saveSettingToStorage = (key: string, value: boolean): void => {
 // Get current settings values (called before every search)
 export const getCurrentSearchSettings = () => ({
     enhancedSearch: getSettingFromStorage('enhancedSearch', false),
-    diversifyResults: getSettingFromStorage('diversifyResults', false)
+    diversifyResults: getSettingFromStorage('diversifyResults', false),
+    experimentalModel: getSettingFromStorage('experimentalModel', false)
 })
 
 // Settings hooks for UI components
@@ -54,6 +55,18 @@ export const useDiversifyResults = () => {
     }
     
     return { isDiversifyResultsEnabled: isEnabled, toggleDiversifyResults: toggle }
+}
+
+export const useExperimentalModel = () => {
+    const [isEnabled, setIsEnabled] = useState(() => getSettingFromStorage('experimentalModel', false))
+    
+    const toggle = () => {
+        const newValue = !isEnabled
+        setIsEnabled(newValue)
+        saveSettingToStorage('experimentalModel', newValue)
+    }
+    
+    return { isExperimentalModelEnabled: isEnabled, toggleExperimentalModel: toggle }
 }
 
 export const useDarkMode = () => {
@@ -218,7 +231,10 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
         // Get fresh settings for each search
         const searchSettings = getCurrentSearchSettings()
         
-        fetch(`${API_BASE}/search`, {
+        // Use fusion-search endpoint if experimental model is enabled
+        const endpoint = searchSettings.experimentalModel ? 'fusion-search' : 'search'
+        
+        fetch(`${API_BASE}/${endpoint}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

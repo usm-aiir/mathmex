@@ -33,7 +33,6 @@ sys.path.append(os.path.expanduser("../../formula-search"))
 from tangent_cft_back_end import TangentCFTBackEnd
 from Embedding_Preprocessing.encoder_tuple_level import TupleTokenizationMode
 
-
 # Create the Flask application instance
 app = Flask(__name__)
 
@@ -45,7 +44,7 @@ load_dotenv()
 
 # --- Load Configuration from config.ini ---
 config = configparser.ConfigParser()
-config.read( os.getenv("BACKEND_CONFIG") )
+config.read( os.getenv("BACKEND_CONFIG", "config.ini") )
 
 
 # OpenSearch Client Configuration from file
@@ -53,7 +52,7 @@ OPENSEARCH_HOST = config.get('opensearch', 'host')
 OPENSEARCH_PORT = config.getint('opensearch', 'port') # Use getint for numbers
 OPENSEARCH_USER = config.get('dev', 'user')
 OPENSEARCH_PASSWORD = config.get('dev', 'password')
-# INDEX_NAME = config.get('opensearch', 'index_name')
+INDEX_NAME = config.get('opensearch', 'index_name')
 MODEL = config.get('general', 'model')
 
 # Flask App Configuration from file
@@ -96,6 +95,8 @@ ENCODED_FILE_PATH = "data/jsonl/TangentCFT/encoded.jsonl"
 INDEX_PATH = "data/jsonl/TangentCFT/encoded_index.json"
 FAISS_INDEX_PATH = "data/jsonl/TangentCFT/slt_index.faiss"
 
+# FAISS index loading commented out - 11GB file causes startup hang
+# Load on-demand if needed in the future
 # print("Loading FAISS index...")
 # faiss_index = faiss.read_index(FAISS_INDEX_PATH)
 
@@ -114,6 +115,10 @@ def get_model():
 # Model for results summary
 # generation_model = pipeline("text-generation", model="mistralai/Mistral-7B-v0.3")
 
+# Import and register routes after models are loaded
+from routes.late_fusion import late_fusion_blueprint
+app.register_blueprint(late_fusion_blueprint)
+
 @app.route('/')
 def home():
     return "Mathmex backend is running! Use /api/search, /api/summarize, or /api/speech-to-latex for requests."
@@ -125,6 +130,7 @@ def formula_search():
     Expects JSON input: {"query": "a^2+b^2=c^2"}
     Returns: a list of matching formulas' visual ids with their scores.
     """
+    print("Received search request.")
     data = request.get_json()
     # query = data.get('query', '')
     sources = data.get('sources', [])
