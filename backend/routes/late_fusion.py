@@ -22,7 +22,7 @@ from LateFusionModel.late_fusion_model import LateFusionModel, FusionConfig
 
 # Load fusion configuration from environment variables with sensible defaults
 fusion_settings = FusionConfig(
-    method=os.getenv("FUSION_METHOD", "hybrid"),
+    method=os.getenv("FUSION_METHOD", "rrf"),
     rrf_k=int(os.getenv("FUSION_RRF_K", "60")),
     weight_formula=float(os.getenv("FUSION_WEIGHT_FORMULA", "1.0")),
     weight_text=float(os.getenv("FUSION_WEIGHT_TEXT", "1.0")),
@@ -30,8 +30,6 @@ fusion_settings = FusionConfig(
     formula_topk=int(os.getenv("FUSION_FORMULA_TOPK", "100")),
     text_topk=int(os.getenv("FUSION_TEXT_TOPK", "100")),
     final_topk=int(os.getenv("FUSION_FINAL_TOPK", "100")),
-    min_formula_results=int(os.getenv("FUSION_MIN_FORMULA_RESULTS", "3")),
-    formula_score_threshold=float(os.getenv("FUSION_FORMULA_SCORE_THRESHOLD", "0.1")),
 )
 fusion_model = LateFusionModel(fusion_settings)
 
