@@ -160,7 +160,7 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
         setSummary("");
 
         try {
-            const res = await fetch("/api/summarize", {
+            const res = await fetch("/utility/summarize", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
