@@ -1,9 +1,7 @@
 from flask import Blueprint, request, jsonify
 import saytex
-from services.models import get_embedding_model
+from services.models import get_embedding_model, get_generation_model
 from utils.format import format_for_mathlive
-from services.models import get_embedding_model
-
 utility_blueprint = Blueprint("utility", __name__)
 
 @utility_blueprint.route("/summarize", methods=["POST"])
@@ -86,8 +84,56 @@ def speech_to_latex():
         return jsonify({'error': str(e)}), 500
     
     
-def llm_response(prompt, response_type="summary"):
-    model = get_embedding_model()
+    # note, if trying to use this function, ensure the generation model is loaded in services/models.py
+    # It is defaulted to commented out to save resources
+def llm_response(prompt, response_type="summary", fallback="Unable to generate response"):
+    # Configure parameters based on response type
+    if response_type == "enhancement":
+        max_new_tokens = 64
+        temperature = 0.3
+        min_length = 10
+        max_output_length = 300
+        cleanup_markers = ["Response:"]
 
-    # Replace with real generation logic
-    return f"[LLM OUTPUT for {response_type}]\n{prompt}"
+    else:  # summary
+        max_new_tokens = 1024
+        temperature = 0.7
+        min_length = 20
+        max_output_length = None
+        cleanup_markers = ["COMPREHENSIVE ANSWER:"]
+    
+    try:
+        response = generation_model(
+            prompt, 
+            max_new_tokens=max_new_tokens,
+            temperature=temperature,
+            do_sample=True
+        )[0]['generated_text']
+        
+        # Extract only the answer part (after the prompt)
+        generated_text = response.replace(prompt, '').strip()
+        
+        # Clean up any artifacts
+        for marker in cleanup_markers:
+            if generated_text.startswith(marker):
+                generated_text = generated_text.replace(marker, '').strip()
+        
+        # Summary-specific cleanup: strip incomplete sentences at the last period
+        if response_type == "summary" and generated_text and '.' in generated_text:
+            last_period_index = generated_text.rfind('.')
+            if last_period_index != -1:
+                generated_text = generated_text[:last_period_index + 1].strip()
+        
+        # Ensure we have a meaningful response
+        if not generated_text or len(generated_text.strip()) < min_length:
+            return fallback
+        
+        # Truncate if too long (for enhancement only)
+        if max_output_length and len(generated_text) > max_output_length:
+            generated_text = generated_text[:max_output_length] + "..."
+            
+        return generated_text
+
+    except Exception as e:
+        print(f"LLM generation error ({response_type}): {e}")
+        return fallback
