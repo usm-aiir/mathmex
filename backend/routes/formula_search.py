@@ -27,6 +27,8 @@ def formula_search():
     query_file = write_temp_query_tsv(query_ml)
 
     backend = get_tangent_backend()
+    # Update the backend's data reader to use the new query file
+    backend.data_reader.queries_dir_path = query_file
     ENCODED_FILE_PATH = current_app.config["ENCODED_FILE_PATH"]
 
     text_trap = io.StringIO()
