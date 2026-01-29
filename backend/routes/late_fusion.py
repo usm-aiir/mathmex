@@ -27,9 +27,8 @@ from LateFusionModel.late_fusion_model import LateFusionModel, FusionConfig
 
 from schemas.indexes import source_to_index
 
-from services.models import get_embedding_model
+from services.models import get_embedding_model, get_tangent_backend
 from services.opensearch import get_opensearch_client
-from services.tangent_cft import get_tangent_cft_backend
 
 # Fusion configuration from environment variables
 fusion_settings = FusionConfig(
@@ -71,7 +70,7 @@ def fusion_search():
         # ---- NEW access pattern (process-wide singletons) ----
         text_model = get_embedding_model()
         opensearch_client = get_opensearch_client()
-        tangent_cft_backend = get_tangent_cft_backend()
+        tangent_cft_backend = get_tangent_backend()  # Use the loaded backend from models.py
 
         fused_results = fusion_model.process_query(
             query=user_query,
@@ -111,7 +110,15 @@ def fusion_search():
         return jsonify({"error": str(e)}), 400
     except Exception as e:
         logging.error("Fusion search failed", exc_info=True)
-        return jsonify({"error": "Internal search error"}), 500
+        # Return more detailed error message for debugging
+        import traceback
+        error_details = {
+            "error": "Internal search error",
+            "message": str(e),
+            "type": type(e).__name__,
+            "traceback": traceback.format_exc() if logging.getLogger().isEnabledFor(logging.DEBUG) else None
+        }
+        return jsonify(error_details), 500
 
 
 def prepare_fusion_response(fused_results: List):

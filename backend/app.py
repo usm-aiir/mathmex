@@ -11,7 +11,6 @@ import os
 
 from services.models import load_models
 from services.opensearch import init_opensearch
-from services.tangent_cft import load_tangent_cft
 
 ENCODED_FILE_PATH = "data/jsonl/TangentCFT/encoded.jsonl"
 INDEX_PATH = "data/jsonl/TangentCFT/encoded_index.json"
@@ -41,8 +40,7 @@ def create_app():
 
     # Initialize shared services so they can be used by blueprints.
     init_opensearch(app)
-    load_models()
-    load_tangent_cft()
+    load_models()  # This loads both embedding model and TangentCFT backend
 
     return app
 
