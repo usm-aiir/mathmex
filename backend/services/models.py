@@ -4,7 +4,7 @@ import configparser
 import os
 import sys
 from transformers import pipeline
-sys.path.append(os.path.expanduser("../../formula-search"))
+sys.path.append(os.path.expanduser("../formula-search"))
 from tangent_cft_back_end import TangentCFTBackEnd
 from Embedding_Preprocessing.encoder_tuple_level import TupleTokenizationMode
 
