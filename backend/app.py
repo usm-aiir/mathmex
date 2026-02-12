@@ -34,9 +34,9 @@ def create_app():
     from routes.utility import utility_blueprint
 
     # Register blueprints with URL prefix
-    app.register_blueprint(formula_search_blueprint, url_prefix="/api")
-    app.register_blueprint(late_fusion_blueprint, url_prefix="/api") 
-    app.register_blueprint(utility_blueprint, url_prefix="/utility")
+    app.register_blueprint(formula_search_blueprint)
+    app.register_blueprint(late_fusion_blueprint) 
+    app.register_blueprint(utility_blueprint)
 
     # Initialize shared services so they can be used by blueprints.
     init_opensearch(app)

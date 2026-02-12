@@ -10,7 +10,7 @@ import { formatDate } from "../lib/utils"
 import { useSearchParams } from "react-router-dom"
 
 
-const API_BASE = "http://localhost:5003/api"  
+// const API_BASE = "http://localhost:5003"  
 
 // Settings management functions
 const getSettingFromStorage = (key: string, defaultValue: boolean): boolean => {
@@ -160,7 +160,7 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
         setSummary("");
 
         try {
-            const res = await fetch("/utility/summarize", {
+            const res = await fetch("https://api.mathmex.com/summarize", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -234,7 +234,7 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
         // Use fusion-search endpoint if experimental model is enabled
         const endpoint = searchSettings.experimentalModel ? 'fusion-search' : 'search'
         
-        fetch(`${API_BASE}/${endpoint}`, {
+        fetch(`https://api.mathmex.com/${endpoint}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

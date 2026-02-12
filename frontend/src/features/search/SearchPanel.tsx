@@ -124,7 +124,7 @@ export default function SearchPanel({
 
     /* Speech-to-LaTeX backend connection */
     const speechToLatex = (text: string) => {
-        fetch(`/utility/speech-to-latex`, {
+        fetch(`https://api.mathmex.com/speech-to-latex`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ text }),
