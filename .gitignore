@@ -17,6 +17,7 @@ frontend/package-lock.json
 backend/data/jsonl
 backend/data/tsvs
 backend/data/vectors
+backend/data/graphs
 backend/data/tangentCFT/slt_index.faiss
 backend/test_retrieval_results.jsonl
 ARQMathQueries
