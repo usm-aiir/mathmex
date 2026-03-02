@@ -6,6 +6,19 @@ import csv
 import configparser
 from tqdm import tqdm
 from opensearchpy import OpenSearch, helpers
+"""
+build_index_graphs.py
+
+A script that runs through each of the MathMex indices in OpenSearch, and constructs "edges" between vectors
+whose cosine similarity is > 0.75 or some other threshold value. These edges are stored as adjacency lists in 
+./backend/data/graphs/. 
+
+Lastly, the script pushes the updated edges to OpenSearch, allowing queries to also
+retrieve a "relevant topics" dict. 
+
+Note that the relevant topics found here come from the same index as the originally retrieved result. 
+For inter-index relevant topics, go to build_global_graph.py.
+"""
 
 config = configparser.ConfigParser()
 config.read('../backend/config.ini')
