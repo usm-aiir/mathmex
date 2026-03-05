@@ -39,7 +39,7 @@ def get_opensearch_client():
     """Initializes and returns the OpenSearch client."""
     # Create and return the OpenSearch client instance
     client = OpenSearch(
-        hosts=[{'host': OPENSEARCH_HOST, 'port': 443}],
+        hosts=[{'host': OPENSEARCH_HOST}],
         http_auth=(USER, PASSWORD),
         use_ssl=True,
         verify_certs=False,

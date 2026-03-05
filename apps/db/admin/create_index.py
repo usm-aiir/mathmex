@@ -29,7 +29,7 @@ INDEX_NAME = ''
 # --- Connect ---
 # Initialize the OpenSearch client
 client = OpenSearch(
-    hosts=[{'host': OPENSEARCH_HOST, 'port': 443}],
+    hosts=[{'host': OPENSEARCH_HOST}],
     http_auth=(USER, PASSWORD),
     use_ssl=True,
     verify_certs=False,

@@ -8,7 +8,6 @@ def init_opensearch(app):
     app.opensearch_client = OpenSearch(
         hosts=[{
             "host": config.get("opensearch", "host"),
-            "port": config.getint("opensearch", "port"),
         }],
         http_auth=(
             config.get("opensearch", "username"),
