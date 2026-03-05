@@ -1,11 +1,9 @@
 #!/bin/bash
 
-# backend run cmd
-cd apps/backend
+# Start OpenSearch database
+cd apps/db
 docker compose up -d
-
-# ensure backend is running
-systemctl start mathmex-backend
-
-# move back to root
 cd ../..
+
+# Start backend service
+systemctl start mathmex-backend

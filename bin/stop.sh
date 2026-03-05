@@ -6,7 +6,7 @@ rm -r dist
 rm -r node_modules
 
 # take down image
-cd ../backend
+cd ../db
 docker compose down
 
 # stop backend

@@ -6,7 +6,7 @@ npm install
 npm run build
 
 # db
-cd ../backend
+cd ../db
 docker compose build
 
 # move back to root
