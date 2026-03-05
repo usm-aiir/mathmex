@@ -1,6 +1,5 @@
 [opensearch]
 host = opensearch.mathmex.com
-port = 5005
 # Public read-only user for testing against the MathMex OpenSearch instance.
 # To request write/admin access, contact the maintainers.
 username = public
