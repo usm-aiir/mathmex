@@ -1,6 +1,6 @@
 import React from "react"
 import styles from "./SettingsSidebar.module.css"
-import { useDarkMode, useEnhancedSearch, useDiversifyResults } from "../pages/SearchPage"
+import { useDarkMode, useEnhancedSearch, useDiversifyResults, useExperimentalModel } from "../pages/SearchPage"
 import { X } from "lucide-react"
 
 interface SettingsSidebarProps {
@@ -12,6 +12,7 @@ const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ open, onClose }) => {
     const { isDarkMode, toggleDarkMode } = useDarkMode()
     const { isEnhancedSearchEnabled, toggleEnhancedSearch } = useEnhancedSearch()
     const { isDiversifyResultsEnabled, toggleDiversifyResults } = useDiversifyResults()
+    const { isExperimentalModelEnabled, toggleExperimentalModel } = useExperimentalModel()
     return (
         <div className={`${styles.sidebar} ${open ? styles.open : ""}`}
             aria-hidden={!open}
@@ -61,6 +62,21 @@ const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ open, onClose }) => {
                 >
                     <span className={styles.track + (isDiversifyResultsEnabled ? ' ' + styles.on : '')}>
                         <span className={styles.thumb + (isDiversifyResultsEnabled ? ' ' + styles.thumbOn : '')} />
+                    </span>
+                </button>
+            </div>
+            
+            <div className={styles.section}>
+                <span className={styles.label}>Experimental model</span>
+                <button
+                    className={styles.pillSwitch}
+                    onClick={toggleExperimentalModel}
+                    aria-label={isExperimentalModelEnabled ? "Disable experimental fusion model" : "Enable experimental fusion model"}
+                    title={isExperimentalModelEnabled ? "Disable experimental fusion model" : "Enable experimental fusion model"}
+                    type="button"
+                >
+                    <span className={styles.track + (isExperimentalModelEnabled ? ' ' + styles.on : '')}>
+                        <span className={styles.thumb + (isExperimentalModelEnabled ? ' ' + styles.thumbOn : '')} />
                     </span>
                 </button>
             </div>
