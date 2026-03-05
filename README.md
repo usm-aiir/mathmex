@@ -4,25 +4,55 @@ MathMex is a web application designed to assist users with mathematical queries 
 
 ## Project Structure
 
-The project is organized into two main directories:
-
-- `frontend/` – React application for the user interface
-- `backend/` – Flask application for API and data processing
+```
+mathmex/
+├── apps/
+│   ├── backend/     # Flask API server
+│   ├── db/          # OpenSearch index management and data pipeline
+│   └── frontend/    # React user interface
+├── bin/             # Server management scripts (run, stop, install)
+└── data/            # Raw TSVs, vector .npy files, and generated .jsonl files (gitignored)
+```
 
 ### Backend
 
-The backend is responsible for handling requests, processing data, and interacting with the OpenSearch service.  
-See [`backend/README.md`](backend/README.md) for setup and usage instructions.
+The backend is responsible for handling API requests and interacting with OpenSearch.  
+See [`apps/backend/README.md`](apps/backend/README.md) for setup and usage instructions.
+
+### DB
+
+The `db` app contains everything needed to set up and populate the OpenSearch database: index schemas, admin scripts (create/delete/clear), and the data processing pipeline.  
+See [`apps/db/README.md`](apps/db/README.md) for details.
 
 ### Frontend
 
-The frontend is a React application that provides the user interface (UX) for MathMex.  
-See [`frontend/README.md`](frontend/README.md) for setup and usage instructions.
+The frontend is a React application that provides the user interface for MathMex.  
+See [`apps/frontend/README.md`](apps/frontend/README.md) for setup and usage instructions.
 
 ## Getting Started
 
-To get started with MathMex, follow the setup instructions in the respective backend and frontend README files.  
-Ensure that all dependencies are installed and the services are properly configured.
+### 1. Configuration
+
+Copy the example files and fill in your values:
+
+```sh
+cp config.ini.example config.ini
+cp .env.example .env
+```
+
+`config.ini` holds OpenSearch connection info, Flask settings, and the model path. `config.ini.example` includes public read-only credentials for the MathMex OpenSearch instance so you can test immediately without setting up your own database.
+
+`.env` just points the backend at your `config.ini`:
+```
+BACKEND_CONFIG=/path/to/your/config.ini
+```
+
+### 2. Install and run
+
+See the respective README files for each component:
+- [`apps/backend/README.md`](apps/backend/README.md) — Flask API setup
+- [`apps/frontend/README.md`](apps/frontend/README.md) — React app setup
+- [`apps/db/README.md`](apps/db/README.md) — OpenSearch index and data pipeline
 
 ## Contributing
 

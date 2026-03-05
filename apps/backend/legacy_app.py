@@ -51,8 +51,8 @@ config.read(os.getenv("BACKEND_CONFIG", "config.ini"))
 # OpenSearch Client Configuration from file
 OPENSEARCH_HOST = config.get('opensearch', 'host')
 OPENSEARCH_PORT = config.getint('opensearch', 'port') # Use getint for numbers
-OPENSEARCH_USER = config.get('dev', 'user')
-OPENSEARCH_PASSWORD = config.get('dev', 'password')
+OPENSEARCH_USER = config.get('opensearch', 'username')
+OPENSEARCH_PASSWORD = config.get('opensearch', 'password')
 INDEX_NAME = config.get('opensearch', 'index_name')
 MODEL = config.get('general', 'model')
 

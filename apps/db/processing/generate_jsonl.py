@@ -4,10 +4,14 @@ generate_jsonl.py
 Script to generate a JSONL file for bulk indexing into OpenSearch.
 Combines TSV metadata and NumPy vector embeddings into a single JSONL output.
 """
+import os
 import numpy as np
 import csv
 import json
 from tqdm import tqdm
+
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.abspath(os.path.join(CURRENT_DIR, '../../../data'))
 
 # Unused dict
 # Use this as reference for the 'media_type' property
@@ -23,13 +27,13 @@ media_type = {
 SOURCE = ''
 
 # Change as needed: input TSV, NPY, and output JSONL file paths
-TSV_FILE = './data/tsvs/arxiv.tsv'
-FULL_VECTS = f'./data/vectors/{SOURCE}_content_vectors.npy'
-TEXT_VECTS = f'./data/vectors/{SOURCE}_text_vectors.npy'
-FORMULA_VECTS = f'./data/vectors/{SOURCE}_formulas_vectors.npy'
-FORMULA_VECT_INDEX = f'./data/vectors/{SOURCE}_formula_index.npy'
-FORMULA_LATEX = f'./data/vectors/{SOURCE}_all_formulas_flat.npy'
-OUT_JSONL_FILE = f'./data/jsonl/mathmex_{SOURCE}.jsonl'
+TSV_FILE = os.path.join(DATA_DIR, 'tsvs/arxiv.tsv')
+FULL_VECTS = os.path.join(DATA_DIR, f'vectors/{SOURCE}_content_vectors.npy')
+TEXT_VECTS = os.path.join(DATA_DIR, f'vectors/{SOURCE}_text_vectors.npy')
+FORMULA_VECTS = os.path.join(DATA_DIR, f'vectors/{SOURCE}_formulas_vectors.npy')
+FORMULA_VECT_INDEX = os.path.join(DATA_DIR, f'vectors/{SOURCE}_formula_index.npy')
+FORMULA_LATEX = os.path.join(DATA_DIR, f'vectors/{SOURCE}_all_formulas_flat.npy')
+OUT_JSONL_FILE = os.path.join(DATA_DIR, f'jsonl/mathmex_{SOURCE}.jsonl')
 
 # Load vector embeddings from .npy file
 body_vecs = np.load(FULL_VECTS)

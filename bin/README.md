@@ -1,17 +1,21 @@
-##  MathMex Bash Files
+# MathMex Bin
 
-The `bin` directory hosts files used for building, starting, and taking down components of the MathMex application on our host server. 
+The `bin` directory contains shell scripts for managing the MathMex application on the host server. All scripts should be run from the repo root.
 
-## How to use
+## Scripts
 
-To take down the current application...
+| Script | Purpose |
+|---|---|
+| `run.sh` | Start the backend Docker container and systemd service |
+| `stop.sh` | Stop the backend and remove frontend build artifacts |
+| `install.sh` | Build the frontend and rebuild the backend Docker image |
+| `restart.sh` | Full stop → install → run cycle |
 
-`sudo bin/down.sh`
+## Usage
 
-To rebuild the application...
-
-`sudo bin/build.sh`
-
-To run the application...
-
-`sudo bin/up.sh`
+```sh
+sudo bin/run.sh       # start the application
+sudo bin/stop.sh      # stop the application
+sudo bin/install.sh   # rebuild after code changes
+sudo bin/restart.sh   # rebuild and restart
+```

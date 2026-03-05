@@ -4,21 +4,24 @@ create_index.py
 Script to create an OpenSearch index for MathMex with the specified mapping.
 Run this script to initialize a new index before bulk uploading documents.
 """
+import os
 from opensearchpy import OpenSearch
 from mappings import mapping
 import json
 import configparser
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # --- Load Configuration from config.ini ---
 config = configparser.ConfigParser()
-config.read('../config.ini')
+config.read(os.path.join(SCRIPT_DIR, '../../backend/config.ini'))
 
 # OpenSearch
 OPENSEARCH_HOST = config.get('opensearch', 'host')
 
 # Credentials
-USER = config.get('admin', 'user')
-PASSWORD = config.get('admin', 'password')
+USER = config.get('opensearch', 'username')
+PASSWORD = config.get('opensearch', 'password')
 
 # Name of the index to create (change as needed)
 INDEX_NAME = ''

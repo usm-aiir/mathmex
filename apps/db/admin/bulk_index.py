@@ -5,21 +5,24 @@ Script to bulk upload documents from a JSONL file to an OpenSearch index for Mat
 Run this script after creating an index and generating a JSONL file with documents.
 """
 import json
+import os
 from opensearchpy import OpenSearch, RequestsHttpConnection
 from opensearchpy.helpers import bulk
 import warnings
 import configparser
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # --- Load Configuration from config.ini ---
 config = configparser.ConfigParser()
-config.read('../config.ini')
+config.read(os.path.join(SCRIPT_DIR, '../../backend/config.ini'))
 
 # OpenSearch
 OPENSEARCH_HOST = config.get('opensearch', 'host')
 
 # Credentials
-USER = config.get('admin', 'user')
-PASSWORD = config.get('admin', 'password')
+USER = config.get('opensearch', 'username')
+PASSWORD = config.get('opensearch', 'password')
 
 # Model Path
 MODEL = config.get('general', 'model')
@@ -27,7 +30,7 @@ MODEL = config.get('general', 'model')
 # Name of the data source and index (change as needed)
 SOURCE_NAME = ''
 INDEX_NAME = f'mathmex_{SOURCE_NAME}'
-JSONL_FILE_PATH = f'../data/jsonl/mathmex_{SOURCE_NAME}.jsonl'
+JSONL_FILE_PATH = os.path.join(SCRIPT_DIR, f'../../../data/jsonl/mathmex_{SOURCE_NAME}.jsonl')
 
 # Suppress the security warning from using a self-signed cert
 warnings.filterwarnings('ignore', message='Unverified HTTPS request')

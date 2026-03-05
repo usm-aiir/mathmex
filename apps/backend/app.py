@@ -12,9 +12,12 @@ import os
 from services.models import load_models
 from services.opensearch import init_opensearch
 
-ENCODED_FILE_PATH = "data/jsonl/TangentCFT/encoded.jsonl"
-INDEX_PATH = "data/jsonl/TangentCFT/encoded_index.json"
-FAISS_INDEX_PATH = "data/jsonl/TangentCFT/slt_index.faiss"
+APP_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.abspath(os.path.join(APP_DIR, '../../data'))
+
+ENCODED_FILE_PATH = os.path.join(DATA_DIR, "jsonl/TangentCFT/encoded.jsonl")
+INDEX_PATH = os.path.join(DATA_DIR, "jsonl/TangentCFT/encoded_index.json")
+FAISS_INDEX_PATH = os.path.join(DATA_DIR, "jsonl/TangentCFT/slt_index.faiss")
 
 config = configparser.ConfigParser()
 config.read(os.getenv("BACKEND_CONFIG", "config.ini"))
@@ -24,9 +27,9 @@ def create_app():
     CORS(app)
 
     app.config["APP_CONFIG"] = config
-    app.config["ENCODED_FILE_PATH"] = "data/jsonl/TangentCFT/encoded.jsonl"   
-    app.config["INDEX_PATH"] = "data/jsonl/TangentCFT/encoded_index.json"
-    app.config["FAISS_INDEX_PATH"] = "data/jsonl/TangentCFT/slt_index.faiss"
+    app.config["ENCODED_FILE_PATH"] = ENCODED_FILE_PATH
+    app.config["INDEX_PATH"] = INDEX_PATH
+    app.config["FAISS_INDEX_PATH"] = FAISS_INDEX_PATH
     
     # Import and register blueprints
     from routes.formula_search import formula_search_blueprint

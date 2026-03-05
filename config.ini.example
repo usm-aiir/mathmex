@@ -1,0 +1,17 @@
+[opensearch]
+host = opensearch.mathmex.com
+port = 5005
+# Public read-only user for testing against the MathMex OpenSearch instance.
+# To request write/admin access, contact the maintainers.
+username = public
+password = a!!rlab2026
+
+[flask_app]
+port = 5001
+debug = False
+
+[general]
+# Path to a local model directory or a HuggingFace model identifier.
+# Example (local): /path/to/models/arq1thru3-finetuned-all-mpnet-jul-27
+# Example (HuggingFace): sentence-transformers/all-mpnet-base-v2
+model = sentence-transformers/all-mpnet-base-v2

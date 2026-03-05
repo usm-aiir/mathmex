@@ -1,45 +1,36 @@
-# For use with virtual environments
+# Virtual environments
 .venv/
-
 
 # Python cache
 __pycache__/
 *.pyc
 
-# Frontend dependecies
-frontend/node_modules/
+# Frontend dependencies
+apps/frontend/node_modules/
 
-# Frontend build files
-frontend/dist/
-frontend/package-lock.json
+# Frontend build output
+apps/frontend/dist/
+apps/frontend/package-lock.json
 
-# Data
-backend/data/jsonl
-backend/data/tsvs
-backend/data/vectors
-backend/data/tangentCFT/slt_index.faiss
-backend/test_retrieval_results.jsonl
-ARQMathQueries
+# Data (generated files — not committed)
+data/
 
-# Vectorization/embedding model
-backend/models
+# Vectorization/embedding models
+apps/backend/models/
 
 # Training and eval data
 machine-learning/data/
 
-# Models
+# ML models and checkpoints
 machine-learning/models/
-
-# Model training checkpoints
-machine-learning/checkpoints
+machine-learning/checkpoints/
 
 # Docker Compose
 *.yml
 
-# Config File
+# Config and secrets (use config.ini.example and .env.example instead)
 *.ini
-
-# Local env's
 *.env
-backend/collection_results.jsonl
-backend/encoded.jsonl
+
+# Misc leftover files
+ARQMathQueries

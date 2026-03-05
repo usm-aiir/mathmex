@@ -4,19 +4,22 @@ clear_index.py
 Script to delete all documents from one or more OpenSearch indices for MathMex.
 Run this script to clear all data from the specified index or indices, but keep the index structure.
 """
+import os
 from opensearchpy import OpenSearch, ConnectionTimeout
 import configparser
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # --- Load Configuration from config.ini ---
 config = configparser.ConfigParser()
-config.read('../config.ini')
+config.read(os.path.join(SCRIPT_DIR, '../../backend/config.ini'))
 
 # OpenSearch
 OPENSEARCH_HOST = config.get('opensearch', 'host')
 
 # Credentials
-USER = config.get('admin', 'user')
-PASSWORD = config.get('admin', 'password')
+USER = config.get('opensearch', 'username')
+PASSWORD = config.get('opensearch', 'password')
 
 # Name or pattern of the index to clear (wildcards allowed)
 INDEX_NAME = ''

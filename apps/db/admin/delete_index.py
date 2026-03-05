@@ -4,19 +4,22 @@ delete_index.py
 Script to delete an entire OpenSearch index for MathMex.
 Run this script to remove an index and all its data from OpenSearch.
 """
+import os
 from opensearchpy import OpenSearch
 import configparser
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # --- Load Configuration from config.ini ---
 config = configparser.ConfigParser()
-config.read('backend/config.ini')
+config.read(os.path.join(SCRIPT_DIR, '../../backend/config.ini'))
 
 # OpenSearch
 OPENSEARCH_HOST = config.get('opensearch', 'host')
 
 # Credentials
-USER = config.get('admin', 'user')
-PASSWORD = config.get('admin', 'password')
+USER = config.get('opensearch', 'username')
+PASSWORD = config.get('opensearch', 'password')
 
 # Name of the index to delete (change as needed)
 INDEX_NAME = ''

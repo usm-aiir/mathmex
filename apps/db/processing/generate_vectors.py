@@ -18,6 +18,7 @@ import glob
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 BACKEND_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "../../backend"))
+DATA_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "../../../data"))
 FORMULA_SEARCH_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "../../../formula-search"))
 
 sys.path.extend([BACKEND_DIR, FORMULA_SEARCH_DIR])
@@ -28,9 +29,9 @@ from tangent_cft_back_end import TangentCFTBackEnd
 from Embedding_Preprocessing.encoder_tuple_level import TupleTokenizationMode
 
 
-ENCODED_FILE_PATH = "jsonl/TangentCFT/encoded.jsonl"
-INDEX_PATH = "jsonl/TangentCFT/encoded_index.json"
-FAISS_INDEX_PATH = "jsonl/TangentCFT/slt_index.faiss"
+ENCODED_FILE_PATH = os.path.join(DATA_DIR, "jsonl/TangentCFT/encoded.jsonl")
+INDEX_PATH = os.path.join(DATA_DIR, "jsonl/TangentCFT/encoded_index.json")
+FAISS_INDEX_PATH = os.path.join(DATA_DIR, "jsonl/TangentCFT/slt_index.faiss")
 
 # # Change as needed: input TSV, NPY, and output JSONL file paths
 TSV_FILE = ''
@@ -159,11 +160,11 @@ with open(TSV_FILE, 'r', encoding='utf-8') as f_in:
 
 
 
-np.save(f"./data/{SOURCE}_text_vectors", vector_arr_text)
+np.save(os.path.join(DATA_DIR, f"vectors/{SOURCE}_text_vectors"), vector_arr_text)
 print("Text vectors saved")
-np.save(f"./data/{SOURCE}_content_vectors", vector_arr_body)
+np.save(os.path.join(DATA_DIR, f"vectors/{SOURCE}_content_vectors"), vector_arr_body)
 print("Body vectors saved")
-np.save(f"./data/{SOURCE}_formulas_vectors", vector_arr_formulas)
+np.save(os.path.join(DATA_DIR, f"vectors/{SOURCE}_formulas_vectors"), vector_arr_formulas)
 print("Formula vectors saved")
 
 # Save structured formula index
@@ -173,10 +174,10 @@ index_dtype = np.dtype([
     ("end", np.int64)
 ])
 index_array = np.array(formula_index, dtype=index_dtype)
-np.save(f"./data/{SOURCE}_formula_index.npy", index_array)
+np.save(os.path.join(DATA_DIR, f"vectors/{SOURCE}_formula_index.npy"), index_array)
 print("Formula index saved", index_array.shape)
 
-np.save(f"./data/{SOURCE}_all_formulas_flat.npy", all_formulas_flat)
+np.save(os.path.join(DATA_DIR, f"vectors/{SOURCE}_all_formulas_flat.npy"), all_formulas_flat)
 print("All formula strings saved")
 
 
@@ -185,25 +186,20 @@ print("All formula strings saved")
 # full = np.concatenate(arrays, axis=0)
 
 # final = np.array(full, dtype=object)
-# np.save(f"./data/{SOURCE}_all_formulas_flat.npy", final)
+# np.save(os.path.join(DATA_DIR, f"vectors/{SOURCE}_all_formulas_flat.npy"), final)
 
 
 print("All vectors saved. Process complete.")
 
-import numpy as np
-
-vectors = np.load(f"./data/{SOURCE}_formulas_vectors.npy", allow_pickle=True)
+vectors = np.load(os.path.join(DATA_DIR, f"vectors/{SOURCE}_formulas_vectors.npy"), allow_pickle=True)
 print("Formula Vector array shape:", vectors.shape)
-# print("Formula Vector 0 sample (first 10 dims):", vectors[0][:10])
 
-vectors = np.load(f"./data/{SOURCE}_content_vectors.npy", allow_pickle=True)
+vectors = np.load(os.path.join(DATA_DIR, f"vectors/{SOURCE}_content_vectors.npy"), allow_pickle=True)
 print("Content Vector array shape:", vectors.shape)
-# print("Content Vector 0 sample (first 10 dims):", vectors[0][:10])
 
-vectors = np.load(f"./data/{SOURCE}_text_vectors.npy", allow_pickle=True)
+vectors = np.load(os.path.join(DATA_DIR, f"vectors/{SOURCE}_text_vectors.npy"), allow_pickle=True)
 print("Text Vector array shape:", vectors.shape)
-# print("Text Vector 0 sample (first 10 dims):", vectors[0][:10])
 
-all_formulas_flat = np.load(f"./data/{SOURCE}_all_formulas_flat.npy", allow_pickle=True)
+all_formulas_flat = np.load(os.path.join(DATA_DIR, f"vectors/{SOURCE}_all_formulas_flat.npy"), allow_pickle=True)
 print(f"Loaded {len(all_formulas_flat)} formulas")
 print("First 10 formulas:", all_formulas_flat[:10])

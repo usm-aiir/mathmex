@@ -11,8 +11,8 @@ def init_opensearch(app):
             "port": config.getint("opensearch", "port"),
         }],
         http_auth=(
-            config.get("dev", "user"),
-            config.get("dev", "password"),
+            config.get("opensearch", "username"),
+            config.get("opensearch", "password"),
         ),
         use_ssl=True,
         verify_certs=False,
