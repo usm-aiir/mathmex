@@ -9,7 +9,9 @@ import argparse
 import sys
 from pathlib import Path
 
-_BACKEND = Path(__file__).resolve().parents[2] / "backend"
+_OPENSEARCH = Path(__file__).resolve().parents[1]
+_BACKEND = _OPENSEARCH.parent / "backend"
+sys.path.insert(0, str(_OPENSEARCH))
 sys.path.insert(0, str(_BACKEND))
 
 import json
@@ -19,6 +21,7 @@ from opensearchpy.helpers import bulk
 
 from paths import DATA_PATH
 from config_loader import get_config
+from schemas.mappings import mapping
 
 parser = argparse.ArgumentParser(description="Bulk upload JSONL to OpenSearch")
 parser.add_argument("source", help="Source name (e.g. wikipedia, mathematica)")
@@ -71,12 +74,23 @@ def generate_bulk_actions(file_path, index_name):
             }
 
 
+def ensure_index_exists(client, index_name):
+    """Create the index with the explicit mapping if it does not exist."""
+    if not client.indices.exists(index=index_name):
+        print(f"Index '{index_name}' does not exist. Creating with explicit mapping...")
+        client.indices.create(index=index_name, body=mapping)
+        print(f"Created index '{index_name}'.")
+    else:
+        print(f"Index '{index_name}' already exists.")
+
+
 def main():
     """Main function to run the bulk upload."""
     if not Path(JSONL_FILE_PATH).exists():
         sys.exit(f"JSONL file not found: {JSONL_FILE_PATH}\nRun bin/process.sh {SOURCE_NAME} <tsv_file> first.")
 
     client = get_opensearch_client()
+    ensure_index_exists(client, INDEX_NAME)
 
     print(f"Starting bulk upload of '{JSONL_FILE_PATH}' to index '{INDEX_NAME}'...")
 

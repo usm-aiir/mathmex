@@ -18,7 +18,7 @@ mapping = {
             # Type of media (e.g., article, video, pdf)
             "media_type": {"type": "text"},
             # Main content body (searchable text, with fielddata enabled for aggregations)
-            "body": {"type": "text", "fielddata": True},
+            "body_text": {"type": "text", "fielddata": True},
             # Vector embedding for whole-bodysemantic search (KNN)
             "body_vector": {
                 "type": "knn_vector",
