@@ -7,7 +7,7 @@ MathMex is a web application for mathematical search, powered by OpenSearch and 
 - **Python 3.8+** — Backend and data pipeline
 - **Node.js 18+** — Frontend
 - **Docker** — OpenSearch (or use a remote instance)
-- **formula-search** (optional) — For TangentCFT/formula search; copy from a separate repo
+- **formula-search** (optional) — For TangentCFT/formula search; add as git submodule
 
 ## Project Structure
 
@@ -92,13 +92,36 @@ Example: `bin/process.sh wikipedia final_wikipedia.tsv --index`
 
 ### 5. formula-search (Optional)
 
-For full search (TangentCFT, LateFusion), copy the formula-search repo into `formula-search/`:
+For full search (TangentCFT, LateFusion), add the formula-search repo as a submodule.
+
+**First-time setup** (run from project root):
+
+If you have an existing formula-search copy with generated files (encoded.jsonl, slt_index.faiss, etc.) and want to convert it to a submodule without re-running the formula-search pipeline:
 
 ```sh
-cp -r /path/to/formula-search formula-search/
+bin/setup_formula_search_submodule.sh <formula-search-repo-url>
 ```
 
-This directory is gitignored.
+This backs up generated files, adds the submodule, then restores them. For private repos, ensure git auth is configured first (e.g. `git config credential.helper store` or use SSH URL).
+
+Or, for a fresh setup:
+
+```sh
+git submodule add <formula-search-repo-url> formula-search
+git submodule update --init --recursive
+```
+
+**Clone mathmex with submodule**:
+
+```sh
+git clone --recurse-submodules <mathmex-repo-url>
+```
+
+**Existing clone** (submodule not initialized):
+
+```sh
+git submodule update --init --recursive
+```
 
 ## Commands Reference
 

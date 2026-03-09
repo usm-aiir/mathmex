@@ -1,0 +1,3 @@
+[submodule "formula-search"]
+	path = formula-search
+	url = https://github.com/usm-aiir/formula-search.git
