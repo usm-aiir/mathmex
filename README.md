@@ -1,72 +1,138 @@
 # MathMex
 
-MathMex is a web application designed to assist users with mathematical queries and provide solutions using advanced search capabilities powered by OpenSearch and machine processing. This project consists of a backend built with Flask and a frontend developed using React.
+MathMex is a web application for mathematical search, powered by OpenSearch and machine learning. It consists of a Flask backend, React frontend, and a data pipeline that transforms TSVs into searchable indices.
+
+## Prerequisites
+
+- **Python 3.8+** — Backend and data pipeline
+- **Node.js 18+** — Frontend
+- **Docker** — OpenSearch (or use a remote instance)
+- **formula-search** (optional) — For TangentCFT/formula search; add as git submodule
 
 ## Project Structure
 
-The project is organized into two main directories:
+```
+mathmex/
+├── apps/
+│   ├── backend/        # Flask API server
+│   ├── data-processing/  # TSV → vectors → JSONL pipeline
+│   ├── opensearch/     # OpenSearch scripts, schemas, docker-compose
+│   └── frontend/       # React UI
+├── bin/                # Shell scripts (run, stop, install, process)
+└── data/               # TSVs, vectors, JSONL (gitignored)
+```
 
-- `frontend/` – React application for the user interface
-- `backend/` – Flask application for API and data processing
-
-### Backend
-
-The backend is responsible for handling requests, processing data, and interacting with the OpenSearch service.  
-See [`backend/README.md`](backend/README.md) for setup and usage instructions.
-
-### Frontend
-
-The frontend is a React application that provides the user interface (UX) for MathMex.  
-See [`frontend/README.md`](frontend/README.md) for setup and usage instructions.
+See each app's README for details: [backend](apps/backend/README.md), [data-processing](apps/data-processing/README.md), [opensearch](apps/opensearch/README.md), [frontend](apps/frontend/README.md).
 
 ## Getting Started
 
-To get started with MathMex, follow the setup instructions in the respective backend and frontend README files.  
-Ensure that all dependencies are installed and the services are properly configured.
+**Run all commands from the project root.**
+
+### 1. Configuration
+
+```sh
+cp config.ini.example config.ini
+cp .env.example .env
+```
+
+Edit `config.ini`:
+
+- **[opensearch]** — Host, username, password. For local Docker, use `host = localhost` and credentials matching your `.env`.
+- **[general]** — `model` = path to sentence-transformers model (local path or HuggingFace ID, e.g. `sentence-transformers/all-mpnet-base-v2`).
+
+Edit `.env`:
+
+- **`OPENSEARCH_INITIAL_ADMIN_PASSWORD`** — Bootstrap password for the OpenSearch container. The `bin/` scripts pass this via `--env-file` when running docker compose. Set `config.ini` [opensearch] password to match.
+- **`VITE_API_BASE`** — (Optional) For local frontend dev, set to `http://localhost:5001` to point at the backend. Omit for production.
+
+### 2. Install
+
+```sh
+bin/install.sh
+```
+
+This builds the frontend and OpenSearch Docker image.
+
+### 3. Run
+
+Start OpenSearch and the backend:
+
+```sh
+bin/run.sh
+```
+
+Or manually:
+
+```sh
+cd apps/opensearch && docker compose --env-file ../../.env up -d
+python apps/backend/app.py
+```
+
+(The `--env-file` loads `OPENSEARCH_INITIAL_ADMIN_PASSWORD` from `.env`.)
+
+Start the frontend (dev mode):
+
+```sh
+cd apps/frontend && npm run dev
+```
+
+Open the app (typically http://localhost:5173 for Vite).
+
+### 4. Data Pipeline
+
+To add searchable content:
+
+1. Add a TSV to `data/tsvs/` (format: `title<TAB>description<TAB>url`, no header).
+2. Run: `bin/process.sh SOURCE TSV_FILE`
+3. Index: `python apps/opensearch/scripts/bulk_index.py SOURCE`
+
+Or combine steps 2 and 3: `bin/process.sh SOURCE TSV_FILE --index`
+
+Example: `bin/process.sh wikipedia final_wikipedia.tsv --index`
+
+### 5. formula-search (Optional)
+
+For full search (TangentCFT, LateFusion), add the formula-search repo as a submodule.
+
+**First-time setup** (run from project root):
+
+For a fresh setup:
+
+```sh
+git submodule add <formula-search-repo-url> formula-search
+git submodule update --init --recursive
+```
+
+**Clone mathmex with submodule**:
+
+```sh
+git clone --recurse-submodules <mathmex-repo-url>
+```
+
+**Existing clone** (submodule not initialized):
+
+```sh
+git submodule update --init --recursive
+```
+
+## Commands Reference
+
+| Command | Purpose |
+|---------|---------|
+| `bin/install.sh` | Build frontend and OpenSearch image |
+| `bin/run.sh` | Start OpenSearch + backend |
+| `bin/stop.sh` | Stop services, remove build artifacts |
+| `bin/restart.sh` | Stop → install → run |
+| `bin/process.sh SOURCE TSV [--index]` | Process data, optionally index |
+| `python apps/backend/app.py` | Run backend only |
+| `python apps/opensearch/scripts/bulk_index.py SOURCE` | Bulk index JSONL |
+| `cd apps/frontend && npm run dev` | Frontend dev server |
 
 ## Contributing
 
-Contributions are welcome! To contribute to MathMex, please follow these steps:
-
-1. **Fork the repository**  
-   Click the "Fork" button at the top right of this page to create your own copy of the repository.  
-   This creates your own copy of the MathMex repo under your GitHub account. You can freely make changes to this copy without affecting the original project.
-
-2. **Clone your fork**  
-   Open a terminal and run:  
-   ```sh
-   git clone https://github.com/your-username/MathMex.git
-   ```
-   This downloads your forked repo from GitHub to your local computer, so you can work on the code locally.
-
-3. **Create a new branch**  
-   Navigate to the project directory and create a new branch for your feature or bugfix:  
-   ```sh
-   git checkout -b my-feature-branch
-   ```
-   Branches let you work on new features or bug fixes without affecting the main codebase. Creating a new branch keeps your changes organized and separate.
-
-4. **Make your changes**  
-   Implement your feature or fix the bug in your local code.  
-   Adding tests is encouraged to ensure your changes work as expected.
-
-5. **Commit your changes**  
-   In the terminal run:
-   ```sh
-   git add .
-   git commit -m "Describe your changes"
-   ```
-   You can save your changes to your local branch with a description message. This helps others understand what you changed and why.
-
-6. **Push to your fork**  
-   ```sh
-   git push origin my-feature-branch
-   ```
-   This uploads your committed changes from your local branch to your forked repo on GitHub.
-
-7. **Open a Pull Request**  
-   Go to the original repository on GitHub and open a Pull Request from your branch.  
-   You request that your changes be reviewed and merged into the original MathMex repo. It will be reviewed and discussed before any necessary changes are made before merging.
-
-Please follow these steps to help keep the project organized and easy to maintain.
-
+1. Fork the repository
+2. Create a branch: `git checkout -b my-feature`
+3. Make changes; tests are encouraged
+4. Commit: `git commit -m "Description"`
+5. Push: `git push origin my-feature`
+6. Open a Pull Request
