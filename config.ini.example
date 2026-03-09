@@ -5,6 +5,10 @@ host = opensearch.mathmex.com
 username = public
 password = a!!rlab2026
 
+[opensearch_admin]
+username = admin
+password = ...
+
 [flask_app]
 port = 5001
 debug = False

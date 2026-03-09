@@ -1,36 +1,37 @@
 """
 bulk_index.py
 
-Script to bulk upload documents from a JSONL file to an OpenSearch index for MathMex.
-Run this script after creating an index and generating a JSONL file with documents.
+Bulk upload documents from JSONL to OpenSearch.
+Run from project root: python apps/opensearch/scripts/bulk_index.py SOURCE
+  e.g. python apps/opensearch/scripts/bulk_index.py wikipedia
 """
+import argparse
+import sys
+from pathlib import Path
+
+_BACKEND = Path(__file__).resolve().parents[2] / "backend"
+sys.path.insert(0, str(_BACKEND))
+
 import json
-import os
+import warnings
 from opensearchpy import OpenSearch, RequestsHttpConnection
 from opensearchpy.helpers import bulk
-import warnings
-import configparser
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+from paths import DATA_PATH
+from config_loader import get_config
 
-# --- Load Configuration from config.ini ---
-config = configparser.ConfigParser()
-config.read(os.path.join(SCRIPT_DIR, '../../backend/config.ini'))
+parser = argparse.ArgumentParser(description="Bulk upload JSONL to OpenSearch")
+parser.add_argument("source", help="Source name (e.g. wikipedia, mathematica)")
+args = parser.parse_args()
 
-# OpenSearch
+SOURCE_NAME = args.source
+INDEX_NAME = f"mathmex_{SOURCE_NAME}"
+JSONL_FILE_PATH = str(DATA_PATH / f"jsonl/mathmex_{SOURCE_NAME}.jsonl")
+
+config = get_config()
 OPENSEARCH_HOST = config.get('opensearch', 'host')
-
-# Credentials
-USER = config.get('opensearch', 'username')
-PASSWORD = config.get('opensearch', 'password')
-
-# Model Path
-MODEL = config.get('general', 'model')
-
-# Name of the data source and index (change as needed)
-SOURCE_NAME = ''
-INDEX_NAME = f'mathmex_{SOURCE_NAME}'
-JSONL_FILE_PATH = os.path.join(SCRIPT_DIR, f'../../../data/jsonl/mathmex_{SOURCE_NAME}.jsonl')
+USER = config.get('opensearch_admin', 'username')
+PASSWORD = config.get('opensearch_admin', 'password')
 
 # Suppress the security warning from using a self-signed cert
 warnings.filterwarnings('ignore', message='Unverified HTTPS request')
@@ -72,6 +73,9 @@ def generate_bulk_actions(file_path, index_name):
 
 def main():
     """Main function to run the bulk upload."""
+    if not Path(JSONL_FILE_PATH).exists():
+        sys.exit(f"JSONL file not found: {JSONL_FILE_PATH}\nRun bin/process.sh {SOURCE_NAME} <tsv_file> first.")
+
     client = get_opensearch_client()
 
     print(f"Starting bulk upload of '{JSONL_FILE_PATH}' to index '{INDEX_NAME}'...")

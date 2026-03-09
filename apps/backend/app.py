@@ -2,25 +2,20 @@
 app.py
 
 Main Flask application factory for MathMex backend.
+Run from project root: python apps/backend/app.py
 """
 from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
-import configparser
 import os
 
+from paths import ENCODED_FILE_PATH, INDEX_PATH, FAISS_INDEX_PATH
+from config_loader import get_config
 from services.models import load_models
 from services.opensearch import init_opensearch
 
-APP_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.abspath(os.path.join(APP_DIR, '../../data'))
-
-ENCODED_FILE_PATH = os.path.join(DATA_DIR, "jsonl/TangentCFT/encoded.jsonl")
-INDEX_PATH = os.path.join(DATA_DIR, "jsonl/TangentCFT/encoded_index.json")
-FAISS_INDEX_PATH = os.path.join(DATA_DIR, "jsonl/TangentCFT/slt_index.faiss")
-
-config = configparser.ConfigParser()
-config.read(os.getenv("BACKEND_CONFIG", "config.ini"))
+load_dotenv()
+config = get_config()
 
 def create_app():
     app = Flask(__name__)

@@ -7,6 +7,7 @@ import FilterModal from "../features/search/FilterModal.tsx"
 import SummaryModal from "../features/search/SummaryModal"
 import type { SearchFilters, SearchResult, SearchHistoryItem } from "../types/search"
 import { formatDate } from "../lib/utils"
+import { API_BASE } from "../lib/api"
 import { useSearchParams } from "react-router-dom"
 
 
@@ -160,7 +161,7 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
         setSummary("");
 
         try {
-            const res = await fetch("https://api.mathmex.com/summarize", {
+            const res = await fetch(`${API_BASE}/summarize`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -234,7 +235,7 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
         // Use fusion-search endpoint if experimental model is enabled
         const endpoint = searchSettings.experimentalModel ? 'fusion-search' : 'search'
         
-        fetch(`https://api.mathmex.com/${endpoint}`, {
+        fetch(`${API_BASE}/${endpoint}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

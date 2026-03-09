@@ -1,9 +1,11 @@
 #!/bin/bash
+# Run from project root. Starts OpenSearch and backend.
 
-# Start OpenSearch database
-cd apps/db
-docker compose up -d
-cd ../..
+set -e
+cd "$(dirname "$0")/.."
 
-# Start backend service
-systemctl start mathmex-backend
+# OpenSearch (--env-file loads OPENSEARCH_INITIAL_ADMIN_PASSWORD from project root)
+(cd apps/opensearch && docker compose --env-file ../../.env up -d)
+
+# Backend (systemd in prod; for dev run: python apps/backend/app.py)
+systemctl start mathmex-backend 2>/dev/null || echo "Run backend manually: python apps/backend/app.py"

@@ -1,51 +1,43 @@
 from typing import List
 from flask import Blueprint, request, jsonify
-import sys
 import os
 import threading
 import logging
 
+from paths import FORMULA_SEARCH_PATH, setup_formula_search_imports
 from utils.format import (
     format_for_mathmex,
     format_for_mathlive,
     format_for_tangent_cft_search,
 )
-
-_ROUTES_DIR = os.path.dirname(os.path.abspath(__file__))
-
-_FORMULA_SEARCH_PATH = os.path.abspath(
-    os.path.join(_ROUTES_DIR, "..", "..", "..", "formula-search")
-)
-_LATE_FUSION_PATH = os.path.join(_FORMULA_SEARCH_PATH, "LateFusionModel")
-
-if _FORMULA_SEARCH_PATH not in sys.path:
-    sys.path.insert(0, _FORMULA_SEARCH_PATH)
-if _LATE_FUSION_PATH not in sys.path:
-    sys.path.insert(0, _LATE_FUSION_PATH)
-
-from LateFusionModel.late_fusion_model import LateFusionModel, FusionConfig
-
 from schemas.indexes import source_to_index
-
 from services.models import get_embedding_model, get_tangent_backend
 from services.opensearch import get_opensearch_client
 
-# Fusion configuration from environment variables
-fusion_settings = FusionConfig(
-    method=os.getenv("FUSION_METHOD", "rrf"),
-    rrf_k=int(os.getenv("FUSION_RRF_K", "60")),
-    weight_formula=float(os.getenv("FUSION_WEIGHT_FORMULA", "0.3")),
-    weight_text=float(os.getenv("FUSION_WEIGHT_TEXT", "0.7")),
-    hybrid_rrf_weight=float(os.getenv("FUSION_HYBRID_RRF_WEIGHT", "0.5")),
-    formula_topk=int(os.getenv("FUSION_FORMULA_TOPK", "100")),
-    text_topk=int(os.getenv("FUSION_TEXT_TOPK", "100")),
-    final_topk=int(os.getenv("FUSION_FINAL_TOPK", "100")),
-)
-
-fusion_model = LateFusionModel(fusion_settings)
-
-# Serialize TangentCFT query path mutations
+fusion_model = None
 formula_search_lock = threading.Lock()
+
+try:
+    if FORMULA_SEARCH_PATH.exists():
+        setup_formula_search_imports()
+        from LateFusionModel.late_fusion_model import LateFusionModel, FusionConfig
+
+        fusion_model = LateFusionModel(FusionConfig(
+            method=os.getenv("FUSION_METHOD", "rrf"),
+            rrf_k=int(os.getenv("FUSION_RRF_K", "60")),
+            weight_formula=float(os.getenv("FUSION_WEIGHT_FORMULA", "0.3")),
+            weight_text=float(os.getenv("FUSION_WEIGHT_TEXT", "0.7")),
+            hybrid_rrf_weight=float(os.getenv("FUSION_HYBRID_RRF_WEIGHT", "0.5")),
+            formula_topk=int(os.getenv("FUSION_FORMULA_TOPK", "100")),
+            text_topk=int(os.getenv("FUSION_TEXT_TOPK", "100")),
+            final_topk=int(os.getenv("FUSION_FINAL_TOPK", "100")),
+        ))
+        print("LateFusion model loaded successfully")
+    else:
+        print("LateFusion: formula-search path not found, fusion disabled")
+except Exception as e:
+    fusion_model = None
+    print(f"LateFusion: failed to load ({type(e).__name__}: {e})")
 
 late_fusion_blueprint = Blueprint("late_fusion", __name__)
 
@@ -54,6 +46,10 @@ def fusion_search():
     """
     Dual-mode search combining structural and semantic retrieval.
     """
+    print("Received fusion-search request")
+    if fusion_model is None:
+        print("Fusion-search: model not loaded, returning 503")
+        return jsonify({"error": "Fusion search not available"}), 503
     try:
         request_data = request.get_json()
         if not request_data:
@@ -71,6 +67,8 @@ def fusion_search():
         text_model = get_embedding_model()
         opensearch_client = get_opensearch_client()
         tangent_cft_backend = get_tangent_backend()  # Use the loaded backend from models.py
+        if tangent_cft_backend is None:
+            print("Fusion-search: TangentCFT backend not loaded, formula path may be text-only")
 
         fused_results = fusion_model.process_query(
             query=user_query,
@@ -90,6 +88,9 @@ def fusion_search():
         formula_count = sum(1 for r in fused_results if r.formula_score is not None)
         text_count = sum(1 for r in fused_results if r.text_score is not None)
 
+        q_preview = (user_query[:50] + "…") if len(user_query) > 50 else user_query
+        print(f"Fusion-search: query=\"{q_preview}\" formulas={formula_count} text={text_count} fusion_used={formula_count > 0}")
+
         final_results = prepare_fusion_response(fused_results)
 
         return jsonify(
@@ -106,9 +107,11 @@ def fusion_search():
         )
 
     except ValueError as e:
+        print(f"Fusion-search: validation error: {e}")
         logging.warning(f"Fusion search validation error: {e}")
         return jsonify({"error": str(e)}), 400
     except Exception as e:
+        print(f"Fusion-search: failed ({type(e).__name__}: {e})")
         logging.error("Fusion search failed", exc_info=True)
         # Return more detailed error message for debugging
         import traceback

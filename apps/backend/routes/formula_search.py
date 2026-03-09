@@ -1,4 +1,8 @@
 from flask import Blueprint, request, jsonify, current_app
+from opensearchpy.exceptions import (
+    ConnectionError as OpenSearchConnectionError,
+    AuthorizationException as OpenSearchAuthorizationException,
+)
 import io
 import sys
 import os
@@ -9,7 +13,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from utils.format import format_for_mathmex, format_for_mathlive, format_for_tangent_cft_search
 from schemas.indexes import source_to_index
 from services.models import get_embedding_model, get_tangent_backend
-sys.path.append(os.path.expanduser("../../formula-search"))
+from routes.utility import llm_response
 
 formula_search_blueprint = Blueprint('formula_search', __name__)
 
@@ -23,49 +27,64 @@ def formula_search():
     diversify = data.get('diversify', False)
     raw_query = data.get("query")
     print(f"Received Query: {raw_query}. Running Retrieval")
-    query_ml = format_for_tangent_cft_search(raw_query)
-    query_file = write_temp_query_tsv(query_ml)
 
-    backend = get_tangent_backend()
-    # Update the backend's data reader to use the new query file
-    backend.data_reader.queries_dir_path = query_file
-    ENCODED_FILE_PATH = current_app.config["ENCODED_FILE_PATH"]
-
-    text_trap = io.StringIO()
-    old_stdout = sys.stdout
-
+    query_file = None
     try:
-        sys.stdout = text_trap
-        query_vector = backend.retrieval(
-            encoded_file_path=ENCODED_FILE_PATH,
-            embedding_type=getattr(backend, 'embedding_type', None),
-            ignore_full_relative_path=True,
-            tokenize_all=False,
-            tokenize_number=True,
-            streaming=True,
-            faiss=True,
-            single_query=True,
-            do_retrieval=False
-        )
-        results = perform_search(
-            raw_query,
-            sources,
-            media_types,
-            do_enhance,
-            diversify,
-            custom_vec=True,
-            custom_query_vec=query_vector
-        )
-        return jsonify({'results': results, 'total': len(results)})
-    except ValueError as e:
-        return jsonify({'error': str(e)}), 400
-    finally:
-        sys.stdout = old_stdout
+        backend = get_tangent_backend()
+        if backend is None:
+            results = perform_search(raw_query, sources, media_types, do_enhance, diversify, custom_vec=False)
+            return jsonify({'results': results, 'total': len(results)})
+
+        query_ml = format_for_tangent_cft_search(raw_query)
+        query_file = write_temp_query_tsv(query_ml)
+        backend.data_reader.queries_dir_path = query_file
+        ENCODED_FILE_PATH = current_app.config["ENCODED_FILE_PATH"]
+
+        text_trap = io.StringIO()
+        old_stdout = sys.stdout
+
         try:
-            if query_file and os.path.exists(query_file):
-                os.remove(query_file)
-        except Exception as cleanup_err:
-            print(f"Warning: failed to delete temp file {query_file}: {cleanup_err}")
+            sys.stdout = text_trap
+            query_vector = backend.retrieval(
+                encoded_file_path=ENCODED_FILE_PATH,
+                embedding_type=getattr(backend, 'embedding_type', None),
+                ignore_full_relative_path=True,
+                tokenize_all=False,
+                tokenize_number=True,
+                streaming=True,
+                faiss=True,
+                single_query=True,
+                do_retrieval=False
+            )
+            results = perform_search(
+                raw_query,
+                sources,
+                media_types,
+                do_enhance,
+                diversify,
+                custom_vec=True,
+                custom_query_vec=query_vector
+            )
+            # Fallback to text search when formula search returns nothing (e.g. docs have no formulas)
+            if not results:
+                results = perform_search(raw_query, sources, media_types, do_enhance, diversify, custom_vec=False)
+            return jsonify({'results': results, 'total': len(results)})
+        except ValueError as e:
+            return jsonify({'error': str(e)}), 400
+        except Exception:
+            results = perform_search(raw_query, sources, media_types, do_enhance, diversify, custom_vec=False)
+            return jsonify({'results': results, 'total': len(results)})
+        finally:
+            sys.stdout = old_stdout
+            try:
+                if query_file and os.path.exists(query_file):
+                    os.remove(query_file)
+            except Exception as cleanup_err:
+                print(f"Warning: failed to delete temp file {query_file}: {cleanup_err}")
+    except OpenSearchConnectionError:
+        return jsonify({"error": "Search service unavailable", "detail": "Cannot connect to OpenSearch"}), 503
+    except OpenSearchAuthorizationException:
+        return jsonify({"error": "Search forbidden", "detail": "OpenSearch user lacks search permissions"}), 403
 
 def convert_numpy(obj):
     if isinstance(obj, dict):
@@ -98,7 +117,7 @@ def perform_search(
             Focus on key terminology, related concepts, and mathematical relationships that would help in finding relevant academic content.
             Response:
         """
-        query = current_app.llm_response(prompt, response_type="enhancement", fallback=f"Mathematical concepts related to {query} including definitions, theorems, and applications.")
+        query = llm_response(prompt, response_type="enhancement", fallback=f"Mathematical concepts related to {query} including definitions, theorems, and applications.")
     indices = (
         [source_to_index[s] for s in sources if s in source_to_index]
         if sources
@@ -106,34 +125,36 @@ def perform_search(
     )
     if custom_vec:
         query_vec = custom_query_vec
+        # Formula search: KNN on nested formulas.formula_vector (300-dim)
+        knn_field = "formulas.formula_vector"
+        use_nested = True
     else:
-        model = current_app.get_model()
+        model = get_embedding_model()
         query_vec = model.encode(format_for_mathmex(query)).tolist()
-    query_body = {
-        "size": 100,
-        "_source": {
-            "includes": ["title", "media_type", "body_text", "link"]
-        },
-        "query": {
-            "bool": {
-                "must": [
-                    {
-                        "nested": {
-                            "path": "formulas",
-                            "query": {
-                                "knn": {
-                                    "formulas.formula_vector": {
-                                        "vector": query_vec,
-                                        "k": 1000
-                                    }
-                                }
-                            },
-                            "score_mode": "max"
-                        }
-                    }
-                ]
+        # Text search: KNN on body_vector (768-dim); many docs have empty formulas
+        knn_field = "body_vector"
+        use_nested = False
+
+    if use_nested:
+        query_clause = {
+            "nested": {
+                "path": "formulas",
+                "query": {
+                    "knn": {knn_field: {"vector": query_vec, "k": 1000}}
+                },
+                "score_mode": "max"
             }
         }
+    else:
+        query_clause = {"knn": {knn_field: {"vector": query_vec, "k": 1000}}}
+
+    source_includes = ["title", "media_type", "body_text", "link"]
+    if diversify:
+        source_includes.append("body_vector")
+    query_body = {
+        "size": 100,
+        "_source": {"includes": source_includes},
+        "query": {"bool": {"must": [query_clause]}}
     }
     if media_types:
         query_body["query"]["bool"]["filter"] = [

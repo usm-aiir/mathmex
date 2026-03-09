@@ -1,13 +1,9 @@
-from flask import current_app
 from sentence_transformers import SentenceTransformer
-import configparser
 import os
 import sys
-from transformers import pipeline
-sys.path.append(os.path.expanduser("../../formula-search"))
-from tangent_cft_back_end import TangentCFTBackEnd
-from Embedding_Preprocessing.encoder_tuple_level import TupleTokenizationMode
 
+from paths import ROOT, FORMULA_SEARCH_PATH, setup_formula_search_imports
+from config_loader import get_config
 
 embedding_model = None
 tangent_backend = None
@@ -17,31 +13,35 @@ def load_models():
     global embedding_model, tangent_backend, generation_model
 
     if embedding_model is None:
-        config = configparser.ConfigParser()
-        config.read(os.getenv("BACKEND_CONFIG", "config.ini"))
-        embedding_model = SentenceTransformer(
-            config.get("general", "model")
-        )
+        config = get_config()
+        model_path = os.path.expanduser(config.get("general", "model"))
+        embedding_model = SentenceTransformer(model_path)
 
-    if tangent_backend is None:
-        tangent_backend = TangentCFTBackEnd(
-            config_file="../../formula-search/Configuration/config/config_1",
-            path_data_set="../../formula-search/ARQMathDataset",
-            is_wiki=False,
-            streaming=True,
-            read_slt=True,
-            queries_directory_path="../../ARQMathQueries/test_SLT.tsv",
-            faiss=True
-        )
-
-        tangent_backend.load_model(
-            map_file_path="data/tsvs/TangentCFT/slt_encoder.tsv",
-            model_file_path="data/vectors/TangentCFT/slt_model",
-            embedding_type=TupleTokenizationMode(3),
-            ignore_full_relative_path=True,
-            tokenize_all=False,
-            tokenize_number=True
-        )
+    if tangent_backend is None and FORMULA_SEARCH_PATH.exists():
+        try:
+            setup_formula_search_imports()
+            fs = str(FORMULA_SEARCH_PATH)
+            from tangent_cft_back_end import TangentCFTBackEnd
+            from Embedding_Preprocessing.encoder_tuple_level import TupleTokenizationMode
+            tangent_backend = TangentCFTBackEnd(
+                config_file=f"{fs}/Configuration/config/config_1",
+                path_data_set=f"{fs}/ARQMathDataset",
+                is_wiki=False,
+                streaming=True,
+                read_slt=True,
+                queries_directory_path=str(ROOT / "ARQMathQueries" / "test_SLT.tsv"),
+                faiss=True
+            )
+            tangent_backend.load_model(
+                map_file_path=f"{fs}/Embedding_Preprocessing/slt_encoder.tsv",
+                model_file_path=f"{fs}/slt_model",
+                embedding_type=TupleTokenizationMode(3),
+                ignore_full_relative_path=True,
+                tokenize_all=False,
+                tokenize_number=True
+            )
+        except Exception:
+            tangent_backend = None
 
     # uncommment when we want to use the generation model
     # if generation_model is None:

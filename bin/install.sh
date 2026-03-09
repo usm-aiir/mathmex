@@ -5,9 +5,9 @@ cd apps/frontend
 npm install
 npm run build
 
-# db
-cd ../db
-docker compose build
+# opensearch
+cd ../opensearch
+docker compose --env-file ../../.env build
 
 # move back to root
 cd ../..

@@ -1,30 +1,30 @@
 """
 create_index.py
 
-Script to create an OpenSearch index for MathMex with the specified mapping.
-Run this script to initialize a new index before bulk uploading documents.
+Create an OpenSearch index for MathMex with the specified mapping.
+Run from project root: python apps/opensearch/scripts/create_index.py
 """
-import os
+import sys
+from pathlib import Path
+
+_OPENSEARCH = Path(__file__).resolve().parents[1]
+_BACKEND = _OPENSEARCH.parent / "backend"
+sys.path.insert(0, str(_OPENSEARCH))
+sys.path.insert(0, str(_BACKEND))
+
 from opensearchpy import OpenSearch
-from mappings import mapping
+from schemas.mappings import mapping
 import json
-import configparser
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+from config_loader import get_config
 
-# --- Load Configuration from config.ini ---
-config = configparser.ConfigParser()
-config.read(os.path.join(SCRIPT_DIR, '../../backend/config.ini'))
-
-# OpenSearch
+config = get_config()
 OPENSEARCH_HOST = config.get('opensearch', 'host')
-
-# Credentials
-USER = config.get('opensearch', 'username')
-PASSWORD = config.get('opensearch', 'password')
+USER = config.get('opensearch_admin', 'username')
+PASSWORD = config.get('opensearch_admin', 'password')
 
 # Name of the index to create (change as needed)
-INDEX_NAME = ''
+INDEX_NAME = 'mathmex_youtube'
 
 # --- Connect ---
 # Initialize the OpenSearch client

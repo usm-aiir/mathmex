@@ -2,14 +2,12 @@ services:
   opensearch-node:
     image: opensearchproject/opensearch:latest
     container_name: opensearch-node
-    env_file:
-      - ../../.env
     environment:
       - cluster.name=mathmex-cluster 
       - discovery.type=single-node
       - bootstrap.memory_lock=true
       - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
-      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_ADMIN_PASSWORD}
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD}
     ulimits:
       memlock:
         soft: -1

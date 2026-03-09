@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react"
 import { Send, Filter, Type, FunctionSquare, FileUp, Sparkles, Mic, Square } from "lucide-react"
 import styles from "./SearchPanel.module.css"
+import { API_BASE } from "../../lib/api"
 
 interface Props {
     // filters
@@ -124,7 +125,7 @@ export default function SearchPanel({
 
     /* Speech-to-LaTeX backend connection */
     const speechToLatex = (text: string) => {
-        fetch(`https://api.mathmex.com/speech-to-latex`, {
+        fetch(`${API_BASE}/speech-to-latex`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ text }),

@@ -1,47 +1,33 @@
 # MathMex Backend
 
-- This directory contains the backend code for the MathMex web application, built using Flask. 
+Flask API server that handles search requests and talks to OpenSearch. See the [main README](../../README.md) for full project setup.
 
-## Getting Started
-- Follow these steps to setup and run the backend server:
+## Run
 
-### 1. Create and Activate a Virtual Environment
-
-```sh
-python -m venv venv
-venv\Scripts\activate  #On Windows
-# source venv/bin/activate #On macOS/Linux
-```
-
-### 2. Install Dependencies
+From project root:
 
 ```sh
-pip install flask flask-cors
+python apps/backend/app.py
 ```
 
-To save dependencies for future use:
+Or use `bin/run.sh` to start OpenSearch and the backend together.
 
-```
-pip freeze > requirements.txt
-```
+## Configuration
 
-### 3. Run the Flask Server
+Reads `config.ini` at project root (or path in `BACKEND_CONFIG` env var). Required sections:
 
-```sh
-python app.py
-```
+- **[opensearch]** — Host, username, password
+- **[flask_app]** — Port (default 5001), debug
+- **[general]** — Sentence-transformers model path
 
-The server will start at [http://localhost:5000/](http://localhost:5000/).
+## Structure
 
-## Project Structure 
-    - `app.py` -Main Flask application file. 
-    - `venv/` - Python virtual environment (not included in version control).
-    - `requirements.txt` - List of Python dependencies. 
+- `app.py` — Flask app entry point
+- `routes/` — API endpoints (search, fusion, utility)
+- `services/` — OpenSearch client, model loading
+- `schemas/` — Source-to-index mappings
+- `utils/` — Formatting, helpers
 
-## API Endpoints
+## Dependencies
 
-- `Get /` - Returns a simple greeting to confirm the server is running. 
-
-## Contributing 
-
-Please follow the main project's contributing guidelines in the root `README.md`.
+See `requirements.txt`. Install with `pip install -r requirements.txt` (from project root or this directory).

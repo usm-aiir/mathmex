@@ -34,5 +34,13 @@ docker-compose.*.yml
 *.ini
 *.env
 
+# Generated / working files at root
+**/encoded.jsonl
+**/collection_results.jsonl
+
 # Misc leftover files
 ARQMathQueries
+
+# Local formula-search copy (copy from ../formula-search for full search)
+formula-search
+formula-search/*

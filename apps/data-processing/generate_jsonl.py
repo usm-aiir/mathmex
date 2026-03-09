@@ -1,39 +1,56 @@
 """
 generate_jsonl.py
 
-Script to generate a JSONL file for bulk indexing into OpenSearch.
-Combines TSV metadata and NumPy vector embeddings into a single JSONL output.
+Combine TSV metadata and vector embeddings into JSONL for bulk indexing.
+Reads from data/tsvs/ and data/vectors/, writes to data/jsonl/.
+
+Usage (from project root): python apps/data-processing/generate_jsonl.py SOURCE TSV_FILE
+  e.g. python processing/generate_jsonl.py arxiv arxiv.tsv
+
+Run generate_vectors.py first to create the vector files.
 """
-import os
+import argparse
+import sys
+from pathlib import Path
+
+_BACKEND = Path(__file__).resolve().parents[1] / "backend"
+sys.path.insert(0, str(_BACKEND))
+
+from paths import DATA_PATH
+
 import numpy as np
 import csv
 import json
 from tqdm import tqdm
 
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.abspath(os.path.join(CURRENT_DIR, '../../../data'))
-
-# Unused dict
-# Use this as reference for the 'media_type' property
-media_type = {
-    "arxiv" : "pdf",
-    "mathematica" : "article",
-    "math-overflow" : "article",
-    "math-stack-exchange" : "article",
-    "wikipedia" : "article",
-    "youtube" : "video"
+MEDIA_TYPE = {
+    "arxiv": "pdf",
+    "mathematica": "article",
+    "math-overflow": "article",
+    "math-stack-exchange": "article",
+    "wikipedia": "article",
+    "youtube": "video",
 }
 
-SOURCE = ''
+parser = argparse.ArgumentParser(description="Combine TSV + vectors into JSONL for bulk indexing")
+parser.add_argument("source", help="Source name (e.g. arxiv, wikipedia)")
+parser.add_argument("tsv", help="TSV filename in data/tsvs/ (e.g. arxiv.tsv)")
+args = parser.parse_args()
 
-# Change as needed: input TSV, NPY, and output JSONL file paths
-TSV_FILE = os.path.join(DATA_DIR, 'tsvs/arxiv.tsv')
-FULL_VECTS = os.path.join(DATA_DIR, f'vectors/{SOURCE}_content_vectors.npy')
-TEXT_VECTS = os.path.join(DATA_DIR, f'vectors/{SOURCE}_text_vectors.npy')
-FORMULA_VECTS = os.path.join(DATA_DIR, f'vectors/{SOURCE}_formulas_vectors.npy')
-FORMULA_VECT_INDEX = os.path.join(DATA_DIR, f'vectors/{SOURCE}_formula_index.npy')
-FORMULA_LATEX = os.path.join(DATA_DIR, f'vectors/{SOURCE}_all_formulas_flat.npy')
-OUT_JSONL_FILE = os.path.join(DATA_DIR, f'jsonl/mathmex_{SOURCE}.jsonl')
+SOURCE = args.source
+TSV_FILE = str(DATA_PATH / "tsvs" / args.tsv)
+FULL_VECTS = str(DATA_PATH / f"vectors/{SOURCE}_content_vectors.npy")
+TEXT_VECTS = str(DATA_PATH / f"vectors/{SOURCE}_text_vectors.npy")
+FORMULA_VECTS = str(DATA_PATH / f"vectors/{SOURCE}_formulas_vectors.npy")
+FORMULA_VECT_INDEX = str(DATA_PATH / f"vectors/{SOURCE}_formula_index.npy")
+FORMULA_LATEX = str(DATA_PATH / f"vectors/{SOURCE}_all_formulas_flat.npy")
+OUT_JSONL_FILE = str(DATA_PATH / f"jsonl/mathmex_{SOURCE}.jsonl")
+
+for p in [TSV_FILE, FULL_VECTS, TEXT_VECTS, FORMULA_VECTS, FORMULA_VECT_INDEX, FORMULA_LATEX]:
+    if not Path(p).exists():
+        sys.exit(f"File not found: {p}\nRun generate_vectors.py first.")
+
+Path(OUT_JSONL_FILE).parent.mkdir(parents=True, exist_ok=True)
 
 # Load vector embeddings from .npy file
 body_vecs = np.load(FULL_VECTS)
@@ -74,12 +91,9 @@ with open(TSV_FILE, 'r', encoding='utf-8') as f_in, \
         ]
 
         obj = {
-            "doc_ID":f"doc_{i}",
+            "doc_ID": f"doc_{i}",
             "title": row[0],
-
-            # Change this depending on what type of data you are generating a *.jsonl for
-            "media_type": "pdf",
-
+            "media_type": MEDIA_TYPE.get(SOURCE, "article"),
             "body_text": row[1],
             "body_vector": body_vecs[i].tolist(),
             "text_vector": text_vecs[i].tolist(),

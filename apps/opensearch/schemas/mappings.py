@@ -1,8 +1,6 @@
 """
-mappings.py
-
-Defines the OpenSearch index mapping for MathMex indices, including KNN vector and text fields.
-Import this mapping in admin scripts when creating a new index.
+OpenSearch index mapping for MathMex indices (KNN vectors, text fields).
+Import in scripts when creating a new index.
 """
 # Mapping definition for MathMex indices
 mapping = {
@@ -46,7 +44,7 @@ mapping = {
                     "engine": "nmslib",
                 }
             },
-            
+
             "formulas": {
                 "type": "nested",
                 "properties": {

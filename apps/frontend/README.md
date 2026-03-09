@@ -1,35 +1,37 @@
 # MathMex Frontend
 
-This directory contains the frontend code for the MathMex web application, built using React.
+React application for the MathMex search UI. See the [main README](../../README.md) for full project setup.
 
-## Getting Started
+## Run (dev)
 
-To get started with MathMex, follow these steps:
+From project root:
 
-1. **Clone the Repository**  
-   Follow steps 1–3 in the main [README.md](../README.md) at the project root.
+```sh
+cd apps/frontend && npm run dev
+```
 
-2. **Install Dependencies**  
-   Make sure you have Node.js installed. Then, in this directory, run:
-   ```sh
-   npm install
-   ```
+Or from this directory: `npm run dev`
 
-3. **Run the Application**  
-   Start the development server with:
-   ```sh
-   npm run dev
-   ```
-   The app will open in your default browser at [http://localhost:3000](http://localhost:3000).
+## Configuration
 
-## Project Structure
+The frontend loads `.env` from the project root (see `vite.config.ts` envDir). For local dev, add to `.env`:
 
-- `src/` – Source code for the React application
-- `public/` – Static files and the HTML template
-- `package.json` – Project metadata and dependencies
-- `README.md` – This file
+```
+VITE_API_BASE=http://localhost:5001
+```
 
-## Contributing
+This points the frontend at the backend API. Omit for production builds that use the default API URL.
 
-Please follow the contributing steps in the main project [README.md](../README.md).
+## Structure
 
+- `src/` — React components, pages, styles
+- `index.html` — Entry HTML
+- `vite.config.ts` — Vite config
+
+## Build
+
+```sh
+npm run build
+```
+
+Output goes to `dist/`.

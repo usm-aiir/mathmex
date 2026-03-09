@@ -1,50 +1,85 @@
 """
-generate_jsonl.py
+generate_vectors.py
 
-Script to generate a JSONL file for bulk indexing into OpenSearch.
-Combines TSV metadata and NumPy vector embeddings into a single JSONL output.
+Generate vector embeddings from TSV for bulk indexing.
+Reads from data/tsvs/, writes to data/vectors/.
+
+Usage (from project root): python apps/data-processing/generate_vectors.py SOURCE TSV_FILE
+  e.g. python processing/generate_vectors.py arxiv arxiv.tsv
 """
-from sentence_transformers import SentenceTransformer
-from dotenv import load_dotenv
-import configparser
-import numpy as np
+import argparse
+import sys
 import os
 import csv
+import tempfile
+from pathlib import Path
+
+_BACKEND = Path(__file__).resolve().parents[1] / "backend"
+sys.path.insert(0, str(_BACKEND))
+
+from dotenv import load_dotenv
+load_dotenv()
+
+from paths import ROOT, DATA_PATH, FORMULA_SEARCH_PATH, ENCODED_FILE_PATH, setup_formula_search_imports
+from config_loader import get_config
+from utils.format import format_for_tangent_cft_search
+
+import numpy as np
+import faiss
 from tqdm import tqdm
 import regex as re
-import sys
 import traceback
-import glob
+from sentence_transformers import SentenceTransformer
 
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-BACKEND_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "../../backend"))
-DATA_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "../../../data"))
-FORMULA_SEARCH_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "../../../formula-search"))
-
-sys.path.extend([BACKEND_DIR, FORMULA_SEARCH_DIR])
-
-from app import faiss_index, backend, write_temp_query_tsv
-from utils.format import format_for_tangent_cft_search
+setup_formula_search_imports()
 from tangent_cft_back_end import TangentCFTBackEnd
 from Embedding_Preprocessing.encoder_tuple_level import TupleTokenizationMode
 
+def write_temp_query_tsv(mathml_string: str):
+    mathml_string = mathml_string.strip().strip('"').strip("'")
+    tmp_tsv = tempfile.NamedTemporaryFile(mode="w", suffix=".tsv", delete=False, newline="", encoding="utf-8")
+    writer = csv.DictWriter(tmp_tsv, delimiter="\t", fieldnames=["id", "topic_id", "thread_id", "type", "formula"])
+    writer.writeheader()
+    writer.writerow({"id": "user_query", "topic_id": "A.000", "thread_id": "0000000", "type": "title", "formula": mathml_string})
+    tmp_tsv.close()
+    return tmp_tsv.name
 
-ENCODED_FILE_PATH = os.path.join(DATA_DIR, "jsonl/TangentCFT/encoded.jsonl")
-INDEX_PATH = os.path.join(DATA_DIR, "jsonl/TangentCFT/encoded_index.json")
-FAISS_INDEX_PATH = os.path.join(DATA_DIR, "jsonl/TangentCFT/slt_index.faiss")
+fs = str(FORMULA_SEARCH_PATH)
+backend = TangentCFTBackEnd(
+    config_file=os.path.join(fs, "Configuration/config/config_1"),
+    path_data_set=os.path.join(fs, "ARQMathDataset"),
+    is_wiki=False,
+    streaming=True,
+    read_slt=True,
+    queries_directory_path=str(ROOT / "ARQMathQueries" / "test_SLT.tsv"),
+    faiss=True
+)
+backend.load_model(
+    map_file_path=os.path.join(fs, "Embedding_Preprocessing/slt_encoder.tsv"),
+    model_file_path=os.path.join(fs, "slt_model"),
+    embedding_type=TupleTokenizationMode(3),
+    ignore_full_relative_path=True,
+    tokenize_all=False,
+    tokenize_number=True
+)
+faiss_index = faiss.read_index(str(FORMULA_SEARCH_PATH / "slt_index.faiss"))
 
-# # Change as needed: input TSV, NPY, and output JSONL file paths
-TSV_FILE = ''
-SOURCE = ''
+parser = argparse.ArgumentParser(description="Generate vector embeddings from TSV")
+parser.add_argument("source", help="Source name (e.g. arxiv, wikipedia)")
+parser.add_argument("tsv", help="TSV filename in data/tsvs/ (e.g. arxiv.tsv)")
+args = parser.parse_args()
 
-# Flush results to disk between batches (for arXiv)
+SOURCE = args.source
+TSV_FILE = str(DATA_PATH / "tsvs" / args.tsv)
 BATCH_SIZE = 5000
 
-# Load model to generate new embeddings
-load_dotenv()
-config = configparser.ConfigParser()
-config.read( os.getenv("BACKEND_CONFIG") )
-model = SentenceTransformer( config.get('general', 'model') )
+if not Path(TSV_FILE).exists():
+    sys.exit(f"TSV file not found: {TSV_FILE}\nExpected: data/tsvs/{args.tsv}")
+
+(DATA_PATH / "vectors").mkdir(parents=True, exist_ok=True)
+
+config = get_config()
+model = SentenceTransformer(os.path.expanduser(config.get("general", "model")))
 
 # Global array
 vector_arr = []
@@ -125,14 +160,11 @@ with open(TSV_FILE, 'r', encoding='utf-8') as f_in:
                     single_query=True,
                     do_retrieval=False
                 )
-                if vec.size == 0:
-                    print(f"Skipping formula '{formula}' due to empty tuples") 
+                if not isinstance(vec, np.ndarray) or vec.size == 0:
                     continue
-                else:
-                    vector_arr_formulas.append(vec)
-                    # all_formulas_flat.append(formula)  # only if vector exists
-                    # batch.append(formula)
-                    # current_formula_pos += 1
+                vector_arr_formulas.append(vec)
+                all_formulas_flat.append(formula)
+                current_formula_pos += 1
                     # if len(batch) >= BATCH_SIZE:
                     #     np.save(f"{formula_batches_dir}/batch_{batch_count}.npy", np.array(batch, dtype=object))
                     #     batch = []
@@ -144,9 +176,7 @@ with open(TSV_FILE, 'r', encoding='utf-8') as f_in:
                 # except Exception as e:
                 #     print(f"Warning: failed to delete temp file {formula_file}: {e}")
 
-            except Exception as e:
-                print(f"Error encoding formula '{formula}': {e}")
-                traceback.print_exc
+            except Exception:
                 continue
         formula_end = current_formula_pos
         formula_index.append((i, formula_start, formula_end))
@@ -160,11 +190,11 @@ with open(TSV_FILE, 'r', encoding='utf-8') as f_in:
 
 
 
-np.save(os.path.join(DATA_DIR, f"vectors/{SOURCE}_text_vectors"), vector_arr_text)
+np.save(str(DATA_PATH / f"vectors/{SOURCE}_text_vectors"), vector_arr_text)
 print("Text vectors saved")
-np.save(os.path.join(DATA_DIR, f"vectors/{SOURCE}_content_vectors"), vector_arr_body)
+np.save(str(DATA_PATH / f"vectors/{SOURCE}_content_vectors"), vector_arr_body)
 print("Body vectors saved")
-np.save(os.path.join(DATA_DIR, f"vectors/{SOURCE}_formulas_vectors"), vector_arr_formulas)
+np.save(str(DATA_PATH / f"vectors/{SOURCE}_formulas_vectors"), vector_arr_formulas)
 print("Formula vectors saved")
 
 # Save structured formula index
@@ -174,10 +204,10 @@ index_dtype = np.dtype([
     ("end", np.int64)
 ])
 index_array = np.array(formula_index, dtype=index_dtype)
-np.save(os.path.join(DATA_DIR, f"vectors/{SOURCE}_formula_index.npy"), index_array)
+np.save(str(DATA_PATH / f"vectors/{SOURCE}_formula_index.npy"), index_array)
 print("Formula index saved", index_array.shape)
 
-np.save(os.path.join(DATA_DIR, f"vectors/{SOURCE}_all_formulas_flat.npy"), all_formulas_flat)
+np.save(str(DATA_PATH / f"vectors/{SOURCE}_all_formulas_flat.npy"), all_formulas_flat)
 print("All formula strings saved")
 
 
@@ -190,16 +220,3 @@ print("All formula strings saved")
 
 
 print("All vectors saved. Process complete.")
-
-vectors = np.load(os.path.join(DATA_DIR, f"vectors/{SOURCE}_formulas_vectors.npy"), allow_pickle=True)
-print("Formula Vector array shape:", vectors.shape)
-
-vectors = np.load(os.path.join(DATA_DIR, f"vectors/{SOURCE}_content_vectors.npy"), allow_pickle=True)
-print("Content Vector array shape:", vectors.shape)
-
-vectors = np.load(os.path.join(DATA_DIR, f"vectors/{SOURCE}_text_vectors.npy"), allow_pickle=True)
-print("Text Vector array shape:", vectors.shape)
-
-all_formulas_flat = np.load(os.path.join(DATA_DIR, f"vectors/{SOURCE}_all_formulas_flat.npy"), allow_pickle=True)
-print(f"Loaded {len(all_formulas_flat)} formulas")
-print("First 10 formulas:", all_formulas_flat[:10])

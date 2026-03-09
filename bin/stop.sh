@@ -6,8 +6,8 @@ rm -r dist
 rm -r node_modules
 
 # take down image
-cd ../db
-docker compose down
+cd ../opensearch
+docker compose --env-file ../../.env down
 
 # stop backend
 systemctl stop mathmex-backend
