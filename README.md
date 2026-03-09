@@ -96,15 +96,7 @@ For full search (TangentCFT, LateFusion), add the formula-search repo as a submo
 
 **First-time setup** (run from project root):
 
-If you have an existing formula-search copy with generated files (encoded.jsonl, slt_index.faiss, etc.) and want to convert it to a submodule without re-running the formula-search pipeline:
-
-```sh
-bin/setup_formula_search_submodule.sh <formula-search-repo-url>
-```
-
-This backs up generated files, adds the submodule, then restores them. For private repos, ensure git auth is configured first (e.g. `git config credential.helper store` or use SSH URL).
-
-Or, for a fresh setup:
+For a fresh setup:
 
 ```sh
 git submodule add <formula-search-repo-url> formula-search
