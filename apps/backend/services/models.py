@@ -43,9 +43,11 @@ def load_models():
         except Exception:
             tangent_backend = None
 
-    # uncommment when we want to use the generation model
-    # if generation_model is None:
-    #     generation_model = pipeline("text-generation", model="mistralai/Mistral-7B-v0.3")
+    # Generation model (Mistral-7B) - commented out to save resources (~14GB VRAM).
+    # Uncomment when using llm_response for AI summaries/enhancement:
+    if generation_model is None:
+        from transformers import pipeline
+        generation_model = pipeline("text-generation", model="mistralai/Mistral-7B-v0.3")
 
     print("Models are loaded")
 

@@ -4,7 +4,7 @@ app.py
 Main Flask application factory for MathMex backend.
 Run from project root: python apps/backend/app.py
 """
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
@@ -35,6 +35,10 @@ def create_app():
     app.register_blueprint(formula_search_blueprint)
     app.register_blueprint(late_fusion_blueprint) 
     app.register_blueprint(utility_blueprint)
+
+    @app.route("/", methods=["GET"])
+    def health():
+        return jsonify({"status": "ok"}), 200
 
     # Initialize shared services so they can be used by blueprints.
     init_opensearch(app)

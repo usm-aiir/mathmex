@@ -8,7 +8,7 @@ import SummaryModal from "../features/search/SummaryModal"
 import type { SearchFilters, SearchResult, SearchHistoryItem } from "../types/search"
 import { formatDate } from "../lib/utils"
 import { API_BASE } from "../lib/api"
-import { useSearchParams } from "react-router-dom"
+import { useSearchParams, useNavigate } from "react-router-dom"
 
 
 // const API_BASE = "http://localhost:5003"  
@@ -100,6 +100,7 @@ interface SearchPageProps {
 
 export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHistoryOpen: setExternalHistoryOpen }: SearchPageProps) {
     const mathFieldRef = useRef<any>(null);
+    const navigate = useNavigate();
 
     // search param
     const [params] = useSearchParams();
@@ -169,10 +170,14 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
                     results: contextResults
                 }),
             });
+            if (res.status >= 500) {
+                navigate(`/error?code=${res.status}`)
+                return
+            }
             const data = await res.json();
             setSummary(data.summary || "No answer generated.");
         } catch (err) {
-            setSummary("Backend not reachable! Please try again later.");
+            navigate("/error?code=503")
         } finally {
             setIsGenerating(false);
         }
@@ -246,13 +251,21 @@ export default function SearchPage({ isHistoryOpen: externalHistoryOpen, setIsHi
                 diversify: searchSettings.diversifyResults
             }),
         })
-            .then(res => res.json())
+            .then(res => {
+                if (res.status >= 500) {
+                    navigate(`/error?code=${res.status}`)
+                    return
+                }
+                return res.json()
+            })
             .then(data => {
-                setSearchResults(data.results || [])
+                if (data) {
+                    setSearchResults(data.results || [])
+                }
                 setIsLoading(false)
             })
             .catch(() => {
-                setSearchResults([])
+                navigate("/error?code=503")
                 setIsLoading(false)
             })
     }

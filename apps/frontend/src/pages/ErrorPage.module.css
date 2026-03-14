@@ -1,0 +1,63 @@
+.main {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background-color: var(--background-color, #ececf0);
+}
+
+.card {
+    max-width: 30rem;
+    width: 100%;
+    text-align: center;
+    padding: 2.5rem 3rem 2.75rem;
+    border-radius: var(--border-radius, 25px);
+    background-color: var(--container-color, #f5f6fa);
+    box-shadow: var(--box-shadow, 0 4px 16px rgba(108, 79, 193, 0.2));
+}
+
+.dividerMid {
+    height: 1px;
+    margin: 1.25rem auto;
+    width: 60%;
+    background: linear-gradient(
+        to right,
+        transparent,
+        var(--primary-accent, #6c4fc1),
+        transparent
+    );
+    opacity: 0.35;
+}
+
+.statusCode {
+    font-size: 5rem;
+    font-weight: 800;
+    color: #f87171;
+    line-height: 1;
+    margin-bottom: 0.6rem;
+    letter-spacing: -0.04em;
+}
+
+.title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--primary-text, #23223a);
+    margin: 0 0 0.25rem;
+    line-height: 1.3;
+}
+
+.message {
+    color: var(--primary-text, #23223a);
+    font-size: 1rem;
+    line-height: 1.65;
+    margin: 0 0 0.6rem;
+    opacity: 0.85;
+}
+
+.submessage {
+    color: var(--primary-text, #23223a);
+    font-size: 0.9rem;
+    margin: 0;
+    opacity: 0.55;
+}

@@ -4,6 +4,7 @@ from services.models import get_embedding_model, get_generation_model
 from utils.format import format_for_mathlive
 utility_blueprint = Blueprint("utility", __name__)
 
+
 @utility_blueprint.route("/summarize", methods=["POST"])
 def summarize():
     data = request.get_json()
@@ -103,6 +104,7 @@ def llm_response(prompt, response_type="summary", fallback="Unable to generate r
         cleanup_markers = ["COMPREHENSIVE ANSWER:"]
     
     try:
+        generation_model = get_generation_model()
         response = generation_model(
             prompt, 
             max_new_tokens=max_new_tokens,
@@ -131,7 +133,7 @@ def llm_response(prompt, response_type="summary", fallback="Unable to generate r
         # Truncate if too long (for enhancement only)
         if max_output_length and len(generated_text) > max_output_length:
             generated_text = generated_text[:max_output_length] + "..."
-            
+
         return generated_text
 
     except Exception as e:

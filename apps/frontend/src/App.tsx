@@ -1,61 +1,58 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import SearchPage from "./pages/SearchPage"
 import AboutPage from "./pages/AboutPage"
+import ErrorPage from "./pages/ErrorPage"
 import Header from "./components/Header"
 import Footer from "./components/Footer"
 import HelpModal, { shouldShowFirstTimePopup } from "./components/HelpModal"
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
+import { API_BASE } from "./lib/api"
 
 /**
  * App.tsx
  *
- * The root component for the MathMex frontend application. Sets up global providers (MathJax, Router),
- * renders the main layout, and handles global modals and navigation.
+ * The root component for the MathMex frontend application. Checks backend health on load;
+ * if down, shows maintenance page immediately. Otherwise renders the main app.
  */
-// MathJax configuration for rendering LaTeX math expressions throughout the app
 
-
-/**
- * Root application component.
- *
- * - Provides MathJax context for math rendering
- * - Sets up React Router for navigation
- * - Handles global Help modal state
- *
- * @returns {JSX.Element} The rendered application
- */
 function App() {
-    // State to control visibility of the Help modal (shows on first visit)
     const [showHelp, setShowHelp] = React.useState(shouldShowFirstTimePopup());
-
-    // State to control search history sidebar
     const [isHistoryOpen, setIsHistoryOpen] = useState(false)
+    const [backendUp, setBackendUp] = useState<boolean | null>(null)
 
-    /**
-     * Opens the Help modal.
-     */
+    useEffect(() => {
+        fetch(`${API_BASE}/`)
+            .then(res => setBackendUp(res.ok))
+            .catch(() => setBackendUp(false))
+    }, [])
+
     const handleOpenHelp = () => setShowHelp(true);
-    /**
-     * Closes the Help modal.
-     */
     const handleCloseHelp = () => setShowHelp(false);
+
+    if (backendUp === null) {
+        return (
+            <div className="primary-content" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>
+                <p style={{ color: "var(--primary-text, #374151)" }}>Loading…</p>
+            </div>
+        )
+    }
+
+    if (!backendUp) {
+        return <ErrorPage />
+    }
 
     return (
         <Router>
-            {/* Main application background and layout */}
             <div className="primary-content">
                 <Header onOpenHistorySidebar={() => setIsHistoryOpen(true)} />
                 <Routes>
-                    {/* Home & Search page route */}
                     <Route path="/" element={<SearchPage isHistoryOpen={isHistoryOpen} setIsHistoryOpen={setIsHistoryOpen} />} />
                     <Route path="/search" element={<SearchPage isHistoryOpen={isHistoryOpen} setIsHistoryOpen={setIsHistoryOpen} />} />
-                    {/* About page route */}
                     <Route path="/about" element={<AboutPage />} />
+                    <Route path="/error" element={<ErrorPage />} />
                 </Routes>
             </div>
-            {/* Footer with Help button */}
             <Footer onHelpClick={handleOpenHelp} />
-            {/* Global Help modal */}
             <HelpModal open={showHelp} onClose={handleCloseHelp} />
         </Router>
     )
