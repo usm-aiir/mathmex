@@ -37,6 +37,10 @@ def create_app():
     app.register_blueprint(utility_blueprint)
 
     @app.route("/", methods=["GET"])
+    def root():
+        return jsonify({"message": "MathMex API is running"}), 200
+
+    @app.route("/health", methods=["GET"])
     def health():
         return jsonify({"status": "ok"}), 200
 

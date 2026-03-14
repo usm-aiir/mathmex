@@ -21,7 +21,7 @@ function App() {
     const [backendUp, setBackendUp] = useState<boolean | null>(null)
 
     useEffect(() => {
-        fetch(`${API_BASE}/`)
+        fetch(`${API_BASE}/health`)
             .then(res => setBackendUp(res.ok))
             .catch(() => setBackendUp(false))
     }, [])
